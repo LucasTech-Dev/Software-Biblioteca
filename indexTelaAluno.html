@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Portal do Aluno — Biblioteca Escolar">
+  <meta name="author" content="Lucas Sant`Ana Dias">
+  <title>BibliotecaEscolar — Portal do Aluno</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style/styleAlunos.css">
+  
+</head>
+
+<body>
+<header>
+  <div class="logo">
+    <span class="logo-mark">Instituto Estadual Riachuelo</span>
+    <span class="logo-tag">Biblioteca Online</span>
+  </div>
+  <span class="header-meta">Portal do Aluno — v1.0</span>
+</header>
+
+<div class="hero">
+  <h1>Reserve e Procure<br><span>Livros</span> de nossa <span>Biblioteca</span></h1>
+  <p class="hero-desc">Seu espaço para explorar o acervo, acompanhar seus empréstimos e gerenciar sua conta de leitor — tudo em um só lugar, de qualquer dispositivo.</p>
+</div>
+
+<div class="stats">
+  <div class="stat">
+    <span class="stat-num">4</span>
+    <span class="stat-label">Módulos</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">16</span>
+    <span class="stat-label">Funcionalidades</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">1</span>
+    <span class="stat-label">Perfil de usuário</span>
+  </div>
+  <div class="stat">
+    <span class="stat-num">100%</span>
+    <span class="stat-label">Web-based</span>
+  </div>
+</div>
+
+<main>
+  <div class="section-header">
+    <h2 class="section-title"></h2>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="modules">
+    <!-- Acervo -->
+    <div class="module-card mod-acervo" onclick="toggleCard(this)">
+      <div class="module-header">
+        <div class="module-icon">📚</div>
+        <div>
+          <div class="module-name">Acervo</div>
+          <div class="module-sub">Catálogo da biblioteca</div>
+        </div>
+      </div>
+      <div class="module-body">
+        <p class="module-desc">Explore todos os livros, revistas e materiais disponíveis na biblioteca do colégio.</p>
+        <ul class="module-features">
+          <li>Visualizar livros por categoria e gênero</li>
+          <li>Consultar disponibilidade de exemplares</li>
+          <li>Ver detalhes: título, autor e ISBN</li>
+          <li>Fazer reserva de livros online</li>
+        </ul>
+      </div>
+      <div class="module-footer">
+        <span class="badge">Módulo central</span>
+        <button class="btn-link">Ver detalhes →</button>
+      </div>
+    </div>
+
+    <!-- Conta -->
+    <div class="module-card mod-conta" onclick="toggleCard(this)">
+      <div class="module-header">
+        <div class="module-icon">👤</div>
+        <div>
+          <div class="module-name">Conta</div>
+          <div class="module-sub">Meu perfil de leitor</div>
+        </div>
+      </div>
+      <div class="module-body">
+        <p class="module-desc">Gerencie suas informações pessoais e acompanhe sua atividade como leitor na biblioteca.</p>
+        <ul class="module-features">
+          <li>Ver nome, turma e matrícula</li>
+          <li>Alterar senha de acesso</li>
+          <li>Histórico completo de leituras</li>
+          <li>Notificações de prazos e devoluções</li>
+        </ul>
+      </div>
+      <div class="module-footer">
+        <span class="badge">Meu perfil</span>
+        <button class="btn-link">Ver detalhes →</button>
+      </div>
+    </div>
+
+    <!-- Empréstimos -->
+    <div class="module-card mod-emprestimos" onclick="toggleCard(this)">
+      <div class="module-header">
+        <div class="module-icon">🔄</div>
+        <div>
+          <div class="module-name">Empréstimos</div>
+          <div class="module-sub">Retirada e devolução</div>
+        </div>
+      </div>
+      <div class="module-body">
+        <p class="module-desc">Acompanhe seus livros em mãos, os prazos de devolução e o histórico de empréstimos anteriores.</p>
+        <ul class="module-features">
+          <li>Ver livros atualmente emprestados</li>
+          <li>Acompanhar prazo de devolução</li>
+          <li>Receber alertas de atraso</li>
+          <li>Solicitar renovação de prazo</li>
+        </ul>
+      </div>
+      <div class="module-footer">
+        <span class="badge">Em tempo real</span>
+        <button class="btn-link">Ver detalhes →</button>
+      </div>
+    </div>
+
+    <!-- Busca -->
+    <div class="module-card mod-busca" onclick="toggleCard(this)">
+      <div class="module-header">
+        <div class="module-icon">🔍</div>
+        <div>
+          <div class="module-name">Busca</div>
+          <div class="module-sub">Catálogo online</div>
+        </div>
+      </div>
+      <div class="module-body">
+        <p class="module-desc">Encontre qualquer material do acervo por diferentes critérios, sem precisar ir à biblioteca pessoalmente.</p>
+        <ul class="module-features">
+          <li>Busca por título, autor ou tema</li>
+          <li>Filtro por categoria e faixa etária</li>
+          <li>Ver disponibilidade em tempo real</li>
+          <li>Fila de reservas online</li>
+        </ul>
+      </div>
+      <div class="module-footer">
+        <span class="badge">Acesso público</span>
+        <button class="btn-link">Ver detalhes →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fluxo principal -->
+  <div class="flow-section">
+    <div class="flow-title">Siga o passo a passo para empréstimo de um livro</div>
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-circle" style="color: var(--blue); border-color: var(--blue-bg); background: var(--blue-bg);">1</div>
+        <div class="flow-step-name">Aluno faz busca no catálogo</div>
+      </div>
+      <div class="flow-arrow"></div>
+      <div class="flow-step">
+        <div class="flow-circle" style="color: var(--teal); border-color: var(--teal-bg); background: var(--teal-bg);">2</div>
+        <div class="flow-step-name">Verifica disponibilidade</div>
+      </div>
+      <div class="flow-arrow"></div>
+      <div class="flow-step">
+        <div class="flow-circle" style="color: var(--amber); border-color: var(--amber-bg); background: var(--amber-bg);">3</div>
+        <div class="flow-step-name">Bibliotecário registra retirada</div>
+      </div>
+      <div class="flow-arrow"></div>
+      <div class="flow-step">
+        <div class="flow-circle" style="color: var(--purple); border-color: var(--purple-bg); background: var(--purple-bg);">4</div>
+        <div class="flow-step-name">Sistema registra prazo</div>
+      </div>
+      <div class="flow-arrow"></div>
+      <div class="flow-step">
+        <div class="flow-circle" style="color: var(--green); border-color: var(--green-bg); background: var(--green-bg);">5</div>
+        <div class="flow-step-name">Devolução e atualização do acervo</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom cards -->
+  <div class="bottom-grid">
+    <div class="info-card">
+      <div class="info-card-title">O que você pode fazer neste portal</div>
+      <div class="tech-list">
+        <div class="tech-row">
+          <span class="tech-name">Explorar o acervo</span>
+          <span class="tech-pill">Acervo + Busca</span>
+        </div>
+        <div class="tech-row">
+          <span class="tech-name">Reservar livros online</span>
+          <span class="tech-pill">Busca</span>
+        </div>
+        <div class="tech-row">
+          <span class="tech-name">Acompanhar empréstimos</span>
+          <span class="tech-pill">Empréstimos</span>
+        </div>
+        <div class="tech-row">
+          <span class="tech-name">Receber alertas de prazo</span>
+          <span class="tech-pill">Empréstimos</span>
+        </div>
+        <div class="tech-row">
+          <span class="tech-name">Ver histórico de leituras</span>
+          <span class="tech-pill">Conta</span>
+        </div>
+        <div class="tech-row">
+          <span class="tech-name">Atualizar dados pessoais</span>
+          <span class="tech-pill">Conta</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-card">
+      <div class="info-card-title">Por onde começar</div>
+      <div class="tip-list">
+        <div class="tip">
+          <div class="tip-num">1</div>
+          <p class="tip-text">Acesse sua conta com o número de matrícula e senha fornecidos pela escola.</p>
+        </div>
+        <div class="tip">
+          <div class="tip-num">2</div>
+          <p class="tip-text">Use a Busca para encontrar um livro por título, autor ou tema de interesse.</p>
+        </div>
+        <div class="tip">
+          <div class="tip-num">3</div>
+          <p class="tip-text">Reserve o livro online e retire com o bibliotecário apresentando sua matrícula.</p>
+        </div>
+        <div class="tip">
+          <div class="tip-num">4</div>
+          <p class="tip-text">Acompanhe o prazo de devolução em Empréstimos para evitar atrasos.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <span>BibliotecaEscolar — Portal do Aluno &copy; 2025</span>
+  <span>Versão 1.0</span>
+</footer>
+
+<script>
+  function toggleCard(card) {
+    card.classList.toggle('active');
+  }
+</script>
+</body>
+</html>

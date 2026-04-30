@@ -1,32 +1,51 @@
 
  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- :root {
-   --bg: #F5F2EC;
-   --surface: #FFFFFF;
-   --ink: #1A1714;
-   --ink-soft: #5C5751;
-   --ink-muted: #9E9890;
-   --accent: #2C4A3E;
-   --accent-light: #4A7C6A;
-   --gold: #B8860B;
-   --warm: #E8DFD0;
-   --line: #D8D2C8;
-   --purple: #3D3270;
-   --purple-bg: #ECEAF5;
-   --teal: #1B5E52;
-   --teal-bg: #E3F0EE;
-   --amber: #7A4F00;
-   --amber-bg: #FDF0D8;
-   --green: #2D5016;
-   --green-bg: #EAF3DF;
-   --coral: #7A2E1E;
-   --coral-bg: #FAEAE6;
-   --blue: #1A3A6B;
-   --blue-bg: #E5EEF8;
-   --radius: 12px;
-   --font-display: 'Playfair Display', Georgia, serif;
-   --font-body: 'DM Sans', sans-serif;
- }
+:root {
+  /* Base */
+  --bg: #F4F7FB;
+  --surface: #FFFFFF;
+
+  /* Texto */
+  --ink: #0A0F1C;
+  --ink-soft: #334155;
+  --ink-muted: #94A3B8;
+
+  /* Azul Klein fosco (menos saturado) */
+  --accent: #1E3A8A;        /* azul profundo e mais “soft” */
+  --accent-light: #3B5BDB;  /* destaque mais suave */
+
+  /* Estrutura */
+  --line: #E2E8F0;
+  --warm: #EEF2FF;
+
+  /* Detalhe opcional */
+  --gold: #C7A94F;
+
+  /* Sistema inteiro alinhado */
+  --purple: #1E3A8A;
+  --purple-bg: #E8EDFF;
+
+  --teal: #1E3A8A;
+  --teal-bg: #E8EDFF;
+
+  --amber: #1E3A8A;
+  --amber-bg: #E8EDFF;
+
+  --green: #1E3A8A;
+  --green-bg: #E8EDFF;
+
+  --coral: #1E3A8A;
+  --coral-bg: #E8EDFF;
+
+  --blue: #1E3A8A;
+  --blue-bg: #E8EDFF;
+
+  /* UI */
+  --radius: 12px;
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'DM Sans', sans-serif;
+}
  body {
    background: var(--bg);
    color: var(--ink);
