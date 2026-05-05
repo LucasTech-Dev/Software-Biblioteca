@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login — BibliotecaEscolar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F4F7FB;
+      --surface: #FFFFFF;
+      --ink: #0A0F1C;
+      --ink-soft: #334155;
+      --ink-muted: #94A3B8;
+      --accent: #1E3A8A;
+      --accent-light: #3B5BDB;
+      --line: #E2E8F0;
+      --warm: #EEF2FF;
+      --gold: #C7A94F;
+      --radius: 12px;
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      color: var(--ink);
+    }
+
+    /* Card principal */
+    .lb-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 440px;
+      overflow: hidden;
+      box-shadow: 0 4px 24px rgba(30, 58, 138, 0.07);
+    }
+
+    /* Header azul */
+    .lb-header {
+      background: var(--accent);
+      padding: 28px 32px 24px;
+      border-bottom: 3px solid var(--gold);
+    }
+
+    .lb-header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 20px;
+    }
+
+    .lb-logo-name {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .lb-logo-sub {
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 400;
+      margin-top: 3px;
+    }
+
+    .lb-version {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    /* Toggle aluno/professor */
+    .lb-toggle {
+      display: flex;
+      gap: 8px;
+    }
+
+    .lb-toggle-btn {
+      flex: 1;
+      padding: 9px 0;
+      border-radius: 8px;
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      background: transparent;
+      color: rgba(255, 255, 255, 0.6);
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .lb-toggle-btn.active {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.6);
+      color: #fff;
+    }
+
+    .lb-toggle-btn:hover:not(.active) {
+      background: rgba(255, 255, 255, 0.07);
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    /* Body do card */
+    .lb-body {
+      padding: 32px 32px 28px;
+    }
+
+    .lb-greeting {
+      margin-bottom: 24px;
+    }
+
+    .lb-greeting-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .lb-greeting-sub {
+      font-size: 13px;
+      color: #64748B;
+      font-weight: 300;
+    }
+
+    /* Campos */
+    .lb-field {
+      margin-bottom: 16px;
+    }
+
+    .lb-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--ink-soft);
+      margin-bottom: 6px;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+    }
+
+    .lb-input {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--ink);
+      background: #F8FAFC;
+      outline: none;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .lb-input:focus {
+      border-color: var(--accent);
+      background: #fff;
+    }
+
+    .lb-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .lb-check {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      color: #64748B;
+      cursor: pointer;
+    }
+
+    .lb-check input {
+      accent-color: var(--accent);
+      width: 14px;
+      height: 14px;
+    }
+
+    .lb-forgot {
+      font-size: 12px;
+      color: var(--accent);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-body);
+      font-weight: 500;
+      padding: 0;
+    }
+
+    .lb-forgot:hover {
+      text-decoration: underline;
+    }
+
+    /* Botão entrar */
+    .lb-btn {
+      width: 100%;
+      padding: 13px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      letter-spacing: 0.2px;
+    }
+
+    .lb-btn:hover { background: #162d70; }
+    .lb-btn:active { transform: scale(0.99); }
+
+    /* Divisor com label */
+    .lb-divider {
+      height: 1px;
+      background: var(--line);
+      margin: 24px 0;
+      position: relative;
+    }
+
+    .lb-divider::after {
+      content: 'Módulos disponíveis';
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding: 0 10px;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--ink-muted);
+      white-space: nowrap;
+    }
+
+    /* Pílulas de módulos */
+    .lb-modules {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .lb-mod-pill {
+      font-size: 11px;
+      padding: 4px 11px;
+      border-radius: 20px;
+      font-weight: 500;
+      background: var(--warm);
+      color: var(--accent);
+      letter-spacing: 0.2px;
+    }
+
+    /* Footer do card */
+    .lb-footer {
+      padding: 14px 32px;
+      background: #F8FAFC;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: center;
+      font-size: 11px;
+      color: var(--ink-muted);
+    }
+
+    /* Toast de feedback */
+    .lb-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(60px);
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: var(--font-body);
+      font-weight: 500;
+      transition: transform 0.3s ease;
+      white-space: nowrap;
+      z-index: 99;
+      pointer-events: none;
+    }
+
+    .lb-toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Painel ativo/inativo */
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* Responsivo */
+    @media (max-width: 480px) {
+      .lb-body { padding: 24px 20px 20px; }
+      .lb-header { padding: 20px 20px 18px; }
+      .lb-footer { padding: 12px 20px; }
+      .lb-greeting-title { font-size: 19px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="lb-card">
+
+    <!-- Header -->
+    <div class="lb-header">
+      <div class="lb-header-top">
+        <div>
+          <div class="lb-logo-name">Instituto Estadual Riachuelo</div>
+          <div class="lb-logo-sub">Biblioteca Online</div>
+        </div>
+        <div class="lb-version">v1.0</div>
+      </div>
+      <div class="lb-toggle">
+        <button class="lb-toggle-btn active" id="btn-aluno" onclick="switchProfile('aluno')">
+          🎒 Aluno
+        </button>
+        <button class="lb-toggle-btn" id="btn-prof" onclick="switchProfile('professor')">
+          👩‍🏫 Professor
+        </button>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="lb-body">
+
+      <!-- Painel Aluno -->
+      <div id="panel-aluno" class="panel active">
+        <div class="lb-greeting">
+          <div class="lb-greeting-title">Bem-vindo, aluno!</div>
+          <div class="lb-greeting-sub">Acesse sua conta para buscar e reservar livros.</div>
+        </div>
+        <div class="lb-field">
+          <label class="lb-label">Matrícula</label>
+          <input class="lb-input" type="text" placeholder="Ex: 2025001234" id="aluno-matricula" />
+        </div>
+        <div class="lb-field">
+          <label class="lb-label">Senha</label>
+          <input class="lb-input" type="password" placeholder="••••••••" id="aluno-senha" />
+        </div>
+        <div class="lb-row">
+          <label class="lb-check">
+            <input type="checkbox" /> Lembrar-me
+          </label>
+          <button class="lb-forgot" onclick="esqueci()">Esqueci a senha</button>
+        </div>
+        <button class="lb-btn" onclick="entrar('aluno')">Entrar como Aluno →</button>
+        <div class="lb-divider"></div>
+        <div class="lb-modules">
+          <span class="lb-mod-pill">📚 Acervo</span>
+          <span class="lb-mod-pill">🔍 Busca</span>
+          <span class="lb-mod-pill">🔄 Empréstimos</span>
+          <span class="lb-mod-pill">👤 Minha Conta</span>
+        </div>
+      </div>
+
+      <!-- Painel Professor -->
+      <div id="panel-professor" class="panel">
+        <div class="lb-greeting">
+          <div class="lb-greeting-title">Bem-vindo, professor!</div>
+          <div class="lb-greeting-sub">Acesse o painel completo de gestão da biblioteca.</div>
+        </div>
+        <div class="lb-field">
+          <label class="lb-label">E-mail institucional</label>
+          <input class="lb-input" type="email" placeholder="prof@riachuelo.edu.br" id="prof-email" />
+        </div>
+        <div class="lb-field">
+          <label class="lb-label">Senha</label>
+          <input class="lb-input" type="password" placeholder="••••••••" id="prof-senha" />
+        </div>
+        <div class="lb-row">
+          <label class="lb-check">
+            <input type="checkbox" /> Lembrar-me
+          </label>
+          <button class="lb-forgot" onclick="esqueci()">Esqueci a senha</button>
+        </div>
+        <button class="lb-btn" onclick="entrar('professor')">Entrar como Professor →</button>
+        <div class="lb-divider"></div>
+        <div class="lb-modules">
+          <span class="lb-mod-pill">📚 Acervo</span>
+          <span class="lb-mod-pill">👥 Usuários</span>
+          <span class="lb-mod-pill">🔄 Empréstimos</span>
+          <span class="lb-mod-pill">🔍 Busca</span>
+          <span class="lb-mod-pill">📊 Relatórios</span>
+          <span class="lb-mod-pill">⚙️ Administração</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="lb-footer">
+      BibliotecaEscolar — Sistema de Gestão &copy; 2025
+    </div>
+
+  </div>
+
+  <!-- Toast de feedback -->
+  <div class="lb-toast" id="toast"></div>
+
+  <script>
+    function switchProfile(perfil) {
+      document.getElementById('panel-aluno').classList.toggle('active', perfil === 'aluno');
+      document.getElementById('panel-professor').classList.toggle('active', perfil === 'professor');
+      document.getElementById('btn-aluno').classList.toggle('active', perfil === 'aluno');
+      document.getElementById('btn-prof').classList.toggle('active', perfil === 'professor');
+    }
+
+    function entrar(perfil) {
+      var campo = perfil === 'aluno'
+        ? document.getElementById('aluno-matricula').value.trim()
+        : document.getElementById('prof-email').value.trim();
+      var senha = perfil === 'aluno'
+        ? document.getElementById('aluno-senha').value
+        : document.getElementById('prof-senha').value;
+
+      if (!campo || !senha) {
+        showToast('Preencha todos os campos.');
+        return;
+      }
+
+      showToast('Entrando como ' + (perfil === 'aluno' ? 'Aluno' : 'Professor') + '...');
+
+      // Redirecionar após login — ajuste os links conforme necessário
+      setTimeout(function () {
+        if (perfil === 'aluno') {
+          window.location.href = 'indexTelaAluno.html';
+        } else {
+          window.location.href = 'index.html';
+        }
+      }, 1200);
+    }
+
+    function esqueci() {
+      showToast('Entre em contato com o bibliotecário.');
+    }
+
+    function showToast(msg) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(function () { t.classList.remove('show'); }, 2500);
+    }
+  </script>
+
+</body>
+</html>
