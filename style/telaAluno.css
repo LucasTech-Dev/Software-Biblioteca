@@ -7,13 +7,10 @@
 
   /* Texto */
   --ink: #0A0F1C;
-<<<<<<< HEAD
+
   --ink-soft: #334155;
   --ink-muted: #94A3B8; 
-=======
-  --ink-soft: #334155; 
-  --ink-muted: #94A3B8; 
->>>>>>> 504ec5506d7a012ccc8f074a66ace9254bb37751
+
 
   /* Azul Klein fosco (menos saturado) */
   --accent: #1E3A8A;        /* azul profundo e mais “soft” */
