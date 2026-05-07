@@ -2,7 +2,7 @@
 
 function selectRole(r) {
   role = r;
-
+ 
   document
     .getElementById('opt-professor')
     .classList.toggle('active', r === 'professor');
