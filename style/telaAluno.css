@@ -7,8 +7,10 @@
 
   /* Texto */
   --ink: #0A0F1C;
-  --ink-soft: #334155; 
+
+  --ink-soft: #334155;
   --ink-muted: #94A3B8; 
+
 
   /* Azul Klein fosco (menos saturado) */
   --accent: #1E3A8A;        /* azul profundo e mais “soft” */

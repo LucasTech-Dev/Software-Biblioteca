@@ -1,0 +1,26 @@
+{
+  "name": "software-biblioteca",
+  "version": "1.0.0",
+  "description": "projeto software-biblioteca",
+  "keywords": [
+    "biblioteca",
+    "escola",
+    "site",
+    "projeto"
+  ],
+  "homepage": "https://github.com/LucasTech-Dev/Software-Biblioteca#readme",
+  "bugs": {
+    "url": "https://github.com/LucasTech-Dev/Software-Biblioteca/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LucasTech-Dev/Software-Biblioteca.git"
+  },
+  "license": "ISC",
+  "author": "lucas e guilherme",
+  "type": "commonjs",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
