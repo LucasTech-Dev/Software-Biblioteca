@@ -14,5 +14,19 @@ const firebaseConfig = {
   appId: "1:691451184435:web:c5b7492af74bcf6a116a46"
 };
 
-// Initialize Firebase
+const src= src("bancobiblioteca-24029.firebaseapp-compat.com")
+const auth= src("bancobiblioteca-24029.firebaseauth-compat.com")
 const app = initializeApp(firebaseConfig);
+
+firebaseConfig.initializeApp(firebaseConfig)
+
+console.log("antes")
+firebase.auth().singInWithEmaillAndPassword("lucas@123", "123").then(Response=>{
+  console.log("sucesso", Response)
+
+}).catch(error=>{
+  console.log("erro", error)
+
+})
+console.log("depois")
+
