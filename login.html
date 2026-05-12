@@ -1,57 +1,85 @@
 <!-- login.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
- <meta charset="UTF-8" />
- <meta name="viewport" content="width=device-width, initial-scale=1.0" />
- <title>Biblioteca Escolar — Acesso</title>
- <link rel="stylesheet" href="style/login.css" />
- <link
-   href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;700&family=Inter:wght@400;500;600&display=swap"
-   rel="stylesheet">
-  
-</head>
 
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <meta name="description" content="Sistema Biblioteca Escolar — Login" />
+  <meta name="author" content="Lucas Sant'Ana Dias" />
+
+  <title>BibliotecaEscolar — Acesso</title>
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style/login.css" />
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;700&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+</head>
 
 <body>
 
+  <div class="lb-card">
 
- <div class="lb-card">
+    <!-- Painel esquerdo -->
+    <div class="left-panel">
 
+      <div class="left-pattern"></div>
 
-   <!-- Painel esquerdo -->
-   <div class="left-panel">
+      <div class="left-top">
+        <h1 class="left-title">
+          Biblioteca<br />
+          Escolar
+        </h1>
 
+        <p class="left-desc">
+          Sistema integrado de gestão de acervo e empréstimos.
+        </p>
+      </div>
 
-     <div class="left-pattern"></div>
+      <div class="left-bottom">
+        <p class="left-quote">
+          "A leitura é o exercício pleno da inteligência."
+        </p>
+      </div>
 
+    </div>
 
-     <div class="left-top">
-       <h1 class="left-title">
-         Biblioteca<br />
-         Escolar
-       </h1>
+    <!-- Painel direito -->
+    <div class="right-panel">
 
+      <div class="form-box">
 
-       <p class="left-desc">
-         Sistema integrado de gestão de acervo e empréstimos.
-       </p>
-     </div>
+        <!-- Cabeçalho -->
+        <div class="form-header">
+          <h2>Acesso ao Sistema</h2>
+          <p>Selecione seu perfil e insira suas credenciais</p>
+        </div>
 
+        <!-- Seleção de perfil -->
+        <div class="role-group">
 
-     <div class="left-bottom">
-       <p class="left-quote">
-         "A leitura é o exercício pleno da inteligência."
-       </p>
-     </div>
+          <!-- Professor -->
+          <button
+            type="button"
+            class="role-opt"
+            id="opt-professor"
+            onclick="selectRole('professor')"
+          >
+            <div class="role-dot"></div>
 
-<<<<<<< HEAD
             <div class="role-text">
               <strong>Professor</strong>
               <span>Acesso completo</span>
             </div>
           </button>
- 
+
+          <!-- Aluno -->
           <button
             type="button"
             class="role-opt"
@@ -59,174 +87,98 @@
             onclick="selectRole('aluno')"
           >
             <div class="role-dot"></div>
-=======
 
-   </div>
->>>>>>> f1ccc3c340b7ae50594fe116c40954931e6f0766
+            <div class="role-text">
+              <strong>Aluno</strong>
+              <span>Empréstimos</span>
+            </div>
+          </button>
 
+        </div>
 
-   <!-- Painel direito -->
-   <div class="right-panel">
+        <!-- Campo identificação -->
+        <div class="field">
 
+          <label id="lbl-id">
+            Identificação
+          </label>
 
-     <div class="form-box">
+          <input
+            type="text"
+            id="inp-id"
+            placeholder="Digite sua identificação"
+            autocomplete="off"
+          />
 
+        </div>
 
-       <div class="form-header">
-         <h2>Acesso ao Sistema</h2>
-         <p>Selecione seu perfil e insira suas credenciais</p>
-       </div>
+        <!-- Campo senha -->
+        <div class="field">
 
+          <div class="field-row">
 
-       <!-- Seleção de perfil -->
-       <div class="role-group">
+            <label for="inp-senha">
+              Senha
+            </label>
 
+            <a class="forgot" href="#">
+              Esqueceu?
+            </a>
 
-         <button
-           type="button"
-           class="role-opt"
-           id="opt-professor"
-           onclick="selectRole('professor')"
-         >
-           <div class="role-dot"></div>
+          </div>
 
+          <input
+            type="password"
+            id="inp-senha"
+            placeholder="••••••••"
+          />
 
-<<<<<<< HEAD
-       <!-- Botão -->
-<button
-  type="button"
-  class="btn-submit"
-  id="btn-entrar"
-  onclick="handleLogin()"
->
-  Entrar
-</button>
+        </div>
 
-<!-- Novo cadastro -->
-<div class="register-text">
-  Não possui conta?
-  <a href="cadastro.html">
-    Cadastre-se
-  </a>
-</div>
+        <!-- Botão -->
+        <button
+          type="button"
+          class="btn-submit"
+          id="btn-entrar"
+          onclick="handleLogin()"
+        >
+          Entrar
+        </button>
 
-<div class="help-text">
-  Problemas de acesso?
-  <a href="#">
-    Contate a secretaria
-  </a>
-</div>
+        <!-- Mensagem -->
+        <div id="msg-feedback" class="msg"></div>
+
+        <!-- Cadastro -->
+        <div class="register-text">
+          Não possui conta?
+          <a href="cadastro.html">
+            Cadastre-se
+          </a>
+        </div>
+
+        <!-- Rodapé -->
+        <div class="help-text">
+          Problemas de acesso?
+          <a href="#">
+            Contate a secretaria
+          </a>
+        </div>
+
       </div>
-=======
-           <div class="role-text">
-             <strong>Professor</strong>
-             <span>Acesso completo</span>
-           </div>
-         </button>
 
+    </div>
 
-         <button
-           type="button"
-           class="role-opt"
-           id="opt-aluno"
-           onclick="selectRole('aluno')"
-         >
-           <div class="role-dot"></div>
->>>>>>> f1ccc3c340b7ae50594fe116c40954931e6f0766
+  </div>
 
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 
-           <div class="role-text">
-             <strong>Aluno</strong>
-             <span>Empréstimos</span>
-           </div>
-         </button>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 
-
-       </div>
-
-
-       <!-- Campo identificação -->
-       <div class="field">
-
-
-         <label id="lbl-id">
-           Identificação
-         </label>
-
-
-         <input
-           type="text"
-           id="inp-id"
-           placeholder="—"
-           autocomplete="off"
-         />
-
-
-       </div>
-
-
-       <!-- Campo senha -->
-       <div class="field">
-
-
-         <div class="field-row">
-           <label>Senha</label>
-
-
-           <a class="forgot" href="#">
-             Esqueceu?
-           </a>
-         </div>
-
-
-         <input
-           type="password"
-           id="inp-senha"
-           placeholder="••••••••"
-         />
-
-
-       </div>
-
-
-       <!-- Botão -->
-       <button
-         type="button"
-         class="btn-submit"
-         id="btn-entrar"
-         onclick="handleLogin()"
-       >
-         Entrar
-       </button>
-
-
-       <div class="help-text">
-         Problemas de acesso?
-         <a href="#">
-           Contate a secretaria
-         </a>
-       </div>
-
-
-     </div>
-
-
-   </div>
-
-
- </div>
-
-
- <script src="script/login.js"></script>
-     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-
-
-   <!-- 2º: Só depois, o seu script -->
+  <!-- Scripts -->
   <script src="script/app.js"></script>
-
-
-
+  <script src="script/login.js"></script>
 
 </body>
+
 </html>

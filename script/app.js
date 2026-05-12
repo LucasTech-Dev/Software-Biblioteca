@@ -26,5 +26,5 @@ src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"
     .catch(error => {
       console.log("erro", error);
     });
-
+ 
   console.log("depois");

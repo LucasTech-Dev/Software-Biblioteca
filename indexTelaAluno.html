@@ -7,234 +7,282 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <meta name="description" content="Portal do Aluno — Biblioteca Escolar">
-  <meta name="author" content="Lucas Sant`Ana Dias">
+  <meta name="author" content="Lucas Sant'Ana Dias">
 
   <title>BibliotecaEscolar — Portal do Aluno</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet"
+  >
 
+  <!-- CSS -->
   <link rel="stylesheet" href="style/telaAluno.css">
 </head>
 
 <body>
-<<<<<<< HEAD
-<header> 
-=======
 
-<header>
->>>>>>> f1ccc3c340b7ae50594fe116c40954931e6f0766
-  <div class="logo">
-    <span class="logo-mark">Instituto Estadual Riachuelo</span>
-    <span class="logo-tag">Biblioteca Online</span>
-  </div>
+  <!-- ========================= -->
+  <!-- HEADER -->
+  <!-- ========================= -->
 
-  <span class="header-meta">Portal do Aluno — v1.0</span>
-</header>
+  <header>
 
-<div class="hero">
-  <h1>
-    Reserve e Procure<br>
-    <span>Livros</span> de nossa <span>Biblioteca</span>
-  </h1>
-
-  <p class="hero-desc">
-    Seu espaço para explorar o acervo, acompanhar seus empréstimos
-    e gerenciar sua conta de leitor — tudo em um só lugar.
-  </p>
-</div>
-
-<div class="stats">
-
-  <div class="stat">
-    <span class="stat-num">4</span>
-    <span class="stat-label">Módulos</span>
-  </div>
-
-  <div class="stat">
-    <span class="stat-num">16</span>
-    <span class="stat-label">Funcionalidades</span>
-  </div>
-
-  <div class="stat">
-    <span class="stat-num">1</span>
-    <span class="stat-label">Perfil de usuário</span>
-  </div>
-
-  <div class="stat">
-    <span class="stat-num">100%</span>
-    <span class="stat-label">Web-based</span>
-  </div>
-
-</div>
-
-<main>
-
-  <div class="section-header">
-    <h2 class="section-title"></h2>
-    <div class="section-line"></div>
-  </div>
-
-  <div class="modules">
-
-    <!-- Acervo -->
-    <div class="module-card mod-acervo"
-    onclick="window.location.href='acervo.html'">
-
-      <div class="module-header">
-        <div class="module-icon">📚</div>
-
-        <div>
-          <div class="module-name">Acervo</div>
-          <div class="module-sub">Catálogo da biblioteca</div>
-        </div>
-      </div>
-
-      <div class="module-body">
-        <p class="module-desc">
-          Explore todos os livros, revistas e materiais disponíveis.
-        </p>
-
-        <ul class="module-features">
-          <li>Visualizar livros por categoria e gênero</li>
-          <li>Consultar disponibilidade de exemplares</li>
-          <li>Ver detalhes: título, autor e ISBN</li>
-          <li>Fazer reserva de livros online</li>
-        </ul>
-      </div>
-
-      <div class="module-footer">
-        <span class="badge">Módulo central</span>
-        <button class="btn-link">Ver detalhes →</button>
-      </div>
-
+    <div class="logo">
+      <span class="logo-mark">Instituto Estadual Riachuelo</span>
+      <span class="logo-tag">Biblioteca Online</span>
     </div>
 
+    <span class="header-meta">Portal do Aluno — v1.0</span>
 
+  </header>
 
+  <!-- ========================= -->
+  <!-- HERO -->
+  <!-- ========================= -->
 
+  <div class="hero">
 
-    <!-- Conta -->
-    <div class="module-card mod-usuario"
-    onclick="window.location.href='usuario.html'">
+    <h1>
+      Reserve e Procure<br>
+      <span>Livros</span> de nossa <span>Biblioteca</span>
+    </h1>
 
-      <div class="module-header">
-        <div class="module-icon">👤</div>
+    <p class="hero-desc">
+      Seu espaço para explorar o acervo, acompanhar seus empréstimos
+      e gerenciar sua conta de leitor — tudo em um só lugar.
+    </p>
 
-        <div>
-          <div class="module-name">usuario</div>
-          <div class="module-sub">Meu perfil de leitor</div>
-        </div>
-      </div>
+  </div>
 
-      <div class="module-body">
-        <p class="module-desc">
-          Gerencie suas informações pessoais e acompanhe sua atividade.
-        </p>
+  <!-- ========================= -->
+  <!-- ESTATÍSTICAS -->
+  <!-- ========================= -->
 
-        <ul class="module-features">
-          <li>Ver nome, turma e matrícula</li>
-          <li>Alterar senha de acesso</li>
-          <li>Histórico completo de leituras</li>
-          <li>Notificações de prazos e devoluções</li>
-        </ul>
-      </div>
+  <div class="stats">
 
-      <div class="module-footer">
-        <span class="badge">Meu perfil</span>
-        <button class="btn-link">Ver detalhes →</button>
-      </div>
-
+    <div class="stat">
+      <span class="stat-num">4</span>
+      <span class="stat-label">Módulos</span>
     </div>
 
-
-
-
-
-    <!-- Empréstimos -->
-    <div class="module-card mod-emprestimos"
-    onclick="window.location.href='emprestimos.html'">
-
-      <div class="module-header">
-        <div class="module-icon">🔄</div>
-
-        <div>
-          <div class="module-name">Empréstimos</div>
-          <div class="module-sub">Retirada e devolução</div>
-        </div>
-      </div>
-
-      <div class="module-body">
-        <p class="module-desc">
-          Acompanhe seus livros em mãos e os prazos de devolução.
-        </p>
-
-        <ul class="module-features">
-          <li>Ver livros atualmente emprestados</li>
-          <li>Acompanhar prazo de devolução</li>
-          <li>Receber alertas de atraso</li>
-          <li>Solicitar renovação de prazo</li>
-        </ul>
-      </div>
-
-      <div class="module-footer">
-        <span class="badge">Em tempo real</span>
-        <button class="btn-link">Ver detalhes →</button>
-      </div>
-
+    <div class="stat">
+      <span class="stat-num">16</span>
+      <span class="stat-label">Funcionalidades</span>
     </div>
 
+    <div class="stat">
+      <span class="stat-num">1</span>
+      <span class="stat-label">Perfil de usuário</span>
+    </div>
 
-
-
-
-    <!-- Busca -->
-    <div class="module-card mod-busca"
-    onclick="window.location.href='busca.html'">
-
-      <div class="module-header">
-        <div class="module-icon">🔍</div>
-
-        <div>
-          <div class="module-name">Busca</div>
-          <div class="module-sub">Catálogo online</div>
-        </div>
-      </div>
-
-      <div class="module-body">
-        <p class="module-desc">
-          Encontre qualquer material do acervo por diferentes critérios.
-        </p>
-
-        <ul class="module-features">
-          <li>Busca por título, autor ou tema</li>
-          <li>Filtro por categoria e faixa etária</li>
-          <li>Ver disponibilidade em tempo real</li>
-          <li>Fila de reservas online</li>
-        </ul>
-      </div>
-
-      <div class="module-footer">
-        <span class="badge">Acesso público</span>
-        <button class="btn-link">Ver detalhes →</button>
-      </div>
-
+    <div class="stat">
+      <span class="stat-num">100%</span>
+      <span class="stat-label">Web-based</span>
     </div>
 
   </div>
 
-</main>
+  <!-- ========================= -->
+  <!-- MAIN -->
+  <!-- ========================= -->
 
-<footer>
-  <span>BibliotecaEscolar — Portal do Aluno &copy; 2025</span>
-  <span>Versão 1.0</span>
-</footer>
+  <main>
 
-<script src="script/telaAluno.js"></script>
+    <div class="section-header">
+      <h2 class="section-title"></h2>
+      <div class="section-line"></div>
+    </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <div class="modules">
 
-<script src="script/app.js"></script>
+      <!-- ========================= -->
+      <!-- ACERVO -->
+      <!-- ========================= -->
+
+      <div class="module-card mod-acervo"
+        onclick="window.location.href='acervo.html'">
+
+        <div class="module-header">
+
+          <div class="module-icon">📚</div>
+
+          <div>
+            <div class="module-name">Acervo</div>
+            <div class="module-sub">Catálogo da biblioteca</div>
+          </div>
+
+        </div>
+
+        <div class="module-body">
+
+          <p class="module-desc">
+            Explore todos os livros, revistas e materiais disponíveis.
+          </p>
+
+          <ul class="module-features">
+            <li>Visualizar livros por categoria e gênero</li>
+            <li>Consultar disponibilidade de exemplares</li>
+            <li>Ver detalhes: título, autor e ISBN</li>
+            <li>Fazer reserva de livros online</li>
+          </ul>
+
+        </div>
+
+        <div class="module-footer">
+          <span class="badge">Módulo central</span>
+          <button class="btn-link">Ver detalhes →</button>
+        </div>
+
+      </div>
+
+      <!-- ========================= -->
+      <!-- USUÁRIO -->
+      <!-- ========================= -->
+
+      <div class="module-card mod-usuario"
+        onclick="window.location.href='usuario.html'">
+
+        <div class="module-header">
+
+          <div class="module-icon">👤</div>
+
+          <div>
+            <div class="module-name">Usuário</div>
+            <div class="module-sub">Meu perfil de leitor</div>
+          </div>
+
+        </div>
+
+        <div class="module-body">
+
+          <p class="module-desc">
+            Gerencie suas informações pessoais e acompanhe sua atividade.
+          </p>
+
+          <ul class="module-features">
+            <li>Ver nome, turma e matrícula</li>
+            <li>Alterar senha de acesso</li>
+            <li>Histórico completo de leituras</li>
+            <li>Notificações de prazos e devoluções</li>
+          </ul>
+
+        </div>
+
+        <div class="module-footer">
+          <span class="badge">Meu perfil</span>
+          <button class="btn-link">Ver detalhes →</button>
+        </div>
+
+      </div>
+
+      <!-- ========================= -->
+      <!-- EMPRÉSTIMOS -->
+      <!-- ========================= -->
+
+      <div class="module-card mod-emprestimos"
+        onclick="window.location.href='emprestimos.html'">
+
+        <div class="module-header">
+
+          <div class="module-icon">🔄</div>
+
+          <div>
+            <div class="module-name">Empréstimos</div>
+            <div class="module-sub">Retirada e devolução</div>
+          </div>
+
+        </div>
+
+        <div class="module-body">
+
+          <p class="module-desc">
+            Acompanhe seus livros em mãos e os prazos de devolução.
+          </p>
+
+          <ul class="module-features">
+            <li>Ver livros atualmente emprestados</li>
+            <li>Acompanhar prazo de devolução</li>
+            <li>Receber alertas de atraso</li>
+            <li>Solicitar renovação de prazo</li>
+          </ul>
+
+        </div>
+
+        <div class="module-footer">
+          <span class="badge">Em tempo real</span>
+          <button class="btn-link">Ver detalhes →</button>
+        </div>
+
+      </div>
+
+      <!-- ========================= -->
+      <!-- BUSCA -->
+      <!-- ========================= -->
+
+      <div class="module-card mod-busca"
+        onclick="window.location.href='busca.html'">
+
+        <div class="module-header">
+
+          <div class="module-icon">🔍</div>
+
+          <div>
+            <div class="module-name">Busca</div>
+            <div class="module-sub">Catálogo online</div>
+          </div>
+
+        </div>
+
+        <div class="module-body">
+
+          <p class="module-desc">
+            Encontre qualquer material do acervo por diferentes critérios.
+          </p>
+
+          <ul class="module-features">
+            <li>Busca por título, autor ou tema</li>
+            <li>Filtro por categoria e faixa etária</li>
+            <li>Ver disponibilidade em tempo real</li>
+            <li>Fila de reservas online</li>
+          </ul>
+
+        </div>
+
+        <div class="module-footer">
+          <span class="badge">Acesso público</span>
+          <button class="btn-link">Ver detalhes →</button>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================= -->
+  <!-- FOOTER -->
+  <!-- ========================= -->
+
+  <footer>
+    <span>BibliotecaEscolar — Portal do Aluno &copy; 2025</span>
+    <span>Versão 1.0</span>
+  </footer>
+
+  <!-- ========================= -->
+  <!-- SCRIPTS -->
+  <!-- ========================= -->
+
+  <script src="script/telaAluno.js"></script>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+
+  <!-- Script principal -->
+  <script src="script/app.js"></script>
 
 </body>
+
 </html>

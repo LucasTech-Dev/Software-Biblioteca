@@ -1,807 +1,874 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
- <meta charset="UTF-8" />
- <meta name="viewport" content="width=device-width, initial-scale=1.0" />
- <title>Biblioteca Escolar — Cadastro</title>
- <link
-   href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;700&family=Inter:wght@400;500;600&display=swap"
-   rel="stylesheet">
-
-
- <style>
-   /* ── RESET ── */
-   * { margin: 0; padding: 0; box-sizing: border-box; }
-   html, body { width: 100%; min-height: 100vh; }
-
-
-   body {
-     background: #F0EDE8;
-     font-family: 'Inter', sans-serif;
-   }
-
-
-   /* ── CONTAINER ── */
-   .lb-card {
-     display: flex;
-     width: 100%;
-     min-height: 100vh;
-   }
-
-
-   /* ── PAINEL ESQUERDO ── */
-   .left-panel {
-     width: 44%;
-     background: #1A2740;
-     display: flex;
-     flex-direction: column;
-     justify-content: space-between;
-     padding: 3rem 2.5rem;
-     position: relative;
-     overflow: hidden;
-   }
-
-
-   .left-pattern {
-     position: absolute;
-     inset: 0;
-     background-image:
-       repeating-linear-gradient(0deg,
-         transparent, transparent 48px,
-         rgba(255,255,255,0.03) 48px,
-         rgba(255,255,255,0.03) 49px),
-       repeating-linear-gradient(90deg,
-         transparent, transparent 48px,
-         rgba(255,255,255,0.03) 48px,
-         rgba(255,255,255,0.03) 49px);
-   }
-
-
-   .left-top, .left-bottom { position: relative; z-index: 1; }
-
-
-   .left-title {
-     font-family: 'EB Garamond', serif;
-     font-size: 32px;
-     font-weight: 700;
-     color: #F5F0E8;
-     line-height: 1.2;
-     margin-bottom: 1rem;
-   }
-
-
-   .left-desc {
-     font-size: 13.5px;
-     color: rgba(200,200,200,0.5);
-     line-height: 1.7;
-     max-width: 220px;
-   }
-
-
-   .left-quote {
-     border-left: 2px solid rgba(200,175,100,0.35);
-     padding-left: 14px;
-     font-family: 'EB Garamond', serif;
-     font-size: 14px;
-     font-style: italic;
-     color: rgba(200,200,200,0.38);
-     line-height: 1.7;
-   }
-
-
-   /* ── PAINEL DIREITO ── */
-   .right-panel {
-     flex: 1;
-     display: flex;
-     align-items: center;
-     justify-content: center;
-     padding: 2rem;
-   }
-
-
-   .form-box {
-     width: 100%;
-     max-width: 340px;
-   }
-
-
-   /* HEADER */
-   .form-header { margin-bottom: 1.75rem; }
-
-
-   .form-header h2 {
-     font-family: 'EB Garamond', serif;
-     font-size: 24px;
-     font-weight: 700;
-     color: #1A2740;
-     margin-bottom: 5px;
-   }
-
-
-   .form-header p {
-     font-size: 13px;
-     color: #8A8880;
-     letter-spacing: 0.03em;
-   }
-
-
-   /* ── PERFIS ── */
-   .role-group {
-     display: grid;
-     grid-template-columns: 1fr 1fr;
-     gap: 8px;
-     margin-bottom: 1.75rem;
-   }
-
-
-   .role-opt {
-     border: 1px solid #D5D0C8;
-     border-radius: 6px;
-     padding: 13px 10px;
-     cursor: pointer;
-     background: #FAF8F5;
-     display: flex;
-     align-items: center;
-     gap: 10px;
-     text-align: left;
-     transition: border-color 0.15s, background 0.15s;
-     outline: none;
-   }
-
-
-   .role-opt:hover { border-color: #1A2740; background: #F0EDE8; }
-
-
-   .role-opt.active {
-     border-color: #1A2740;
-     background: #1A2740;
-   }
-
-
-   .role-dot {
-     width: 7px;
-     height: 7px;
-     border-radius: 50%;
-     border: 1.5px solid #A0998E;
-     flex-shrink: 0;
-     transition: border-color 0.15s, background 0.15s;
-   }
-
-
-   .role-opt.active .role-dot { background: #C8AF64; border-color: #C8AF64; }
-
-
-   .role-text strong {
-     display: block;
-     font-size: 13px;
-     font-weight: 600;
-     color: #1A2740;
-     transition: color 0.15s;
-   }
-
-
-   .role-opt.active .role-text strong { color: #F5F0E8; }
-
-
-   .role-text span {
-     display: block;
-     font-size: 11px;
-     color: #9A938A;
-     transition: color 0.15s;
-   }
-
-
-   .role-opt.active .role-text span { color: rgba(200,175,100,0.65); }
-
-
-   /* ── CAMPOS ── */
-   .field { margin-bottom: 1rem; }
-
-
-   .field label {
-     display: block;
-     font-size: 11px;
-     font-weight: 600;
-     letter-spacing: 0.08em;
-     text-transform: uppercase;
-     color: #7A7670;
-     margin-bottom: 6px;
-   }
-
-
-   .field input,
-   .field select {
-     width: 100%;
-     border: 1px solid #D5D0C8;
-     border-radius: 6px;
-     padding: 11px 14px;
-     font-size: 14px;
-     font-family: 'Inter', sans-serif;
-     color: #1A2740;
-     background: #FAF8F5;
-     outline: none;
-     transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
-     appearance: none;
-   }
-
-
-   .field input:focus,
-   .field select:focus {
-     border-color: #1A2740;
-     box-shadow: 0 0 0 3px rgba(26,39,64,0.08);
-     background: #FFFFFF;
-   }
-
-
-   .field input::placeholder { color: #C0BAB2; }
-
-
-   /* Select com seta customizada */
-   .select-wrap { position: relative; }
-
-
-   .select-wrap::after {
-     content: '';
-     position: absolute;
-     right: 14px;
-     top: 50%;
-     transform: translateY(-50%);
-     width: 0;
-     height: 0;
-     border-left: 4px solid transparent;
-     border-right: 4px solid transparent;
-     border-top: 5px solid #A0998E;
-     pointer-events: none;
-   }
-
-
-   .field select { cursor: pointer; }
-   .field select option { color: #1A2740; }
-
-
-   /* Linha 2 colunas */
-   .field-cols {
-     display: grid;
-     grid-template-columns: 1fr 1fr;
-     gap: 10px;
-   }
-
-
-   /* Senha com força */
-   .strength-bar {
-     display: flex;
-     gap: 4px;
-     margin-top: 6px;
-   }
-
-
-   .strength-seg {
-     flex: 1;
-     height: 3px;
-     border-radius: 2px;
-     background: #D5D0C8;
-     transition: background 0.25s;
-   }
-
-
-   .strength-seg.fraca   { background: #C05050; }
-   .strength-seg.media   { background: #C8AF64; }
-   .strength-seg.forte   { background: #4A8C6A; }
-
-
-   .strength-label {
-     font-size: 10.5px;
-     color: #9A938A;
-     margin-top: 4px;
-     min-height: 14px;
-     transition: color 0.2s;
-   }
-
-
-   /* Divider */
-   .divider {
-     display: flex;
-     align-items: center;
-     gap: 10px;
-     margin: 0.25rem 0 1rem;
-   }
-
-
-   .divider::before,
-   .divider::after {
-     content: '';
-     flex: 1;
-     height: 1px;
-     background: #D5D0C8;
-   }
-
-
-   .divider span {
-     font-size: 11px;
-     color: #B0A89E;
-     white-space: nowrap;
-   }
-
-
-   /* ── BOTÃO ── */
-   .btn-submit {
-     width: 100%;
-     padding: 12px;
-     border: none;
-     border-radius: 6px;
-     background: #1A2740;
-     color: #F5F0E8;
-     font-size: 14px;
-     font-weight: 600;
-     font-family: 'Inter', sans-serif;
-     cursor: pointer;
-     letter-spacing: 0.04em;
-     margin-top: 0.5rem;
-     transition: background 0.15s, transform 0.1s;
-   }
-
-
-   .btn-submit:hover { background: #243352; }
-   .btn-submit:active { transform: scale(0.99); }
-   .btn-submit:disabled { opacity: 0.7; cursor: default; }
-
-
-   /* ── FOOTER ── */
-   .help-text {
-     text-align: center;
-     margin-top: 1.25rem;
-     font-size: 12px;
-     color: #A0998E;
-   }
-
-
-   .help-text a {
-     color: #1A2740;
-     font-weight: 600;
-     text-decoration: none;
-   }
-
-
-   .help-text a:hover { text-decoration: underline; }
-
-
-   /* ── FEEDBACK ── */
-   .msg {
-     display: none;
-     font-size: 12px;
-     padding: 9px 12px;
-     border-radius: 6px;
-     margin-top: 0.75rem;
-     text-align: center;
-   }
-
-
-   .msg.erro  { display: block; background: rgba(192,80,80,0.1); color: #9B3A3A; border: 1px solid rgba(192,80,80,0.2); }
-   .msg.ok    { display: block; background: rgba(74,140,106,0.1); color: #2E6B4A; border: 1px solid rgba(74,140,106,0.2); }
-
-
-   /* ── RESPONSIVO ── */
-   @media (max-width: 640px) {
-     .lb-card { flex-direction: column; }
-     .left-panel { width: 100%; padding: 2rem 1.5rem 1.75rem; }
-     .left-title { font-size: 26px; }
-     .left-desc { display: none; }
-     .left-bottom { margin-top: 1.5rem; }
-     .right-panel { padding: 2rem 1.5rem; }
-   }
- </style>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Biblioteca Escolar — Cadastro</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;700&family=Inter:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+
+  <style>
+    /* ── RESET ── */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    body {
+      background: #F0EDE8;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ── CONTAINER ── */
+    .lb-card {
+      display: flex;
+      width: 100%;
+      min-height: 100vh;
+    }
+
+    /* ── PAINEL ESQUERDO ── */
+    .left-panel {
+      width: 44%;
+      background: #1A2740;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 3rem 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .left-pattern {
+      position: absolute;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 48px,
+          rgba(255,255,255,0.03) 48px,
+          rgba(255,255,255,0.03) 49px
+        ),
+        repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 48px,
+          rgba(255,255,255,0.03) 48px,
+          rgba(255,255,255,0.03) 49px
+        );
+    }
+
+    .left-top,
+    .left-bottom {
+      position: relative;
+      z-index: 1;
+    }
+
+    .left-title {
+      font-family: 'EB Garamond', serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: #F5F0E8;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+
+    .left-desc {
+      font-size: 13.5px;
+      color: rgba(200, 200, 200, 0.5);
+      line-height: 1.7;
+      max-width: 220px;
+    }
+
+    .left-quote {
+      border-left: 2px solid rgba(200, 175, 100, 0.35);
+      padding-left: 14px;
+      font-family: 'EB Garamond', serif;
+      font-size: 14px;
+      font-style: italic;
+      color: rgba(200, 200, 200, 0.38);
+      line-height: 1.7;
+    }
+
+    /* ── PAINEL DIREITO ── */
+    .right-panel {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .form-box {
+      width: 100%;
+      max-width: 340px;
+    }
+
+    /* ── HEADER ── */
+    .form-header {
+      margin-bottom: 1.75rem;
+    }
+
+    .form-header h2 {
+      font-family: 'EB Garamond', serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: #1A2740;
+      margin-bottom: 5px;
+    }
+
+    .form-header p {
+      font-size: 13px;
+      color: #8A8880;
+      letter-spacing: 0.03em;
+    }
+
+    /* ── PERFIS ── */
+    .role-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 1.75rem;
+    }
+
+    .role-opt {
+      border: 1px solid #D5D0C8;
+      border-radius: 6px;
+      padding: 13px 10px;
+      cursor: pointer;
+      background: #FAF8F5;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-align: left;
+      transition: 0.15s;
+      outline: none;
+    }
+
+    .role-opt:hover {
+      border-color: #1A2740;
+      background: #F0EDE8;
+    }
+
+    .role-opt.active {
+      border-color: #1A2740;
+      background: #1A2740;
+    }
+
+    .role-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      border: 1.5px solid #A0998E;
+      flex-shrink: 0;
+      transition: 0.15s;
+    }
+
+    .role-opt.active .role-dot {
+      background: #C8AF64;
+      border-color: #C8AF64;
+    }
+
+    .role-text strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #1A2740;
+    }
+
+    .role-opt.active .role-text strong {
+      color: #F5F0E8;
+    }
+
+    .role-text span {
+      display: block;
+      font-size: 11px;
+      color: #9A938A;
+    }
+
+    .role-opt.active .role-text span {
+      color: rgba(200,175,100,0.65);
+    }
+
+    /* ── CAMPOS ── */
+    .field {
+      margin-bottom: 1rem;
+    }
+
+    .field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #7A7670;
+      margin-bottom: 6px;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      border: 1px solid #D5D0C8;
+      border-radius: 6px;
+      padding: 11px 14px;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      color: #1A2740;
+      background: #FAF8F5;
+      outline: none;
+      transition: 0.15s;
+      appearance: none;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: #1A2740;
+      box-shadow: 0 0 0 3px rgba(26,39,64,0.08);
+      background: #FFFFFF;
+    }
+
+    .field input::placeholder {
+      color: #C0BAB2;
+    }
+
+    .select-wrap {
+      position: relative;
+    }
+
+    .select-wrap::after {
+      content: '';
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 0;
+      height: 0;
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 5px solid #A0998E;
+      pointer-events: none;
+    }
+
+    .field-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    /* ── SENHA ── */
+    .strength-bar {
+      display: flex;
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    .strength-seg {
+      flex: 1;
+      height: 3px;
+      border-radius: 2px;
+      background: #D5D0C8;
+    }
+
+    .strength-seg.fraca {
+      background: #C05050;
+    }
+
+    .strength-seg.media {
+      background: #C8AF64;
+    }
+
+    .strength-seg.forte {
+      background: #4A8C6A;
+    }
+
+    .strength-label {
+      font-size: 10.5px;
+      color: #9A938A;
+      margin-top: 4px;
+      min-height: 14px;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0.25rem 0 1rem;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #D5D0C8;
+    }
+
+    .divider span {
+      font-size: 11px;
+      color: #B0A89E;
+      white-space: nowrap;
+    }
+
+    /* ── BOTÃO ── */
+    .btn-submit {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 6px;
+      background: #1A2740;
+      color: #F5F0E8;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      margin-top: 0.5rem;
+      transition: 0.15s;
+    }
+
+    .btn-submit:hover {
+      background: #243352;
+    }
+
+    .btn-submit:active {
+      transform: scale(0.99);
+    }
+
+    .btn-submit:disabled {
+      opacity: 0.7;
+      cursor: default;
+    }
+
+    /* ── FEEDBACK ── */
+    .msg {
+      display: none;
+      font-size: 12px;
+      padding: 9px 12px;
+      border-radius: 6px;
+      margin-top: 0.75rem;
+      text-align: center;
+    }
+
+    .msg.erro {
+      display: block;
+      background: rgba(192,80,80,0.1);
+      color: #9B3A3A;
+      border: 1px solid rgba(192,80,80,0.2);
+    }
+
+    .msg.ok {
+      display: block;
+      background: rgba(74,140,106,0.1);
+      color: #2E6B4A;
+      border: 1px solid rgba(74,140,106,0.2);
+    }
+
+    /* ── FOOTER ── */
+    .help-text {
+      text-align: center;
+      margin-top: 1.25rem;
+      font-size: 12px;
+      color: #A0998E;
+    }
+
+    .help-text a {
+      color: #1A2740;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .help-text a:hover {
+      text-decoration: underline;
+    }
+
+    /* ── RESPONSIVO ── */
+    @media (max-width: 640px) {
+      .lb-card {
+        flex-direction: column;
+      }
+
+      .left-panel {
+        width: 100%;
+        padding: 2rem 1.5rem 1.75rem;
+      }
+
+      .left-title {
+        font-size: 26px;
+      }
+
+      .left-desc {
+        display: none;
+      }
+
+      .left-bottom {
+        margin-top: 1.5rem;
+      }
+
+      .right-panel {
+        padding: 2rem 1.5rem;
+      }
+
+      .field-cols {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
-
 
 <body>
 
+  <div class="lb-card">
+
+    <!-- Painel esquerdo -->
+    <div class="left-panel">
+
+      <div class="left-pattern"></div>
+
+      <div class="left-top">
+        <h1 class="left-title">
+          Biblioteca<br />
+          Escolar
+        </h1>
+
+        <p class="left-desc">
+          Sistema integrado de gestão de acervo e empréstimos.
+        </p>
+      </div>
+
+      <div class="left-bottom">
+        <p class="left-quote">
+          "Um livro é um sonho que você segura nas mãos."
+        </p>
+      </div>
+
+    </div>
+
+    <!-- Painel direito -->
+    <div class="right-panel">
+
+      <div class="form-box">
+
+        <div class="form-header">
+          <h2>Criar Conta</h2>
+          <p>Preencha os dados para registrar seu acesso</p>
+        </div>
+
+        <!-- Perfis -->
+        <div class="role-group">
+
+          <button
+            type="button"
+            class="role-opt"
+            id="opt-professor"
+            onclick="selectRole('professor')"
+          >
+            <div class="role-dot"></div>
+
+            <div class="role-text">
+              <strong>Professor</strong>
+              <span>Acesso completo</span>
+            </div>
+          </button>
+
+          <button
+            type="button"
+            class="role-opt"
+            id="opt-aluno"
+            onclick="selectRole('aluno')"
+          >
+            <div class="role-dot"></div>
+
+            <div class="role-text">
+              <strong>Aluno</strong>
+              <span>Empréstimos</span>
+            </div>
+          </button>
+
+        </div>
+
+        <!-- Nome -->
+        <div class="field">
+          <label for="inp-nome">Nome completo</label>
+
+          <input
+            type="text"
+            id="inp-nome"
+            placeholder="Seu nome"
+            autocomplete="off"
+          />
+        </div>
+
+        <!-- Identificação -->
+        <div class="field-cols">
+
+          <div class="field">
+            <label id="lbl-id" for="inp-id">Matrícula</label>
+
+            <input
+              type="text"
+              id="inp-id"
+              placeholder="—"
+              autocomplete="off"
+            />
+          </div>
+
+          <div class="field" id="wrap-turma">
+
+            <label id="lbl-extra" for="inp-turma">Turma</label>
+
+            <div class="select-wrap">
+
+              <select id="inp-turma">
+                <option value="">Selecione</option>
+                <option>1º A</option>
+                <option>1º B</option>
+                <option>2º A</option>
+                <option>2º B</option>
+                <option>3º A</option>
+                <option>3º B</option>
+              </select>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Divider -->
+        <div class="divider">
+          <span>Credenciais de acesso</span>
+        </div>
+
+        <!-- Email -->
+        <div class="field">
+
+          <label for="inp-email">E-mail institucional</label>
+
+          <input
+            type="email"
+            id="inp-email"
+            placeholder="nome@escola.edu.br"
+            autocomplete="off"
+          />
+        </div>
+
+        <!-- Senha -->
+        <div class="field">
 
- <div class="lb-card">
+          <label for="inp-senha">Senha</label>
 
+          <input
+            type="password"
+            id="inp-senha"
+            placeholder="••••••••"
+            oninput="avaliarSenha(this.value)"
+          />
 
-   <!-- ── Painel esquerdo ── -->
-   <div class="left-panel">
-     <div class="left-pattern"></div>
+          <div class="strength-bar">
+            <div class="strength-seg" id="seg1"></div>
+            <div class="strength-seg" id="seg2"></div>
+            <div class="strength-seg" id="seg3"></div>
+            <div class="strength-seg" id="seg4"></div>
+          </div>
 
+          <div class="strength-label" id="lbl-forca"></div>
 
-     <div class="left-top">
-       <h1 class="left-title">
-         Biblioteca<br />
-         Escolar
-       </h1>
-       <p class="left-desc">
-         Sistema integrado de gestão de acervo e empréstimos.
-       </p>
-     </div>
+        </div>
 
+        <!-- Confirmar senha -->
+        <div class="field">
 
-     <div class="left-bottom">
-       <p class="left-quote">
-         "Um livro é um sonho que você segura nas mãos."
-       </p>
-     </div>
-   </div>
+          <label for="inp-confirma">Confirmar senha</label>
 
+          <input
+            type="password"
+            id="inp-confirma"
+            placeholder="••••••••"
+          />
+        </div>
 
-   <!-- ── Painel direito ── -->
-   <div class="right-panel">
+        <!-- Botão -->
+        <button
+          type="button"
+          class="btn-submit"
+          id="btn-cadastrar"
+          onclick="handleCadastro()"
+        >
+          Criar conta
+        </button>
 
+        <!-- Feedback -->
+        <div id="msg-feedback" class="msg"></div>
 
-     <div class="form-box">
+        <!-- Footer -->
+        <div class="help-text">
+          Já tem acesso?
+          <a href="login.html">Entrar no sistema</a>
+        </div>
 
+      </div>
+    </div>
+  </div>
 
-       <div class="form-header">
-         <h2>Criar Conta</h2>
-         <p>Preencha os dados para registrar seu acesso</p>
-       </div>
+  <script>
+    let roleAtual = null;
 
+    function selectRole(role) {
+      roleAtual = role;
 
-       <!-- Seleção de perfil -->
-       <div class="role-group">
-         <button type="button" class="role-opt" id="opt-professor" onclick="selectRole('professor')">
-           <div class="role-dot"></div>
-           <div class="role-text">
-             <strong>Professor</strong>
-             <span>Acesso completo</span>
-           </div>
-         </button>
+      document
+        .querySelectorAll('.role-opt')
+        .forEach(el => el.classList.remove('active'));
 
+      document
+        .getElementById('opt-' + role)
+        .classList.add('active');
 
-         <button type="button" class="role-opt" id="opt-aluno" onclick="selectRole('aluno')">
-           <div class="role-dot"></div>
-           <div class="role-text">
-             <strong>Aluno</strong>
-             <span>Empréstimos</span>
-           </div>
-         </button>
-       </div>
+      const lblId = document.getElementById('lbl-id');
+      const lblExtra = document.getElementById('lbl-extra');
+      const wrapTurma = document.getElementById('wrap-turma');
+      const inpTurma = document.getElementById('inp-turma');
 
+      if (role === 'professor') {
 
-       <!-- Nome completo -->
-       <div class="field">
-         <label>Nome completo</label>
-         <input type="text" id="inp-nome" placeholder="Seu nome" autocomplete="off" />
-       </div>
+        lblId.textContent = 'Registro funcional';
+        lblExtra.textContent = 'Disciplina';
 
+        if (inpTurma.tagName === 'SELECT') {
+          swapTurmaParaInput('Português, Matemática...');
+        }
 
-       <!-- Identificação dinâmica -->
-       <div class="field-cols">
-         <div class="field">
-           <label id="lbl-id">Matrícula</label>
-           <input type="text" id="inp-id" placeholder="—" autocomplete="off" />
-         </div>
+        wrapTurma.style.display = '';
 
+      } else {
 
-         <div class="field" id="wrap-turma">
-           <label id="lbl-extra">Turma</label>
-           <div class="select-wrap">
-             <select id="inp-turma">
-               <option value="">Selecione</option>
-               <option>1º A</option><option>1º B</option>
-               <option>2º A</option><option>2º B</option>
-               <option>3º A</option><option>3º B</option>
-             </select>
-           </div>
-         </div>
-       </div>
+        lblId.textContent = 'Matrícula';
+        lblExtra.textContent = 'Turma';
 
+        if (document.getElementById('inp-turma').tagName === 'INPUT') {
+          swapTurmaParaSelect();
+        }
 
-       <!-- Divider -->
-       <div class="divider"><span>Credenciais de acesso</span></div>
+        wrapTurma.style.display = '';
+      }
+    }
 
+    function swapTurmaParaInput(ph) {
 
-       <!-- E-mail -->
-       <div class="field">
-         <label>E-mail institucional</label>
-         <input type="email" id="inp-email" placeholder="nome@escola.edu.br" autocomplete="off" />
-       </div>
+      const wrap = document.querySelector('#wrap-turma .select-wrap');
 
+      const input = document.createElement('input');
 
-       <!-- Senha -->
-       <div class="field">
-         <label>Senha</label>
-         <input type="password" id="inp-senha" placeholder="••••••••" oninput="avaliarSenha(this.value)" />
-         <div class="strength-bar">
-           <div class="strength-seg" id="seg1"></div>
-           <div class="strength-seg" id="seg2"></div>
-           <div class="strength-seg" id="seg3"></div>
-           <div class="strength-seg" id="seg4"></div>
-         </div>
-         <div class="strength-label" id="lbl-forca"></div>
-       </div>
+      input.type = 'text';
+      input.id = 'inp-turma';
+      input.placeholder = ph;
 
+      wrap.replaceChild(
+        input,
+        document.getElementById('inp-turma')
+      );
+    }
 
-       <!-- Confirmar senha -->
-       <div class="field">
-         <label>Confirmar senha</label>
-         <input type="password" id="inp-confirma" placeholder="••••••••" />
-       </div>
+    function swapTurmaParaSelect() {
 
+      const wrap = document.querySelector('#wrap-turma .select-wrap');
 
-       <!-- Botão -->
-       <button type="button" class="btn-submit" id="btn-cadastrar" onclick="handleCadastro()">
-         Criar conta
-       </button>
+      const sel = document.createElement('select');
 
+      sel.id = 'inp-turma';
 
-       <div id="msg-feedback" class="msg"></div>
+      [
+        '',
+        '1º A',
+        '1º B',
+        '2º A',
+        '2º B',
+        '3º A',
+        '3º B'
+      ].forEach(v => {
 
+        const o = document.createElement('option');
 
-       <div class="help-text">
-         Já tem acesso?
-         <a href="login.html">Entrar no sistema</a>
-       </div>
+        o.value = v;
+        o.textContent = v || 'Selecione';
 
+        sel.appendChild(o);
+      });
 
-     </div>
-   </div>
+      const old = document.getElementById('inp-turma');
 
+      if (old) {
+        wrap.replaceChild(sel, old);
+      } else {
+        wrap.appendChild(sel);
+      }
+    }
 
- </div>
+    function avaliarSenha(val) {
 
+      const segs = [1, 2, 3, 4].map(i =>
+        document.getElementById('seg' + i)
+      );
 
- <script>
-   /* ─── Estado ─── */
-   let roleAtual = null;
+      const lbl = document.getElementById('lbl-forca');
 
+      const pontos = calcularForca(val);
 
-   function selectRole(role) {
-     roleAtual = role;
+      segs.forEach(s => {
+        s.className = 'strength-seg';
+      });
 
+      if (!val) {
+        lbl.textContent = '';
+        return;
+      }
 
-     document.querySelectorAll('.role-opt').forEach(el => el.classList.remove('active'));
-     document.getElementById('opt-' + role).classList.add('active');
+      if (pontos <= 1) {
 
+        segs[0].classList.add('fraca');
 
-     /* Adaptações por perfil */
-     const lblId    = document.getElementById('lbl-id');
-     const lblExtra = document.getElementById('lbl-extra');
-     const wrapTurma = document.getElementById('wrap-turma');
-     const inpTurma  = document.getElementById('inp-turma');
+        lbl.style.color = '#C05050';
+        lbl.textContent = 'Senha fraca';
 
+      } else if (pontos === 2) {
 
-     if (role === 'professor') {
-       lblId.textContent    = 'Registro funcional';
-       lblExtra.textContent = 'Disciplina';
+        segs[0].classList.add('media');
+        segs[1].classList.add('media');
 
+        lbl.style.color = '#B09040';
+        lbl.textContent = 'Senha razoável';
 
-       /* Troca select por input de texto */
-       if (inpTurma.tagName === 'SELECT') swapTurmaParaInput('Português, Matemática…');
-       wrapTurma.style.display = '';
+      } else if (pontos === 3) {
 
+        [0, 1, 2].forEach(i => {
+          segs[i].classList.add('forte');
+        });
 
-     } else {
-       lblId.textContent    = 'Matrícula';
-       lblExtra.textContent = 'Turma';
+        lbl.style.color = '#4A8C6A';
+        lbl.textContent = 'Senha boa';
 
+      } else {
 
-       /* Volta para select */
-       if (document.getElementById('inp-turma').tagName === 'INPUT') swapTurmaParaSelect();
-       wrapTurma.style.display = '';
-     }
-   }
+        segs.forEach(s => {
+          s.classList.add('forte');
+        });
 
+        lbl.style.color = '#2E6B4A';
+        lbl.textContent = 'Senha forte';
+      }
+    }
 
-   function swapTurmaParaInput(ph) {
-     const wrap = document.querySelector('#wrap-turma .select-wrap');
-     const input = document.createElement('input');
-     input.type = 'text'; input.id = 'inp-turma'; input.placeholder = ph;
-     wrap.replaceChild(input, document.getElementById('inp-turma'));
-   }
+    function calcularForca(p) {
 
+      let pts = 0;
 
-   function swapTurmaParaSelect() {
-     const wrap = document.querySelector('#wrap-turma .select-wrap');
-     const sel = document.createElement('select');
-     sel.id = 'inp-turma';
-     ['', '1º A','1º B','2º A','2º B','3º A','3º B'].forEach(v => {
-       const o = document.createElement('option'); o.value = v; o.textContent = v || 'Selecione'; sel.appendChild(o);
-     });
-     const old = document.getElementById('inp-turma');
-     if (old) wrap.replaceChild(sel, old);
-     else wrap.appendChild(sel);
-   }
+      if (p.length >= 8) pts++;
+      if (/[A-Z]/.test(p)) pts++;
+      if (/[0-9]/.test(p)) pts++;
+      if (/[^A-Za-z0-9]/.test(p)) pts++;
 
+      return pts;
+    }
 
-   /* ─── Força da senha ─── */
-   function avaliarSenha(val) {
-     const segs   = [1,2,3,4].map(i => document.getElementById('seg' + i));
-     const lbl    = document.getElementById('lbl-forca');
-     const pontos = calcularForca(val);
+    function handleCadastro() {
 
+      const nome = document
+        .getElementById('inp-nome')
+        .value
+        .trim();
 
-     segs.forEach(s => s.className = 'strength-seg');
+      const id = document
+        .getElementById('inp-id')
+        .value
+        .trim();
 
+      const email = document
+        .getElementById('inp-email')
+        .value
+        .trim();
 
-     if (!val) { lbl.textContent = ''; return; }
+      const senha = document
+        .getElementById('inp-senha')
+        .value;
 
+      const confirma = document
+        .getElementById('inp-confirma')
+        .value;
 
-     if (pontos <= 1) {
-       segs[0].classList.add('fraca');
-       lbl.style.color = '#C05050'; lbl.textContent = 'Senha fraca';
-     } else if (pontos === 2) {
-       segs[0].classList.add('media'); segs[1].classList.add('media');
-       lbl.style.color = '#B09040'; lbl.textContent = 'Senha razoável';
-     } else if (pontos === 3) {
-       [0,1,2].forEach(i => segs[i].classList.add('forte'));
-       lbl.style.color = '#4A8C6A'; lbl.textContent = 'Senha boa';
-     } else {
-       segs.forEach(s => s.classList.add('forte'));
-       lbl.style.color = '#2E6B4A'; lbl.textContent = 'Senha forte';
-     }
-   }
+      const fb = document.getElementById('msg-feedback');
 
+      fb.className = 'msg';
 
-   function calcularForca(p) {
-     let pts = 0;
-     if (p.length >= 8)  pts++;
-     if (/[A-Z]/.test(p)) pts++;
-     if (/[0-9]/.test(p)) pts++;
-     if (/[^A-Za-z0-9]/.test(p)) pts++;
-     return pts;
-   }
+      if (!roleAtual) {
+        return mostrarErro('Selecione um perfil.');
+      }
 
+      if (!nome) {
+        return mostrarErro('Informe o nome completo.');
+      }
 
-   /* ─── Cadastro ─── */
-   function handleCadastro() {
-     const nome     = document.getElementById('inp-nome').value.trim();
-     const id       = document.getElementById('inp-id').value.trim();
-     const email    = document.getElementById('inp-email').value.trim();
-     const senha    = document.getElementById('inp-senha').value;
-     const confirma = document.getElementById('inp-confirma').value;
-     const fb       = document.getElementById('msg-feedback');
+      if (!id) {
+        return mostrarErro('Informe a identificação.');
+      }
 
+      if (!email || !email.includes('@')) {
+        return mostrarErro('E-mail inválido.');
+      }
 
-     fb.className = 'msg';
+      if (senha.length < 6) {
+        return mostrarErro('A senha deve ter pelo menos 6 caracteres.');
+      }
 
+      if (senha !== confirma) {
+        return mostrarErro('As senhas não coincidem.');
+      }
 
-     if (!roleAtual)       return mostrarErro('Selecione um perfil.');
-     if (!nome)            return mostrarErro('Informe o nome completo.');
-     if (!id)              return mostrarErro('Informe a identificação.');
-     if (!email || !email.includes('@')) return mostrarErro('E-mail inválido.');
-     if (senha.length < 6) return mostrarErro('A senha deve ter pelo menos 6 caracteres.');
-     if (senha !== confirma) return mostrarErro('As senhas não coincidem.');
+      const btn = document.getElementById('btn-cadastrar');
 
+      btn.disabled = true;
+      btn.textContent = 'Cadastrando...';
 
-     const btn = document.getElementById('btn-cadastrar');
-     btn.disabled = true;
-     btn.textContent = 'Cadastrando…';
+      setTimeout(() => {
 
+        btn.disabled = false;
+        btn.textContent = 'Criar conta';
 
-     /* Aqui você integra com Firebase / backend */
-     setTimeout(() => {
-       btn.disabled = false;
-       btn.textContent = 'Criar conta';
-       mostrarOk('Conta criada com sucesso! Redirecionando…');
+        mostrarOk('Conta criada com sucesso!');
 
+        // window.location.href = 'login.html';
 
-       /* setTimeout(() => window.location.href = 'login.html', 1800); */
-     }, 1400);
-   }
+      }, 1400);
+    }
 
+    function mostrarErro(txt) {
 
-   function mostrarErro(txt) {
-     const fb = document.getElementById('msg-feedback');
-     fb.className = 'msg erro'; fb.textContent = txt;
-   }
+      const fb = document.getElementById('msg-feedback');
 
+      fb.className = 'msg erro';
+      fb.textContent = txt;
+    }
 
-   function mostrarOk(txt) {
-     const fb = document.getElementById('msg-feedback');
-     fb.className = 'msg ok'; fb.textContent = txt;
-   }
- </script>
+    function mostrarOk(txt) {
 
+      const fb = document.getElementById('msg-feedback');
+
+      fb.className = 'msg ok';
+      fb.textContent = txt;
+    }
+  </script>
 
 </body>
+
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-script:
-
-let role = null;
-
-
-function selectRole(r) {
- role = r;
- document
-   .getElementById('opt-professor')
-   .classList.toggle('active', r === 'professor');
-
-
- document
-   .getElementById('opt-aluno')
-   .classList.toggle('active', r === 'aluno');
-
-
- const lbl = document.getElementById('lbl-id');
- const inp = document.getElementById('inp-id');
-
-
- if (r === 'professor') {
-   lbl.textContent = 'E-mail Institucional';
-   inp.placeholder = 'professor@escola.edu.br';
-   inp.type = 'email';
- } else {
-   lbl.textContent = 'Número de Matrícula';
-   inp.placeholder = 'Ex: 2024001';
-   inp.type = 'text';
- }
-}
-
-
-function handleLogin() {
-
-
- if (!role) {
-   alert('Selecione o perfil antes de continuar.');
-   return;
- }
-
-
- const id = document.getElementById('inp-id').value.trim();
- const senha = document.getElementById('inp-senha').value.trim();
-
-
- if (!id || !senha) {
-   alert('Preencha todos os campos.');
-   return;
- }
-
-
- const btn = document.getElementById('btn-entrar');
-
-
- btn.textContent = 'Verificando...';
- btn.disabled = true;
-
-
- setTimeout(() => {
-
-
-   // LOGIN PROFESSOR
-   if (role === 'professor' && id === 'adm123' && senha === '123') {
-
-
-     window.location.href = "telaProfessor.html";
-
-
-   }
-
-
-   // LOGIN ALUNO
-   else if (role === 'aluno' && id === 'aluno123' && senha === '123') {
-
-
-     window.location.href = "indexTelaAluno.html";
-
-
-   }
-
-
-   // LOGIN INVÁLIDO
-   else {
-
-
-     alert('Usuário ou senha inválidos.');
-
-
-     btn.textContent = 'Entrar';
-     btn.disabled = false;
-
-
-   }
-
-
- }, 1300);
-}

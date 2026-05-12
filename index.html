@@ -1,17 +1,5 @@
 <!DOCTYPE html>
-
-<!-- 
-==========================================
-Documento HTML principal do sistema
-Define que o documento utiliza HTML5
-==========================================
--->
-
 <html lang="pt-BR">
-<!-- 
-Define o idioma principal da página como português do Brasil
-Ajuda em acessibilidade e mecanismos de busca
--->
 
 <head>
 
@@ -19,152 +7,98 @@ Ajuda em acessibilidade e mecanismos de busca
     <!-- Configurações básicas -->
     <!-- ========================= -->
 
-    <!-- Define a codificação UTF-8 -->
-    <!-- Permite acentos e caracteres especiais -->
     <meta charset="UTF-8">
 
-    <!-- Compatibilidade com navegadores antigos da Microsoft -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-    <!-- Responsividade para dispositivos móveis -->
-    <!-- Faz o site adaptar corretamente ao tamanho da tela -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Descrição do site -->
-    <!-- Utilizada por mecanismos de busca -->
-    <meta name="description" content="Esse é meu primeiro site!">
-
-    <!-- Palavras-chave relacionadas ao site -->
-    <!-- Hoje em dia tem pouco impacto no SEO -->
-    <meta name="keywords" content="programaçao, css, html, Javascript">
-
-    <!-- Nome do autor do projeto -->
-    <meta name="author" content="Lucas Sant`Ana Dias">
-
-    
-    <!-- ===================================== -->
-    <!-- Link para página de login -->
-    <!-- ===================================== -->
-    
-    <!-- 
-    Este link está vazio e não possui conteúdo clicável.
-    Atualmente ele não faz nada visualmente.
-    
-    Pode ser removido sem afetar o funcionamento.
-    -->
-    <a href="login.html"></a>
-
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <!-- ========================= -->
-    <!-- Arquivo CSS principal -->
+    <!-- SEO -->
     <!-- ========================= -->
 
-    <!-- Importa o arquivo de estilos do site -->
-    <link rel="stylesheet" href="style/style.css">
+    <meta
+        name="description"
+        content="Sistema Biblioteca Escolar"
+    >
 
+    <meta
+        name="keywords"
+        content="programação, css, html, javascript, biblioteca"
+    >
+
+    <meta
+        name="author"
+        content="Lucas Sant'Ana Dias"
+    >
 
     <!-- ========================= -->
-    <!-- Título da aba do navegador -->
+    <!-- CSS -->
+    <!-- ========================= -->
+
+    <link
+        rel="stylesheet"
+        href="style/style.css"
+    >
+
+    <!-- ========================= -->
+    <!-- Fonts -->
+    <!-- ========================= -->
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- ========================= -->
+    <!-- Título -->
     <!-- ========================= -->
 
     <title>BibliotecaEscolar — Sistema</title>
 
-
     <!-- ========================= -->
-    <!-- Importação de fontes -->
+    <!-- Redirecionamento -->
     <!-- ========================= -->
 
-    <!-- 
-    Importa fontes do Google Fonts:
-    
-    - Playfair Display → títulos elegantes
-    - DM Sans → textos modernos e limpos
-    -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <script>
+        window.location.replace("login.html");
+    </script>
 
 </head>
 
-
-<body> 
-<<<<<<< HEAD
-
-    <!-- ===================================== -->
-    <!-- Redirecionamento automático -->
-    <!-- ===================================== -->
+<body>
 
     <!-- 
-    Assim que a página carregar,
-    o usuário será enviado automaticamente
-    para login.html
+    Caso o JavaScript esteja desativado,
+    exibe link manual para acesso.
     -->
-    <script>
-        window.location.href = "login.html";
-    </script>
 
+    <noscript>
+        <p>
+            JavaScript está desativado.
+            <a href="login.html">
+                Clique aqui para acessar o sistema.
+            </a>
+        </p>
+    </noscript>
 
     <!-- ========================= -->
-    <!-- Cabeçalho da página -->
-    <!-- ========================= -->
-
-    <header>
-
-        <!-- 
-        Atualmente o header está vazio.
-        Pode futuramente conter:
-        
-        - Logo
-        - Menu
-        - Nome do usuário
-        - Navegação
-        -->
-
-    </header>
-
-
-    <!-- ===================================== -->
     <!-- Firebase -->
-    <!-- ===================================== -->
+    <!-- ========================= -->
 
-    <!-- 
-    Biblioteca principal do Firebase.
-    Responsável por inicializar os serviços.
-    -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 
-
-    <!-- 
-    Biblioteca de autenticação do Firebase.
-    Permite:
-=======
-  <script>window.location.href = "login.html";</script>
- 
-<header>
->>>>>>> f1ccc3c340b7ae50594fe116c40954931e6f0766
-    
-    - login
-    - logout
-    - cadastro
-    - controle de sessão
-    -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 
+    <!-- ========================= -->
+    <!-- Script principal -->
+    <!-- ========================= -->
 
-    <!-- ===================================== -->
-    <!-- Script principal do sistema -->
-    <!-- ===================================== -->
-
-    <!-- 
-    Arquivo JavaScript do projeto.
-    
-    Normalmente usado para:
-    
-    - inicializar Firebase
-    - autenticação
-    - lógica do sistema
-    - redirecionamentos
-    - eventos
-    -->
     <script src="script/app.js"></script>
 
 </body>
+
 </html>
