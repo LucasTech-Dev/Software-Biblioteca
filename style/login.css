@@ -390,6 +390,24 @@ body {
   text-decoration: underline;
 }
 
+
+
+.register-text{
+  margin-top: 18px;
+  text-align: center;
+  font-size: 14px;
+  color: #666;
+}
+
+.register-text a{
+  color: #1A2740;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.register-text a:hover{
+  text-decoration: underline;
+}
 /* ───────────────────────── */
 /* RESPONSIVO */
 /* ───────────────────────── */

@@ -12,8 +12,8 @@ src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"
     messagingSenderId: "691451184435",
     appId: "1:691451184435:web:c5b7492af74bcf6a116a46"
   };
-
-  // Inicializa apenas uma vez
+ 
+  // Inicializa apenas uma vez 
   firebase.initializeApp(firebaseConfig);
 
   console.log("antes");

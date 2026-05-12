@@ -1,32 +1,164 @@
 <!DOCTYPE html>
+
+<!-- 
+==========================================
+Documento HTML principal do sistema
+Define que o documento utiliza HTML5
+==========================================
+-->
+
 <html lang="pt-BR">
+<!-- 
+Define o idioma principal da página como português do Brasil
+Ajuda em acessibilidade e mecanismos de busca
+-->
+
 <head>
+
+    <!-- ========================= -->
+    <!-- Configurações básicas -->
+    <!-- ========================= -->
+
+    <!-- Define a codificação UTF-8 -->
+    <!-- Permite acentos e caracteres especiais -->
     <meta charset="UTF-8">
+
+    <!-- Compatibilidade com navegadores antigos da Microsoft -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <!-- Responsividade para dispositivos móveis -->
+    <!-- Faz o site adaptar corretamente ao tamanho da tela -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Descrição do site -->
+    <!-- Utilizada por mecanismos de busca -->
     <meta name="description" content="Esse é meu primeiro site!">
+
+    <!-- Palavras-chave relacionadas ao site -->
+    <!-- Hoje em dia tem pouco impacto no SEO -->
     <meta name="keywords" content="programaçao, css, html, Javascript">
+
+    <!-- Nome do autor do projeto -->
     <meta name="author" content="Lucas Sant`Ana Dias">
 
     
-<a href="login.html"></a>
-<link rel="stylesheet" href="style/style.css">
-<title>BibliotecaEscolar — Sistema</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-  
+    <!-- ===================================== -->
+    <!-- Link para página de login -->
+    <!-- ===================================== -->
+    
+    <!-- 
+    Este link está vazio e não possui conteúdo clicável.
+    Atualmente ele não faz nada visualmente.
+    
+    Pode ser removido sem afetar o funcionamento.
+    -->
+    <a href="login.html"></a>
+
+
+    <!-- ========================= -->
+    <!-- Arquivo CSS principal -->
+    <!-- ========================= -->
+
+    <!-- Importa o arquivo de estilos do site -->
+    <link rel="stylesheet" href="style/style.css">
+
+
+    <!-- ========================= -->
+    <!-- Título da aba do navegador -->
+    <!-- ========================= -->
+
+    <title>BibliotecaEscolar — Sistema</title>
+
+
+    <!-- ========================= -->
+    <!-- Importação de fontes -->
+    <!-- ========================= -->
+
+    <!-- 
+    Importa fontes do Google Fonts:
+    
+    - Playfair Display → títulos elegantes
+    - DM Sans → textos modernos e limpos
+    -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
 </head>
+
+
 <body> 
-  <script>window.location.href = "login.html";</script>
-<header>
+
+    <!-- ===================================== -->
+    <!-- Redirecionamento automático -->
+    <!-- ===================================== -->
+
+    <!-- 
+    Assim que a página carregar,
+    o usuário será enviado automaticamente
+    para login.html
+    -->
+    <script>
+        window.location.href = "login.html";
+    </script>
+
+
+    <!-- ========================= -->
+    <!-- Cabeçalho da página -->
+    <!-- ========================= -->
+
+    <header>
+
+        <!-- 
+        Atualmente o header está vazio.
+        Pode futuramente conter:
+        
+        - Logo
+        - Menu
+        - Nome do usuário
+        - Navegação
+        -->
+
+    </header>
+
+
+    <!-- ===================================== -->
+    <!-- Firebase -->
+    <!-- ===================================== -->
+
+    <!-- 
+    Biblioteca principal do Firebase.
+    Responsável por inicializar os serviços.
+    -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+
+
+    <!-- 
+    Biblioteca de autenticação do Firebase.
+    Permite:
     
-  
-      <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    - login
+    - logout
+    - cadastro
+    - controle de sessão
+    -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 
-    <!-- 2º: Só depois, o seu script -->
-   <script src="script/app.js"></script>
+
+    <!-- ===================================== -->
+    <!-- Script principal do sistema -->
+    <!-- ===================================== -->
+
+    <!-- 
+    Arquivo JavaScript do projeto.
+    
+    Normalmente usado para:
+    
+    - inicializar Firebase
+    - autenticação
+    - lógica do sistema
+    - redirecionamentos
+    - eventos
+    -->
+    <script src="script/app.js"></script>
 
 </body>
 </html>
-
