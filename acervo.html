@@ -2,16 +2,1707 @@
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acervo</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta name="description" content="Sistema Biblioteca Escolar — Acervo">
+  <meta name="keywords" content="programação, css, html, javascript, biblioteca, acervo">
+  <meta name="author" content="Lucas Sant'Ana Dias">
+
+  <title>BibliotecaEscolar — Acervo</title>
+
+  <!-- Google Fonts -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet"
+  >
+
+  <style>
+
+    /* ========================= */
+    /* RESET */
+    /* ========================= */
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* ========================= */
+    /* VARIÁVEIS */
+    /* ========================= */
+
+    :root {
+
+      /* Base */
+      --bg: #F4F7FB;
+      --surface: #FFFFFF;
+
+      /* Texto */
+      --ink: #0A0F1C;
+      --ink-soft: #334155;
+      --ink-muted: #94A3B8;
+
+      /* Azul principal */
+      --accent: #1E3A8A;
+      --accent-light: #3B5BDB;
+
+      /* Estrutura */
+      --line: #E2E8F0;
+      --warm: #EEF2FF;
+
+      /* Destaque */
+      --gold: #C7A94F;
+
+      /* UI */
+      --radius: 12px;
+
+      --font-display: 'Playfair Display', Georgia, serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    /* ========================= */
+    /* BODY */
+    /* ========================= */
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+
+      min-height: 100vh;
+      padding: 0;
+    }
+
+    /* ========================= */
+    /* HEADER */
+    /* ========================= */
+
+    header {
+      background: var(--accent);
+      color: #fff;
+
+      padding: 28px 48px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      border-bottom: 3px solid var(--gold);
+    }
+
+    .logo {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+
+    .logo-mark {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+
+      letter-spacing: -0.5px;
+      color: #fff;
+    }
+
+    .logo-tag {
+      font-size: 11px;
+      font-weight: 500;
+
+      letter-spacing: 2px;
+      text-transform: uppercase;
+
+      color: rgba(255, 255, 255, 0.55);
+    }
+
+    .header-meta {
+      font-size: 13px;
+      font-weight: 300;
+
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* ========================= */
+    /* BREADCRUMB */
+    /* ========================= */
+
+    .breadcrumb {
+      background: var(--surface);
+      border-bottom: 1px solid var(--line);
+
+      padding: 12px 48px;
+
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .breadcrumb a {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--accent-light);
+      text-decoration: none;
+    }
+
+    .breadcrumb a:hover {
+      text-decoration: underline;
+    }
+
+    .breadcrumb-sep {
+      font-size: 12px;
+      color: var(--ink-muted);
+    }
+
+    .breadcrumb-current {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-soft);
+    }
+
+    /* ========================= */
+    /* HERO */
+    /* ========================= */
+
+    .hero {
+      background: var(--surface);
+
+      border-bottom: 1px solid var(--line);
+
+      padding: 36px 48px 32px;
+
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+
+      gap: 24px;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: 38px;
+      font-weight: 700;
+
+      color: var(--ink);
+
+      line-height: 1.15;
+    }
+
+    .hero h1 span {
+      color: var(--accent);
+    }
+
+    .hero-desc {
+      max-width: 280px;
+
+      font-size: 13px;
+      font-weight: 300;
+
+      color: var(--ink-soft);
+
+      line-height: 1.7;
+    }
+
+    /* ========================= */
+    /* STATS */
+    /* ========================= */
+
+    .stats {
+      background: var(--accent);
+
+      display: flex;
+
+      overflow: hidden;
+    }
+
+    .stat {
+      flex: 1;
+
+      padding: 16px 28px;
+
+      text-align: center;
+
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .stat:last-child {
+      border-right: none;
+    }
+
+    .stat-num {
+      display: block;
+
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 700;
+
+      color: #fff;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      font-weight: 400;
+
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    /* ========================= */
+    /* MAIN */
+    /* ========================= */
+
+    main {
+      max-width: 1200px;
+
+      margin: 0 auto;
+      padding: 36px 48px;
+    }
+
+    /* ========================= */
+    /* TOOLBAR */
+    /* ========================= */
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 16px;
+
+      margin-bottom: 24px;
+
+      flex-wrap: wrap;
+    }
+
+    .toolbar-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      flex: 1;
+      min-width: 260px;
+    }
+
+    .search-wrapper {
+      position: relative;
+      flex: 1;
+      max-width: 380px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+
+      font-size: 14px;
+      color: var(--ink-muted);
+
+      pointer-events: none;
+    }
+
+    .search-input {
+      width: 100%;
+
+      padding: 10px 14px 10px 38px;
+
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--ink);
+
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-input::placeholder {
+      color: var(--ink-muted);
+    }
+
+    .search-input:focus {
+      border-color: var(--accent-light);
+    }
+
+    .filter-select {
+      padding: 10px 14px;
+
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--ink-soft);
+
+      outline: none;
+      cursor: pointer;
+
+      transition: border-color 0.2s;
+    }
+
+    .filter-select:focus {
+      border-color: var(--accent-light);
+    }
+
+    .toolbar-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .view-toggle {
+      display: flex;
+      align-items: center;
+
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+
+      overflow: hidden;
+    }
+
+    .view-btn {
+      padding: 9px 12px;
+
+      background: none;
+      border: none;
+
+      cursor: pointer;
+
+      font-size: 14px;
+      color: var(--ink-muted);
+
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .view-btn.active {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary {
+      padding: 10px 18px;
+
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+
+      cursor: pointer;
+
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      color: #fff;
+
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      transition: background 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-light);
+    }
+
+    /* ========================= */
+    /* FILTROS RÁPIDOS */
+    /* ========================= */
+
+    .quick-filters {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      margin-bottom: 24px;
+
+      flex-wrap: wrap;
+    }
+
+    .quick-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+
+      margin-right: 4px;
+    }
+
+    .chip {
+      padding: 5px 14px;
+
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+
+      cursor: pointer;
+
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--ink-soft);
+
+      transition: all 0.15s;
+    }
+
+    .chip:hover {
+      border-color: var(--accent-light);
+      color: var(--accent);
+    }
+
+    .chip.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* ========================= */
+    /* GRID DE LIVROS */
+    /* ========================= */
+
+    .books-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+
+      margin-bottom: 40px;
+    }
+
+    .books-grid.list-view {
+      grid-template-columns: 1fr;
+    }
+
+    /* ========================= */
+    /* BOOK CARD — GRID */
+    /* ========================= */
+
+    .book-card {
+      background: var(--surface);
+
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+
+      overflow: hidden;
+      cursor: pointer;
+
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .book-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+    }
+
+    .book-card:nth-child(1)  { animation-delay: 0.04s; }
+    .book-card:nth-child(2)  { animation-delay: 0.08s; }
+    .book-card:nth-child(3)  { animation-delay: 0.12s; }
+    .book-card:nth-child(4)  { animation-delay: 0.16s; }
+    .book-card:nth-child(5)  { animation-delay: 0.20s; }
+    .book-card:nth-child(6)  { animation-delay: 0.24s; }
+    .book-card:nth-child(7)  { animation-delay: 0.28s; }
+    .book-card:nth-child(8)  { animation-delay: 0.32s; }
+
+    .book-cover {
+      width: 100%;
+      height: 160px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 40px;
+
+      position: relative;
+      overflow: hidden;
+    }
+
+    .book-cover-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, transparent 40%, rgba(0,0,0,0.18) 100%);
+    }
+
+    .book-status-dot {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+
+      width: 10px;
+      height: 10px;
+
+      border-radius: 50%;
+      border: 2px solid #fff;
+    }
+
+    .book-status-dot.disponivel { background: #22C55E; }
+    .book-status-dot.emprestado { background: #F59E0B; }
+    .book-status-dot.reservado  { background: #6366F1; }
+
+    .book-info {
+      padding: 14px 16px 16px;
+    }
+
+    .book-category {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--accent-light);
+
+      margin-bottom: 5px;
+    }
+
+    .book-title {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+
+      line-height: 1.3;
+
+      margin-bottom: 4px;
+
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .book-author {
+      font-size: 12px;
+      font-weight: 300;
+      color: var(--ink-soft);
+
+      margin-bottom: 12px;
+    }
+
+    .book-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+
+    .book-copies {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--ink-muted);
+    }
+
+    .book-copies strong {
+      color: var(--ink-soft);
+    }
+
+    .status-badge {
+      padding: 3px 9px;
+
+      border-radius: 20px;
+
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    .status-badge.disponivel {
+      background: #DCFCE7;
+      color: #15803D;
+    }
+
+    .status-badge.emprestado {
+      background: #FEF9C3;
+      color: #B45309;
+    }
+
+    .status-badge.reservado {
+      background: #EEF2FF;
+      color: #4338CA;
+    }
+
+    /* ========================= */
+    /* BOOK CARD — LIST VIEW */
+    /* ========================= */
+
+    .books-grid.list-view .book-card {
+      display: flex;
+      align-items: stretch;
+    }
+
+    .books-grid.list-view .book-cover {
+      width: 72px;
+      height: auto;
+      min-height: 80px;
+      flex-shrink: 0;
+      font-size: 28px;
+      border-radius: 0;
+    }
+
+    .books-grid.list-view .book-info {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+
+      padding: 14px 20px;
+    }
+
+    .books-grid.list-view .book-category {
+      margin-bottom: 0;
+    }
+
+    .books-grid.list-view .book-title {
+      font-size: 14px;
+      margin-bottom: 2px;
+      -webkit-line-clamp: 1;
+    }
+
+    .books-grid.list-view .book-author {
+      margin-bottom: 0;
+    }
+
+    .books-grid.list-view .book-title-block {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .books-grid.list-view .book-footer {
+      border-top: none;
+      padding-top: 0;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    .books-grid.list-view .book-meta-block {
+      display: none;
+    }
+
+    /* ========================= */
+    /* EMPTY STATE */
+    /* ========================= */
+
+    .empty-state {
+      grid-column: 1 / -1;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      padding: 60px 24px;
+
+      color: var(--ink-muted);
+      text-align: center;
+    }
+
+    .empty-state-icon {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .empty-state-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink-soft);
+      margin-bottom: 6px;
+    }
+
+    .empty-state-desc {
+      font-size: 13px;
+      font-weight: 300;
+    }
+
+    /* ========================= */
+    /* PAGINAÇÃO */
+    /* ========================= */
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+
+      margin-top: 8px;
+      margin-bottom: 48px;
+    }
+
+    .page-btn {
+      width: 34px;
+      height: 34px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+
+      cursor: pointer;
+
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--ink-soft);
+
+      transition: all 0.15s;
+    }
+
+    .page-btn:hover {
+      border-color: var(--accent-light);
+      color: var(--accent);
+    }
+
+    .page-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+      font-weight: 500;
+    }
+
+    .page-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* ========================= */
+    /* MODAL */
+    /* ========================= */
+
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+
+      background: rgba(10, 15, 28, 0.5);
+      backdrop-filter: blur(4px);
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      z-index: 1000;
+
+      opacity: 0;
+      pointer-events: none;
+
+      transition: opacity 0.2s;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      background: var(--surface);
+      border-radius: 16px;
+
+      width: 100%;
+      max-width: 520px;
+      max-height: 90vh;
+
+      overflow-y: auto;
+
+      transform: translateY(24px);
+      transition: transform 0.25s ease;
+    }
+
+    .modal-overlay.open .modal {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      padding: 28px 32px 0;
+
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+
+      gap: 16px;
+    }
+
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+
+      cursor: pointer;
+
+      width: 32px;
+      height: 32px;
+
+      border-radius: 8px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 18px;
+      color: var(--ink-muted);
+
+      flex-shrink: 0;
+
+      transition: background 0.15s;
+    }
+
+    .modal-close:hover {
+      background: var(--bg);
+    }
+
+    .modal-body {
+      padding: 24px 32px 32px;
+    }
+
+    .modal-book-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+
+      margin-bottom: 24px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .modal-cover {
+      width: 80px;
+      height: 110px;
+
+      border-radius: 8px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-size: 36px;
+
+      flex-shrink: 0;
+    }
+
+    .modal-book-meta {
+      flex: 1;
+    }
+
+    .modal-category {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--accent-light);
+      margin-bottom: 6px;
+    }
+
+    .modal-book-title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.25;
+      margin-bottom: 4px;
+    }
+
+    .modal-book-author {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--ink-soft);
+      margin-bottom: 12px;
+    }
+
+    .modal-info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+
+      margin-bottom: 20px;
+    }
+
+    .modal-info-item label {
+      display: block;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 3px;
+    }
+
+    .modal-info-item span {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--ink-soft);
+    }
+
+    .modal-desc-title {
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 8px;
+    }
+
+    .modal-desc {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--ink-soft);
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-reserve {
+      flex: 1;
+
+      padding: 11px 18px;
+
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+
+      cursor: pointer;
+
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      color: #fff;
+
+      transition: background 0.2s;
+    }
+
+    .btn-reserve:hover {
+      background: var(--accent-light);
+    }
+
+    .btn-reserve:disabled {
+      background: var(--ink-muted);
+      cursor: not-allowed;
+    }
+
+    .btn-outline {
+      padding: 11px 18px;
+
+      background: none;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+
+      cursor: pointer;
+
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--ink-soft);
+
+      transition: border-color 0.15s;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent-light);
+      color: var(--accent);
+    }
+
+    /* ========================= */
+    /* FOOTER */
+    /* ========================= */
+
+    footer {
+      margin-top: 48px;
+
+      padding: 24px 48px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      border-top: 1px solid var(--line);
+
+      background: var(--surface);
+
+      font-size: 12px;
+
+      color: var(--ink-muted);
+    }
+
+    /* ========================= */
+    /* ANIMAÇÕES */
+    /* ========================= */
+
+    @keyframes fadeUp {
+
+      from {
+        opacity: 0;
+        transform: translateY(16px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+    }
+
+    /* ========================= */
+    /* RESPONSIVO */
+    /* ========================= */
+
+    @media (max-width: 1000px) {
+
+      .books-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+    }
+
+    @media (max-width: 768px) {
+
+      header,
+      .breadcrumb,
+      .hero {
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+
+      main {
+        padding: 28px 24px;
+      }
+
+      .hero {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .hero h1 {
+        font-size: 28px;
+      }
+
+      .books-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .toolbar-left {
+        max-width: 100%;
+      }
+
+      .search-wrapper {
+        max-width: 100%;
+      }
+
+    }
+
+    @media (max-width: 480px) {
+
+      .books-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        flex-wrap: wrap;
+      }
+
+      footer {
+        flex-direction: column;
+        gap: 8px;
+        text-align: center;
+        padding: 20px 24px;
+      }
+
+    }
+
+  </style>
+
 </head>
 
 <body>
 
-    
-         
-  
+  <!-- ========================= -->
+  <!-- HEADER -->
+  <!-- ========================= -->
+
+  <header>
+
+    <div class="logo">
+      <span class="logo-mark">Instituto Estadual Riachuelo</span>
+      <span class="logo-tag">Biblioteca Online</span>
+    </div>
+
+    <span class="header-meta">Versão 1.0</span>
+
+  </header>
+
+  <!-- ========================= -->
+  <!-- BREADCRUMB -->
+  <!-- ========================= -->
+
+  <nav class="breadcrumb">
+    <a href="telaProfessor.html">Início</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="breadcrumb-current">Acervo</span>
+  </nav>
+
+  <!-- ========================= -->
+  <!-- HERO -->
+  <!-- ========================= -->
+
+  <div class="hero">
+
+    <h1>
+      Acervo<br>
+      <span>Literário</span>
+    </h1>
+
+    <p class="hero-desc">
+      Explore o catálogo completo da biblioteca. Pesquise por título, autor ou
+      categoria e verifique a disponibilidade em tempo real.
+    </p>
+
+  </div>
+
+  <!-- ========================= -->
+  <!-- STATS -->
+  <!-- ========================= -->
+
+  <div class="stats" id="stats-bar">
+
+    <div class="stat">
+      <span class="stat-num" id="stat-total">0</span>
+      <span class="stat-label">Títulos</span>
+    </div>
+
+    <div class="stat">
+      <span class="stat-num" id="stat-disp">0</span>
+      <span class="stat-label">Disponíveis</span>
+    </div>
+
+    <div class="stat">
+      <span class="stat-num" id="stat-emp">0</span>
+      <span class="stat-label">Emprestados</span>
+    </div>
+
+    <div class="stat">
+      <span class="stat-num" id="stat-res">0</span>
+      <span class="stat-label">Reservados</span>
+    </div>
+
+  </div>
+
+  <!-- ========================= -->
+  <!-- MAIN -->
+  <!-- ========================= -->
+
+  <main>
+
+    <!-- ========================= -->
+    <!-- TOOLBAR -->
+    <!-- ========================= -->
+
+    <div class="toolbar">
+
+      <div class="toolbar-left">
+
+        <div class="search-wrapper">
+          <span class="search-icon">🔍</span>
+          <input
+            class="search-input"
+            id="search-input"
+            type="search"
+            placeholder="Buscar por título ou autor..."
+          >
+        </div>
+
+        <select class="filter-select" id="filter-categoria">
+          <option value="">Todas as categorias</option>
+          <option value="Literatura">Literatura</option>
+          <option value="Ciências">Ciências</option>
+          <option value="História">História</option>
+          <option value="Matemática">Matemática</option>
+          <option value="Filosofia">Filosofia</option>
+          <option value="Artes">Artes</option>
+        </select>
+
+      </div>
+
+      <div class="toolbar-right">
+
+        <div class="view-toggle">
+          <button class="view-btn active" id="btn-grid" onclick="setView('grid')" title="Grade">⊞</button>
+          <button class="view-btn" id="btn-list" onclick="setView('list')" title="Lista">☰</button>
+        </div>
+
+        <button class="btn-primary">
+          ＋ Novo livro
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- FILTROS RÁPIDOS -->
+    <!-- ========================= -->
+
+    <div class="quick-filters">
+
+      <span class="quick-label">Status:</span>
+
+      <button class="chip active" data-status="" onclick="setStatus(this, '')">Todos</button>
+      <button class="chip" data-status="disponivel" onclick="setStatus(this, 'disponivel')">Disponíveis</button>
+      <button class="chip" data-status="emprestado" onclick="setStatus(this, 'emprestado')">Emprestados</button>
+      <button class="chip" data-status="reservado" onclick="setStatus(this, 'reservado')">Reservados</button>
+
+    </div>
+
+    <!-- ========================= -->
+    <!-- GRID DE LIVROS -->
+    <!-- ========================= -->
+
+    <div class="books-grid" id="books-grid">
+      <!-- preenchido pelo JS -->
+    </div>
+
+    <!-- ========================= -->
+    <!-- PAGINAÇÃO -->
+    <!-- ========================= -->
+
+    <div class="pagination" id="pagination">
+      <!-- preenchido pelo JS -->
+    </div>
+
+  </main>
+
+  <!-- ========================= -->
+  <!-- MODAL DETALHES -->
+  <!-- ========================= -->
+
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModalOnOverlay(event)">
+
+    <div class="modal" id="modal">
+
+      <div class="modal-header">
+        <span class="modal-title" id="modal-title">Detalhes do livro</span>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+
+      <div class="modal-body" id="modal-body">
+        <!-- preenchido pelo JS -->
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ========================= -->
+  <!-- FOOTER -->
+  <!-- ========================= -->
+
+  <footer>
+    <span>BibliotecaEscolar — Sistema de Gestão &copy; 2025</span>
+    <span>Módulo: Acervo v1.0</span>
+  </footer>
+
+  <!-- ========================= -->
+  <!-- SCRIPT -->
+  <!-- ========================= -->
+
+  <script>
+
+    /* ========================= */
+    /* DADOS (mock) */
+    /* ========================= */
+
+    const LIVROS = [
+      {
+        id: 1,
+        titulo: 'Dom Casmurro',
+        autor: 'Machado de Assis',
+        categoria: 'Literatura',
+        isbn: '978-85-359-0277-5',
+        ano: 1899,
+        editora: 'Garnier',
+        exemplares: 3,
+        disponiveis: 2,
+        status: 'disponivel',
+        emoji: '📖',
+        cor: '#E8EDFF',
+        desc: 'Um dos maiores clássicos da literatura brasileira, que narra a história de Bentinho e Capitu em uma das tramas mais debatidas da língua portuguesa.'
+      },
+      {
+        id: 2,
+        titulo: 'O Cortiço',
+        autor: 'Aluísio Azevedo',
+        categoria: 'Literatura',
+        isbn: '978-85-359-0312-3',
+        ano: 1890,
+        editora: 'Garnier',
+        exemplares: 2,
+        disponiveis: 0,
+        status: 'emprestado',
+        emoji: '🏚️',
+        cor: '#FEF9C3',
+        desc: 'Obra naturalista que retrata a vida coletiva e as relações sociais em um cortiço carioca do século XIX.'
+      },
+      {
+        id: 3,
+        titulo: 'Iracema',
+        autor: 'José de Alencar',
+        categoria: 'Literatura',
+        isbn: '978-85-359-0401-4',
+        ano: 1865,
+        editora: 'Mecenas',
+        exemplares: 4,
+        disponiveis: 0,
+        status: 'reservado',
+        emoji: '🌿',
+        cor: '#DCFCE7',
+        desc: 'Romance indianista que narra o amor entre a indígena Iracema e o colonizador Martim, símbolo da formação do povo brasileiro.'
+      },
+      {
+        id: 4,
+        titulo: 'Origem das Espécies',
+        autor: 'Charles Darwin',
+        categoria: 'Ciências',
+        isbn: '978-85-359-0555-4',
+        ano: 1859,
+        editora: 'Hemus',
+        exemplares: 2,
+        disponiveis: 1,
+        status: 'disponivel',
+        emoji: '🔬',
+        cor: '#F0FDF4',
+        desc: 'A obra fundamental da biologia moderna que apresenta a teoria da evolução das espécies por seleção natural.'
+      },
+      {
+        id: 5,
+        titulo: 'Sapiens',
+        autor: 'Yuval Noah Harari',
+        categoria: 'História',
+        isbn: '978-85-378-1279-5',
+        ano: 2011,
+        editora: 'Companhia das Letras',
+        exemplares: 3,
+        disponiveis: 3,
+        status: 'disponivel',
+        emoji: '🦴',
+        cor: '#FFF7ED',
+        desc: 'Uma narrativa fascinante da história da humanidade, desde os primeiros humanos até a era moderna.'
+      },
+      {
+        id: 6,
+        titulo: 'A República',
+        autor: 'Platão',
+        categoria: 'Filosofia',
+        isbn: '978-85-359-0211-9',
+        ano: -380,
+        editora: 'Martin Claret',
+        exemplares: 2,
+        disponiveis: 0,
+        status: 'emprestado',
+        emoji: '🏛️',
+        cor: '#F5F3FF',
+        desc: 'Diálogo filosófico em que Sócrates debate sobre justiça, ordem política e o Estado ideal.'
+      },
+      {
+        id: 7,
+        titulo: 'Matemática Elementar',
+        autor: 'Gelson Iezzi',
+        categoria: 'Matemática',
+        isbn: '978-85-350-6100-2',
+        ano: 2004,
+        editora: 'Atual',
+        exemplares: 8,
+        disponiveis: 5,
+        status: 'disponivel',
+        emoji: '📐',
+        cor: '#EFF6FF',
+        desc: 'Coleção de referência para o ensino médio abrangendo álgebra, geometria, trigonometria e análise combinatória.'
+      },
+      {
+        id: 8,
+        titulo: 'O Pequeno Príncipe',
+        autor: 'Antoine de Saint-Exupéry',
+        categoria: 'Literatura',
+        isbn: '978-85-325-1631-3',
+        ano: 1943,
+        editora: 'Agir',
+        exemplares: 5,
+        disponiveis: 4,
+        status: 'disponivel',
+        emoji: '🌹',
+        cor: '#FFF1F2',
+        desc: 'Conto poético que narra a história de um pequeno príncipe que viaja pelo universo, refletindo sobre amizade e a essência das coisas.'
+      }
+    ];
+
+    /* ========================= */
+    /* ESTADO */
+    /* ========================= */
+
+    let filtroTexto   = '';
+    let filtroCateg   = '';
+    let filtroStatus  = '';
+    let viewMode      = 'grid';
+    let paginaAtual   = 1;
+    const POR_PAGINA  = 8;
+
+    /* ========================= */
+    /* RENDER */
+    /* ========================= */
+
+    function livrosFiltrados() {
+      return LIVROS.filter(l => {
+        const textoOk = !filtroTexto ||
+          l.titulo.toLowerCase().includes(filtroTexto.toLowerCase()) ||
+          l.autor.toLowerCase().includes(filtroTexto.toLowerCase());
+        const categOk  = !filtroCateg  || l.categoria === filtroCateg;
+        const statusOk = !filtroStatus || l.status === filtroStatus;
+        return textoOk && categOk && statusOk;
+      });
+    }
+
+    function renderStats() {
+      document.getElementById('stat-total').textContent = LIVROS.length;
+      document.getElementById('stat-disp').textContent  = LIVROS.filter(l => l.status === 'disponivel').length;
+      document.getElementById('stat-emp').textContent   = LIVROS.filter(l => l.status === 'emprestado').length;
+      document.getElementById('stat-res').textContent   = LIVROS.filter(l => l.status === 'reservado').length;
+    }
+
+    function labelStatus(s) {
+      return { disponivel: 'Disponível', emprestado: 'Emprestado', reservado: 'Reservado' }[s] || s;
+    }
+
+    function renderGrid() {
+      const grid    = document.getElementById('books-grid');
+      const todos   = livrosFiltrados();
+      const inicio  = (paginaAtual - 1) * POR_PAGINA;
+      const pagina  = todos.slice(inicio, inicio + POR_PAGINA);
+
+      grid.className = 'books-grid' + (viewMode === 'list' ? ' list-view' : '');
+
+      if (pagina.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <div class="empty-state-title">Nenhum livro encontrado</div>
+            <p class="empty-state-desc">Tente ajustar os filtros ou o termo de busca.</p>
+          </div>`;
+        renderPaginacao(0);
+        return;
+      }
+
+      grid.innerHTML = pagina.map((l, i) => {
+        if (viewMode === 'list') {
+          return `
+            <div class="book-card" style="animation-delay:${(i * 0.05) + 0.04}s"
+                 onclick="openModal(${l.id})">
+              <div class="book-cover" style="background:${l.cor}">
+                ${l.emoji}
+                <div class="book-cover-overlay"></div>
+                <span class="book-status-dot ${l.status}"></span>
+              </div>
+              <div class="book-info">
+                <div class="book-title-block">
+                  <div class="book-category">${l.categoria}</div>
+                  <div class="book-title">${l.titulo}</div>
+                  <div class="book-author">${l.autor}</div>
+                </div>
+                <div class="book-footer">
+                  <span class="book-copies">
+                    <strong>${l.disponiveis}</strong>/${l.exemplares} exempl.
+                  </span>
+                  <span class="status-badge ${l.status}">${labelStatus(l.status)}</span>
+                </div>
+              </div>
+            </div>`;
+        }
+
+        return `
+          <div class="book-card" style="animation-delay:${(i * 0.04) + 0.04}s"
+               onclick="openModal(${l.id})">
+            <div class="book-cover" style="background:${l.cor}">
+              ${l.emoji}
+              <div class="book-cover-overlay"></div>
+              <span class="book-status-dot ${l.status}"></span>
+            </div>
+            <div class="book-info">
+              <div class="book-category">${l.categoria}</div>
+              <div class="book-title">${l.titulo}</div>
+              <div class="book-author">${l.autor}</div>
+              <div class="book-footer">
+                <span class="book-copies">
+                  <strong>${l.disponiveis}</strong>/${l.exemplares} exempl.
+                </span>
+                <span class="status-badge ${l.status}">${labelStatus(l.status)}</span>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+
+      renderPaginacao(todos.length);
+    }
+
+    function renderPaginacao(total) {
+      const pag  = document.getElementById('pagination');
+      const pages = Math.ceil(total / POR_PAGINA);
+
+      if (pages <= 1) { pag.innerHTML = ''; return; }
+
+      let html = `
+        <button class="page-btn" onclick="goPage(${paginaAtual - 1})"
+          ${paginaAtual === 1 ? 'disabled' : ''}>‹</button>`;
+
+      for (let i = 1; i <= pages; i++) {
+        html += `
+          <button class="page-btn ${i === paginaAtual ? 'active' : ''}"
+            onclick="goPage(${i})">${i}</button>`;
+      }
+
+      html += `
+        <button class="page-btn" onclick="goPage(${paginaAtual + 1})"
+          ${paginaAtual === pages ? 'disabled' : ''}>›</button>`;
+
+      pag.innerHTML = html;
+    }
+
+    /* ========================= */
+    /* AÇÕES */
+    /* ========================= */
+
+    function goPage(n) {
+      paginaAtual = n;
+      renderGrid();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function setView(mode) {
+      viewMode = mode;
+      document.getElementById('btn-grid').classList.toggle('active', mode === 'grid');
+      document.getElementById('btn-list').classList.toggle('active', mode === 'list');
+      renderGrid();
+    }
+
+    function setStatus(btn, status) {
+      filtroStatus = status;
+      paginaAtual  = 1;
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      renderGrid();
+    }
+
+    document.getElementById('search-input').addEventListener('input', e => {
+      filtroTexto = e.target.value;
+      paginaAtual = 1;
+      renderGrid();
+    });
+
+    document.getElementById('filter-categoria').addEventListener('change', e => {
+      filtroCateg = e.target.value;
+      paginaAtual = 1;
+      renderGrid();
+    });
+
+    /* ========================= */
+    /* MODAL */
+    /* ========================= */
+
+    function openModal(id) {
+      const l = LIVROS.find(x => x.id === id);
+      if (!l) return;
+
+      document.getElementById('modal-title').textContent = 'Detalhes do livro';
+
+      const podeReservar = l.status === 'disponivel';
+      const btnLabel     = { disponivel: 'Reservar', emprestado: 'Fila de espera', reservado: 'Fila de espera' }[l.status];
+
+      document.getElementById('modal-body').innerHTML = `
+        <div class="modal-book-header">
+          <div class="modal-cover" style="background:${l.cor}">${l.emoji}</div>
+          <div class="modal-book-meta">
+            <div class="modal-category">${l.categoria}</div>
+            <div class="modal-book-title">${l.titulo}</div>
+            <div class="modal-book-author">${l.autor}</div>
+            <span class="status-badge ${l.status}">${labelStatus(l.status)}</span>
+          </div>
+        </div>
+
+        <div class="modal-info-grid">
+          <div class="modal-info-item">
+            <label>ISBN</label>
+            <span>${l.isbn}</span>
+          </div>
+          <div class="modal-info-item">
+            <label>Ano</label>
+            <span>${l.ano < 0 ? Math.abs(l.ano) + ' a.C.' : l.ano}</span>
+          </div>
+          <div class="modal-info-item">
+            <label>Editora</label>
+            <span>${l.editora}</span>
+          </div>
+          <div class="modal-info-item">
+            <label>Exemplares</label>
+            <span>${l.disponiveis} disponíveis de ${l.exemplares}</span>
+          </div>
+        </div>
+
+        <div class="modal-desc-title">Sinopse</div>
+        <p class="modal-desc">${l.desc}</p>
+
+        <div class="modal-actions">
+          <button class="btn-reserve" ${podeReservar ? '' : ''}>${btnLabel}</button>
+          <button class="btn-outline" onclick="closeModal()">Fechar</button>
+        </div>
+      `;
+
+      document.getElementById('modal-overlay').classList.add('open');
+    }
+
+    function closeModal() {
+      document.getElementById('modal-overlay').classList.remove('open');
+    }
+
+    function closeModalOnOverlay(e) {
+      if (e.target === document.getElementById('modal-overlay')) closeModal();
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal();
+    });
+
+    /* ========================= */
+    /* INIT */
+    /* ========================= */
+
+    renderStats();
+    renderGrid();
+
+  </script>
 
 </body>
+
 </html>
