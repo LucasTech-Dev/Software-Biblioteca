@@ -1332,133 +1332,17 @@
   <!-- ========================= -->
 
   <script>
+    
+      function addnovolivro() {
+  window.location.href = "addLivros.html";
+}
+
 
     /* ========================= */
     /* DADOS (mock) */
     /* ========================= */
 
-    const LIVROS = [
-      {
-        id: 1,
-        titulo: 'Dom Casmurro',
-        autor: 'Machado de Assis',
-        categoria: 'Literatura',
-        isbn: '978-85-359-0277-5',
-        ano: 1899,
-        editora: 'Garnier',
-        exemplares: 3,
-        disponiveis: 2,
-        status: 'disponivel',
-        emoji: '📖',
-        cor: '#E8EDFF',
-        desc: 'Um dos maiores clássicos da literatura brasileira, que narra a história de Bentinho e Capitu em uma das tramas mais debatidas da língua portuguesa.'
-      },
-      {
-        id: 2,
-        titulo: 'O Cortiço',
-        autor: 'Aluísio Azevedo',
-        categoria: 'Literatura',
-        isbn: '978-85-359-0312-3',
-        ano: 1890,
-        editora: 'Garnier',
-        exemplares: 2,
-        disponiveis: 0,
-        status: 'emprestado',
-        emoji: '🏚️',
-        cor: '#FEF9C3',
-        desc: 'Obra naturalista que retrata a vida coletiva e as relações sociais em um cortiço carioca do século XIX.'
-      },
-      {
-        id: 3,
-        titulo: 'Iracema',
-        autor: 'José de Alencar',
-        categoria: 'Literatura',
-        isbn: '978-85-359-0401-4',
-        ano: 1865,
-        editora: 'Mecenas',
-        exemplares: 4,
-        disponiveis: 0,
-        status: 'reservado',
-        emoji: '🌿',
-        cor: '#DCFCE7',
-        desc: 'Romance indianista que narra o amor entre a indígena Iracema e o colonizador Martim, símbolo da formação do povo brasileiro.'
-      },
-      {
-        id: 4,
-        titulo: 'Origem das Espécies',
-        autor: 'Charles Darwin',
-        categoria: 'Ciências',
-        isbn: '978-85-359-0555-4',
-        ano: 1859,
-        editora: 'Hemus',
-        exemplares: 2,
-        disponiveis: 1,
-        status: 'disponivel',
-        emoji: '🔬',
-        cor: '#F0FDF4',
-        desc: 'A obra fundamental da biologia moderna que apresenta a teoria da evolução das espécies por seleção natural.'
-      },
-      {
-        id: 5,
-        titulo: 'Sapiens',
-        autor: 'Yuval Noah Harari',
-        categoria: 'História',
-        isbn: '978-85-378-1279-5',
-        ano: 2011,
-        editora: 'Companhia das Letras',
-        exemplares: 3,
-        disponiveis: 3,
-        status: 'disponivel',
-        emoji: '🦴',
-        cor: '#FFF7ED',
-        desc: 'Uma narrativa fascinante da história da humanidade, desde os primeiros humanos até a era moderna.'
-      },
-      {
-        id: 6,
-        titulo: 'A República',
-        autor: 'Platão',
-        categoria: 'Filosofia',
-        isbn: '978-85-359-0211-9',
-        ano: -380,
-        editora: 'Martin Claret',
-        exemplares: 2,
-        disponiveis: 0,
-        status: 'emprestado',
-        emoji: '🏛️',
-        cor: '#F5F3FF',
-        desc: 'Diálogo filosófico em que Sócrates debate sobre justiça, ordem política e o Estado ideal.'
-      },
-      {
-        id: 7,
-        titulo: 'Matemática Elementar',
-        autor: 'Gelson Iezzi',
-        categoria: 'Matemática',
-        isbn: '978-85-350-6100-2',
-        ano: 2004,
-        editora: 'Atual',
-        exemplares: 8,
-        disponiveis: 5,
-        status: 'disponivel',
-        emoji: '📐',
-        cor: '#EFF6FF',
-        desc: 'Coleção de referência para o ensino médio abrangendo álgebra, geometria, trigonometria e análise combinatória.'
-      },
-      {
-        id: 8,
-        titulo: 'O Pequeno Príncipe',
-        autor: 'Antoine de Saint-Exupéry',
-        categoria: 'Literatura',
-        isbn: '978-85-325-1631-3',
-        ano: 1943,
-        editora: 'Agir',
-        exemplares: 5,
-        disponiveis: 4,
-        status: 'disponivel',
-        emoji: '🌹',
-        cor: '#FFF1F2',
-        desc: 'Conto poético que narra a história de um pequeno príncipe que viaja pelo universo, refletindo sobre amizade e a essência das coisas.'
-      }
-    ];
+   
 
     /* ========================= */
     /* ESTADO */
@@ -1705,11 +1589,7 @@
     renderGrid();
 
   
-   
-      function addnovolivro() {
-  window.location.href = "addLivros.html";
-}
-    
+       
 
   </script>
 
