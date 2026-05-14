@@ -1256,7 +1256,7 @@
           <button class="view-btn" id="btn-list" onclick="setView('list')" title="Lista">☰</button>
         </div>
 
-        <button class="btn-primary">
+        <button onclick="addnovolivro()" class="btn-primary">
           ＋ Novo livro
         </button>
 
@@ -1463,6 +1463,9 @@
     /* ========================= */
     /* ESTADO */
     /* ========================= */
+
+     
+
 
     let filtroTexto   = '';
     let filtroCateg   = '';
@@ -1700,6 +1703,13 @@
 
     renderStats();
     renderGrid();
+
+  
+   
+      function addnovolivro() {
+  window.location.href = "addLivros.html";
+}
+    
 
   </script>
 
