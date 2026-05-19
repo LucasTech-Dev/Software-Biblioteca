@@ -2,17 +2,304 @@
 <html lang="pt-BR">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Empréstimos</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>BibliotecaEscolar — Empréstimos</title>
+
+  <!-- FONTS -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet">
+
+  <style>
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg: #F4F7FB;
+      --surface: #FFFFFF;
+      --ink: #0A0F1C;
+      --ink-soft: #334155;
+      --line: #E2E8F0;
+      --accent: #1E3A8A;
+      --gold: #C7A94F;
+
+      --font-display: 'Playfair Display', serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    body {
+      background: var(--bg);
+      font-family: var(--font-body);
+      color: var(--ink);
+    }
+
+    /* HEADER */
+
+    header {
+      background: var(--accent);
+      color: white;
+      padding: 28px 48px;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 3px solid var(--gold);
+    }
+
+    .logo-mark {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 700;
+    }
+
+    /* HERO */
+
+    .hero {
+      background: var(--surface);
+      padding: 40px 48px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: 40px;
+      line-height: 1.1;
+    }
+
+    .hero span {
+      color: var(--accent);
+    }
+
+    .hero p {
+      margin-top: 10px;
+      color: var(--ink-soft);
+      max-width: 600px;
+      line-height: 1.6;
+    }
+
+    /* MAIN */
+
+    main {
+      max-width: 1200px;
+      margin: auto;
+      padding: 40px 48px;
+    }
+
+    /* ACTIONS */
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .btn {
+      padding: 12px 16px;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+      font-weight: 500;
+      transition: .2s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-secondary {
+      background: white;
+      border: 1px solid var(--line);
+      color: var(--accent);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+
+    /* TABLE */
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th, td {
+      padding: 16px;
+      border-top: 1px solid var(--line);
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background: #F8FAFC;
+      font-size: 12px;
+      color: var(--ink-soft);
+      text-transform: uppercase;
+    }
+
+    /* STATUS */
+
+    .status {
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .active {
+      background: #DBEAFE;
+      color: #2563EB;
+    }
+
+    .delayed {
+      background: #FEE2E2;
+      color: #DC2626;
+    }
+
+    .returned {
+      background: #DCFCE7;
+      color: #16A34A;
+    }
+
+  </style>
+
 </head>
 
 <body>
 
-  
-        
+  <!-- HEADER -->
 
-    
+  <header>
+    <div class="logo-mark">Instituto Estadual Riachuelo</div>
+    <div>Módulo Empréstimos</div>
+  </header>
+
+  <!-- HERO -->
+
+  <div class="hero">
+
+    <h1>
+      Controle de <span>Empréstimos</span><br>
+      e <span>Devoluções</span>
+    </h1>
+
+    <p>
+      Gerencie retiradas, devoluções e acompanhe o status dos livros da biblioteca escolar.
+    </p>
+
+  </div>
+
+  <!-- MAIN -->
+
+  <main>
+
+    <div class="actions">
+
+      <button class="btn btn-primary">
+        ➕ Novo Empréstimo
+      </button>
+
+      <button class="btn btn-secondary" id="btnDevolucao">
+        📚 Registrar Devolução
+      </button>
+
+    </div>
+
+    <!-- TABLE -->
+
+    <div class="card">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Aluno</th>
+            <th>Livro</th>
+            <th>Retirada</th>
+            <th>Devolução</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          <tr>
+            <td>Maria Oliveira</td>
+            <td>Dom Casmurro</td>
+            <td>10/05/2026</td>
+            <td>17/05/2026</td>
+            <td><span class="status delayed">Atrasado</span></td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  </main>
+
+  <!-- SCRIPT -->
+
+  <script>
+
+    // IR PARA DEVOLUÇÃO
+
+    document
+      .getElementById("btnDevolucao")
+      .addEventListener("click", () => {
+
+        window.location.href = "./devolucao.html";
+
+      });
+
+    // PEGAR DEVOLUÇÃO DO LOCALSTORAGE
+
+    const dadosSalvos =
+      localStorage.getItem("ultimaDevolucao");
+
+    if (dadosSalvos) {
+
+      const dados = JSON.parse(dadosSalvos);
+
+      const tbody = document.querySelector("tbody");
+
+      const tr = document.createElement("tr");
+
+      let statusClass = "returned";
+
+      if (dados.status === "Atrasado") statusClass = "delayed";
+      if (dados.status === "Em andamento") statusClass = "active";
+
+      tr.innerHTML = `
+        <td>${dados.aluno}</td>
+        <td>${dados.livro}</td>
+        <td>${dados.retirada}</td>
+        <td>${dados.devolucao}</td>
+        <td><span class="status ${statusClass}">${dados.status}</span></td>
+      `;
+
+      tbody.prepend(tr);
+
+      localStorage.removeItem("ultimaDevolucao");
+
+    }
+
+  </script>
 
 </body>
+
 </html>
