@@ -1,0 +1,29 @@
+{
+  "name": "software-biblioteca",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LucasTech-Dev/Software-Biblioteca.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LucasTech-Dev/Software-Biblioteca/issues"
+  },
+  "homepage": "https://github.com/LucasTech-Dev/Software-Biblioteca#readme",
+  "dependencies": {
+    "express": "^5.2.1",
+    "firebase": "^12.13.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

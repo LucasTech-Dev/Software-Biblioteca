@@ -1,20 +1,17 @@
-// ========================================
-// IMPORT FIREBASE AUTH
-// ========================================
-
-import {
-
-  auth
-
-} from "./app.js";
-
 import {
 
   signInWithEmailAndPassword
 
-} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+}
+
+from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
 
+// ========================================
+// IMPORT FIREBASE AUTH
+// ========================================
+
+import { auth } from "../firebase/auth.js";
 
 // ========================================
 // CONTROLE DE PERFIL
