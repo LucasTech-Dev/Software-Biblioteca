@@ -2,16 +2,169 @@
 <html lang="pt-BR">
 
 <head>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>BibliotecaEscolar — Perfil do Usuário</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet">
+
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    :root {
+      --bg:#F4F7FB;
+      --surface:#FFFFFF;
+      --ink:#0A0F1C;
+      --ink-soft:#334155;
+      --line:#E2E8F0;
+      --accent:#1E3A8A;
+      --gold:#C7A94F;
+      --font-display:'Playfair Display', serif;
+      --font-body:'DM Sans', sans-serif;
+    }
+    body { background:var(--bg); font-family:var(--font-body); color:var(--ink); }
+    header { background:var(--accent); color:white; padding:28px 48px; display:flex; justify-content:space-between; border-bottom:3px solid var(--gold);}
+    .logo { font-family:var(--font-display); font-size:22px; font-weight:700;}
+    .hero { background:var(--surface); padding:40px 48px; border-bottom:1px solid var(--line);}
+    .hero h1 { font-family:var(--font-display); font-size:38px; margin-bottom:10px;}
+    .hero p { color:var(--ink-soft); max-width:600px; line-height:1.6;}
+    main { max-width:1100px; margin:0 auto; padding:40px 48px;}
+    .grid { display:grid; grid-template-columns:1fr; gap:20px;}
+    .card { background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:24px;}
+    .card h2 { font-family:var(--font-display); margin-bottom:16px;}
+    .info { display:flex; flex-direction:column; gap:10px; color:var(--ink-soft); font-size:14px;}
+    .tag { display:inline-block; padding:4px 10px; border-radius:20px; font-size:12px; background:#DBEAFE; color:#2563EB; width:fit-content;}
+    .list { display:flex; flex-direction:column; gap:12px; }
+    .item { border:1px solid var(--line); padding:14px; border-radius:10px;}
+    .item strong { display:block; margin-bottom:4px; }
+    .form-group { display:flex; flex-direction:column; margin-bottom:14px;}
+    .form-group label { margin-bottom:6px; font-size:13px; color:var(--ink-soft);}
+    .form-group input { padding:10px 12px; border:1px solid var(--line); border-radius:8px; font-size:14px; outline:none;}
+    .btn { padding:10px 16px; border:none; border-radius:10px; background:var(--accent); color:white; cursor:pointer; font-weight:500; transition:0.2s;}
+    .btn:hover { transform:translateY(-1px);}
+    .notif { padding:12px 14px; border-radius:10px; background:#FEF3C7; color:#92400E; font-size:14px;}
+    footer { margin-top:40px; padding:24px 48px; background:var(--surface); border-top:1px solid var(--line); color:#94A3B8; display:flex; justify-content:space-between; font-size:12px;}
+    @media (min-width:768px){ .grid{ grid-template-columns:1fr 1fr;} }
+    @media (max-width:768px){ header, .hero, main, footer { padding-left:24px; padding-right:24px; } }
+  </style>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style/usuario.css">
-    <title>usuario</title>
+  <title>usuario</title>
+
 </head>
 
 <body>
 
+  <!-- HEADER -->
+  <header>
+    <div class="logo">Biblioteca Escolar</div>
+    <div>Perfil do Usuário</div>
+  </header>
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>Bem-vindo(a), Maria Oliveira</h1>
+    <p>Acompanhe seus empréstimos, histórico, notificações e gerencie sua conta.</p>
+  </div>
+
+  <!-- MAIN -->
+  <main>
+
+    <div class="grid">
+
+      <!-- DADOS PESSOAIS -->
+      <div class="card">
+        <h2>Dados do Usuário</h2>
+        <div class="info">
+          <div><strong>Nome:</strong> <span id="nomeUsuario">Maria Oliveira</span></div>
+          <div><strong>Matrícula:</strong> <span id="matriculaUsuario">20260045</span></div>
+          <div><strong>Turma:</strong> <span id="turmaUsuario">2º Ano A</span></div>
+        </div>
+        <h3>Alterar Senha</h3>
+        <div class="form-group">
+          <label for="novaSenha">Nova senha</label>
+          <input type="password" id="novaSenha" placeholder="Digite sua nova senha">
+        </div>
+        <button class="btn" id="btnAlterarSenha">Alterar Senha</button>
+      </div>
+
+      <!-- HISTÓRICO E NOTIFICAÇÕES -->
+      <div class="card">
+        <h2>Histórico de Leituras</h2>
+        <div class="list" id="historicoLeituras">
+          <!-- Itens preenchidos via JS -->
+        </div>
+
+        <h2>Notificações</h2>
+        <div class="list" id="notificacoes">
+          <!-- Notificações via JS -->
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>BibliotecaEscolar © 2026</span>
+    <span>Área do Usuário</span>
+  </footer>
+
+  <script>
+    // Simulação de dados do usuário e histórico
+    const usuario = {
+      nome: "Maria Oliveira",
+      matricula: "20260045",
+      turma: "2º Ano A",
+      historico: [
+        { livro: "Dom Casmurro", retirada: "10/05/2026", devolucao: "17/05/2026", status: "Atrasado" },
+        { livro: "Capitães da Areia", retirada: "12/05/2026", devolucao: "19/05/2026", status: "Em andamento" },
+        { livro: "O Pequeno Príncipe", retirada: "08/05/2026", devolucao: "15/05/2026", status: "Devolvido" }
+      ],
+      notificacoes: [
+        "Livro 'Dom Casmurro' está atrasado!",
+        "Prazo para 'Capitães da Areia' vence amanhã."
+      ]
+    };
+
+    // Preencher histórico
+    const historicoDiv = document.getElementById("historicoLeituras");
+    usuario.historico.forEach(l => {
+      const div = document.createElement("div");
+      div.className = "item";
+      div.innerHTML = `<strong>${l.livro}</strong> Retirado em ${l.retirada} • Devolver até ${l.devolucao} • Status: ${l.status}`;
+      historicoDiv.appendChild(div);
+    });
+
+    // Preencher notificações
+    const notifDiv = document.getElementById("notificacoes");
+    usuario.notificacoes.forEach(n => {
+      const div = document.createElement("div");
+      div.className = "notif";
+      div.innerText = n;
+      notifDiv.appendChild(div);
+    });
+
+    // Alterar senha (simulação)
+    document.getElementById("btnAlterarSenha").addEventListener("click", () => {
+      const novaSenha = document.getElementById("novaSenha").value;
+      if(novaSenha.length < 4) { alert("Senha muito curta!"); return; }
+      // Salvar localStorage (simulado)
+      localStorage.setItem("senhaUsuario", novaSenha);
+      alert("Senha alterada com sucesso!");
+      document.getElementById("novaSenha").value = "";
+    });
+  </script>
+
 
     <script src="script/usuario.js"></script>
 
+
 </body>
-</html> 
+</html>
