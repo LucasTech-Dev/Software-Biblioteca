@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 
 <head>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BibliotecaEscolar — Painel do Administrador</title>
@@ -46,6 +47,12 @@
     @media (min-width:768px){ .grid{ grid-template-columns:1fr 1fr;} }
     @media (max-width:768px){ header, .hero, main, footer { padding-left:24px; padding-right:24px; } .grid{ grid-template-columns:1fr; } }
   </style>
+  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/administracao.css">
+    <title>administracao</title>
+
 </head>
 
 <body>
@@ -180,3 +187,10 @@
       alert("Backup realizado com sucesso!");
       logs.push({hora:new Date().toLocaleString(), acao:"Backup automático executado"});
       render
+
+   
+
+    <script src="script/administracao.js"></script>
+</body>
+</html> 
+
