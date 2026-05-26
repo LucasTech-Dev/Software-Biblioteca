@@ -3,6 +3,7 @@
 
 <head>
 
+  <link rel="stylesheet" href="style/administracao.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BibliotecaEscolar — Painel do Administrador</title>
@@ -12,46 +13,9 @@
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
     rel="stylesheet">
 
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    :root {
-      --bg:#F4F7FB;
-      --surface:#FFFFFF;
-      --ink:#0A0F1C;
-      --ink-soft:#334155;
-      --line:#E2E8F0;
-      --accent:#1E3A8A;
-      --gold:#C7A94F;
-      --font-display:'Playfair Display', serif;
-      --font-body:'DM Sans', sans-serif;
-    }
-    body { background:var(--bg); font-family:var(--font-body); color:var(--ink); }
-    header { background:var(--accent); color:white; padding:28px 48px; display:flex; justify-content:space-between; border-bottom:3px solid var(--gold);}
-    .logo { font-family:var(--font-display); font-size:22px; font-weight:700;}
-    .hero { background:var(--surface); padding:40px 48px; border-bottom:1px solid var(--line);}
-    .hero h1 { font-family:var(--font-display); font-size:38px; margin-bottom:10px;}
-    .hero p { color:var(--ink-soft); max-width:600px; line-height:1.6;}
-    main { max-width:1200px; margin:0 auto; padding:40px 48px;}
-    .grid { display:grid; grid-template-columns:1fr; gap:20px;}
-    .card { background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:24px;}
-    .card h2 { font-family:var(--font-display); margin-bottom:16px;}
-    .form-group { display:flex; flex-direction:column; margin-bottom:14px;}
-    .form-group label { margin-bottom:6px; font-size:13px; color:var(--ink-soft);}
-    .form-group input, .form-group select { padding:10px 12px; border:1px solid var(--line); border-radius:8px; font-size:14px; outline:none;}
-    .btn { padding:10px 16px; border:none; border-radius:10px; background:var(--accent); color:white; cursor:pointer; font-weight:500; margin-right:10px;}
-    .btn:hover { transform:translateY(-1px);}
-    table { width:100%; border-collapse:collapse; }
-    th, td { padding:12px 14px; border-top:1px solid var(--line); font-size:14px; }
-    th { color:var(--ink-soft); text-align:left; }
-    footer { margin-top:40px; padding:24px 48px; background:var(--surface); border-top:1px solid var(--line); color:#94A3B8; display:flex; justify-content:space-between; font-size:12px;}
-    @media (min-width:768px){ .grid{ grid-template-columns:1fr 1fr;} }
-    @media (max-width:768px){ header, .hero, main, footer { padding-left:24px; padding-right:24px; } .grid{ grid-template-columns:1fr; } }
-  </style>
   
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style/administracao.css">
-    <title>administracao</title>
+   
+  
 
 </head>
 
@@ -139,54 +103,7 @@
     <span>Painel do Administrador</span>
   </footer>
 
-  <script>
-    // Simulação de usuários e logs
-    const usuarios = [
-      { nome:"Maria Oliveira", tipo:"Aluno" },
-      { nome:"João Pereira", tipo:"Aluno" },
-      { nome:"Ana Souza", tipo:"Bibliotecário" }
-    ];
-
-    const logs = [
-      { hora:"19/05/2026 10:12", acao:"Maria Oliveira retirou 'Dom Casmurro'" },
-      { hora:"19/05/2026 11:05", acao:"João Pereira devolveu 'Capitães da Areia'" },
-      { hora:"19/05/2026 12:30", acao:"Ana Souza alterou regras de empréstimo" }
-    ];
-
-    // Preencher tabela de usuários
-    const tbodyUsuarios = document.getElementById("tabelaUsuarios");
-    usuarios.forEach(u=>{
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td>${u.nome}</td><td>${u.tipo}</td><td><button class="btn" onclick="alert('Editar permissões de ${u.nome}')">Editar</button></td>`;
-      tbodyUsuarios.appendChild(tr);
-    });
-
-    // Preencher log de atividades
-    const tbodyLogs = document.getElementById("tabelaLogs");
-    function renderLogs(){
-      tbodyLogs.innerHTML = "";
-      logs.forEach(l=>{
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td>${l.hora}</td><td>${l.acao}</td>`;
-        tbodyLogs.appendChild(tr);
-      });
-    }
-    renderLogs();
-
-    // Botões
-    document.getElementById("btnSalvarRegras").addEventListener("click", ()=>{
-      const dias = document.getElementById("diasEmprestimo").value;
-      const max = document.getElementById("maxLivros").value;
-      localStorage.setItem("regrasBiblioteca", JSON.stringify({diasEmprestimo:dias,maxLivros:max}));
-      alert("Regras salvas com sucesso!");
-      logs.push({hora:new Date().toLocaleString(), acao:`Regras alteradas: ${dias} dias, ${max} livros`});
-      renderLogs();
-    });
-
-    document.getElementById("btnBackup").addEventListener("click", ()=>{
-      alert("Backup realizado com sucesso!");
-      logs.push({hora:new Date().toLocaleString(), acao:"Backup automático executado"});
-      render
+  
 
    
 
