@@ -1,9 +1,4 @@
-import { initializeApp }  
-//from "firebase/app";
-
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-
-
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 
 // CONFIG
 const firebaseConfig = {
@@ -15,10 +10,8 @@ const firebaseConfig = {
   appId: "1:375143207365:web:89548892164c039785bbac"
 };
 
-
 // APP
 const app = initializeApp(firebaseConfig);
-
 
 // EXPORT
 export { app };
