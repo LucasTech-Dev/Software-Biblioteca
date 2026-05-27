@@ -2,8 +2,6 @@
 <html lang="pt-BR">
 
 <head>
-
-  <link rel="stylesheet" href="style/administracao.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BibliotecaEscolar — Painel do Administrador</title>
@@ -13,10 +11,446 @@
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
     rel="stylesheet">
 
-  
-   
-  
+  <style>
+    /* ============================================
+       BibliotecaEscolar — Painel do Administrador
+       ============================================ */
 
+    /* ---------- Reset & Base ---------- */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 400;
+      line-height: 1.6;
+      background: #f0f4fb;
+      color: #1a2740;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---------- Header ---------- */
+    header {
+      background: #ffffff;
+      border-bottom: 2px solid #3d8bcd;
+      padding: 14px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #1a3a6b;
+      letter-spacing: 0.3px;
+    }
+
+    .header-sub {
+      font-size: 11px;
+      font-weight: 500;
+      color: #4a6fa5;
+      background: #e6f1fb;
+      border: 1px solid #85b7eb;
+      padding: 4px 14px;
+      border-radius: 20px;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+    }
+
+    /* ---------- Hero ---------- */
+    .hero {
+      background: #ffffff;
+      border-bottom: 1px solid #d0dff0;
+      padding: 36px 32px 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '§';
+      position: absolute;
+      right: 32px;
+      top: 4px;
+      font-family: 'Playfair Display', serif;
+      font-size: 130px;
+      color: #1a3a6b08;
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px;
+      font-weight: 700;
+      color: #1a3a6b;
+      margin-bottom: 6px;
+      line-height: 1.2;
+    }
+
+    .hero p {
+      font-size: 14px;
+      color: #4a6fa5;
+      font-weight: 300;
+      max-width: 500px;
+    }
+
+    /* ---------- Main / Grid ---------- */
+    main {
+      flex: 1;
+      padding: 28px 32px 40px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    /* ---------- Cards ---------- */
+    .card {
+      background: #ffffff;
+      border: 1px solid #d0dff0;
+      border-radius: 10px;
+      padding: 22px 24px;
+      box-shadow: 0 1px 4px rgba(26, 58, 107, 0.06);
+      animation: fadeUp 0.35s ease both;
+    }
+
+    .card--full {
+      grid-column: 1 / -1;
+    }
+
+    .card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a3a6b;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #dce8f5;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #dce8f5;
+    }
+
+    .card-header h2 {
+      margin: 0;
+      padding: 0;
+      border: none;
+    }
+
+    /* ---------- Form ---------- */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: #4a6fa5;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 6px;
+    }
+
+    .form-group input[type="number"] {
+      width: 100%;
+      background: #f5f8fd;
+      border: 1px solid #b0c4de;
+      border-radius: 6px;
+      color: #1a2740;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 9px 12px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -moz-appearance: textfield;
+    }
+
+    .form-group input[type="number"]::-webkit-inner-spin-button,
+    .form-group input[type="number"]::-webkit-outer-spin-button {
+      opacity: 1;
+    }
+
+    .form-group input[type="number"]:focus {
+      border-color: #1a3a6b;
+      box-shadow: 0 0 0 3px rgba(26, 58, 107, 0.10);
+    }
+
+    /* ---------- Buttons ---------- */
+    .btn {
+      background: #1a3a6b;
+      color: #ffffff;
+      border: none;
+      border-radius: 6px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      padding: 9px 20px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:hover  { background: #1e4d8c; }
+    .btn:active { transform: scale(0.97); }
+
+    .btn--outline {
+      background: transparent;
+      color: #1a3a6b;
+      border: 1px solid #85b7eb;
+    }
+
+    .btn--outline:hover {
+      background: #e6f1fb;
+      border-color: #1a3a6b;
+    }
+
+    .btn--danger {
+      background: transparent;
+      color: #a32d2d;
+      border: 1px solid #f0959544;
+    }
+
+    .btn--danger:hover { background: #fcebeb; }
+
+    /* ---------- Backup ---------- */
+    .backup-status {
+      background: #f5f8fd;
+      border: 1px solid #d0dff0;
+      border-radius: 8px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .backup-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: #1a7ac4;
+      flex-shrink: 0;
+    }
+
+    .backup-info { flex: 1; }
+
+    .backup-info--right { text-align: right; }
+
+    .backup-info .lbl {
+      font-size: 10px;
+      color: #4a6fa5;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+
+    .backup-info .val {
+      font-size: 14px;
+      color: #1a2740;
+      font-weight: 500;
+    }
+
+    .backup-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* ---------- Tables ---------- */
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    thead th {
+      text-align: left;
+      font-size: 10px;
+      font-weight: 500;
+      color: #4a6fa5;
+      letter-spacing: 0.7px;
+      text-transform: uppercase;
+      padding: 0 12px 10px 0;
+      border-bottom: 1px solid #d0dff0;
+    }
+
+    tbody tr {
+      border-bottom: 1px solid #e8f0f8;
+      transition: background 0.15s;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #f5f8fd; }
+
+    tbody td {
+      padding: 10px 12px 10px 0;
+      color: #2c3e5a;
+      vertical-align: middle;
+    }
+
+    /* ---------- Role Tags ---------- */
+    .role-tag {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+      display: inline-block;
+    }
+
+    .role-admin { background: #e6f1fb; color: #0c447c; border: 1px solid #85b7eb; }
+    .role-prof  { background: #e6f1fb; color: #185fa5; border: 1px solid #85b7eb; }
+    .role-aluno { background: #e6f1fb; color: #185fa5; border: 1px solid #85b7eb; }
+
+    /* ---------- Log Tags ---------- */
+    .log-tag {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      padding: 3px 9px;
+      border-radius: 20px;
+      display: inline-block;
+    }
+
+    .log-cfg  { background: #e6f1fb; color: #0c447c; }
+    .log-back { background: #e6f1fb; color: #185fa5; }
+    .log-add  { background: #e6f1fb; color: #185fa5; }
+    .log-del  { background: #fcebeb; color: #a32d2d; }
+    .log-acc  { background: #f3eefe; color: #534ab7; }
+
+    /* ---------- Status ---------- */
+    .status-ativo   { color: #1a7ac4; font-size: 12px; font-weight: 500; }
+    .status-inativo { color: #a32d2d; font-size: 12px; font-weight: 500; }
+
+    /* ---------- Table action buttons ---------- */
+    .table-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
+    .btn-sm {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      padding: 4px 11px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.18s;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-sm--edit {
+      background: transparent;
+      color: #1a3a6b;
+      border: 1px solid #85b7eb;
+    }
+    .btn-sm--edit:hover { background: #e6f1fb; }
+
+    .btn-sm--toggle-off {
+      background: transparent;
+      color: #a32d2d;
+      border: 1px solid #f0959588;
+    }
+    .btn-sm--toggle-off:hover { background: #fcebeb; }
+
+    .btn-sm--toggle-on {
+      background: transparent;
+      color: #1a7ac4;
+      border: 1px solid #85b7eb;
+    }
+    .btn-sm--toggle-on:hover { background: #e6f1fb; }
+
+    /* ---------- Toast ---------- */
+    .toast {
+      position: fixed;
+      bottom: 22px;
+      right: 24px;
+      background: #ffffff;
+      border: 1px solid #3d8bcd;
+      border-left: 4px solid #3d8bcd;
+      border-radius: 8px;
+      padding: 12px 18px;
+      font-size: 13px;
+      color: #1a2740;
+      display: none;
+      z-index: 999;
+      align-items: center;
+      gap: 8px;
+      min-width: 230px;
+      box-shadow: 0 4px 16px rgba(26, 58, 107, 0.12);
+      animation: slideIn 0.3s ease;
+    }
+
+    /* ---------- Footer ---------- */
+    footer {
+      background: #ffffff;
+      border-top: 1px solid #d0dff0;
+      padding: 14px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: #8aabcc;
+    }
+
+    /* ---------- Animations ---------- */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { transform: translateY(12px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 720px) {
+      main            { padding: 18px 16px 32px; }
+      header          { padding: 12px 16px; }
+      .hero           { padding: 24px 16px 20px; }
+      footer          { padding: 12px 16px; }
+      .grid           { grid-template-columns: 1fr; }
+      .card--full     { grid-column: 1; }
+      .form-row       { grid-template-columns: 1fr; }
+      .backup-actions { flex-direction: column; }
+    }
+  </style>
 </head>
 
 <body>
@@ -24,7 +458,7 @@
   <!-- HEADER -->
   <header>
     <div class="logo">Biblioteca Escolar</div>
-    <div>Painel do Administrador</div>
+    <div class="header-sub">Painel do Administrador</div>
   </header>
 
   <!-- HERO -->
@@ -35,19 +469,20 @@
 
   <!-- MAIN -->
   <main>
-
     <div class="grid">
 
       <!-- Configuração de prazos e regras -->
       <div class="card">
         <h2>Configuração de Prazos e Regras</h2>
-        <div class="form-group">
-          <label for="diasEmprestimo">Dias de empréstimo padrão:</label>
-          <input type="number" id="diasEmprestimo" value="7">
-        </div>
-        <div class="form-group">
-          <label for="maxLivros">Máximo de livros por aluno:</label>
-          <input type="number" id="maxLivros" value="3">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="diasEmprestimo">Dias de empréstimo padrão</label>
+            <input type="number" id="diasEmprestimo" value="7" min="1" max="60">
+          </div>
+          <div class="form-group">
+            <label for="maxLivros">Máximo de livros por aluno</label>
+            <input type="number" id="maxLivros" value="3" min="1" max="20">
+          </div>
         </div>
         <button class="btn" id="btnSalvarRegras">Salvar Regras</button>
       </div>
@@ -55,59 +490,231 @@
       <!-- Backup automático -->
       <div class="card">
         <h2>Backup Automático</h2>
-        <p>Execute backups completos dos dados do sistema.</p>
-        <button class="btn" id="btnBackup">Fazer Backup Agora</button>
+        <div class="backup-status">
+          <div class="backup-dot"></div>
+          <div class="backup-info">
+            <p class="lbl">Último backup</p>
+            <p class="val" id="ultimoBackup">Hoje às 03:00</p>
+          </div>
+          <div class="backup-info backup-info--right">
+            <p class="lbl">Tamanho</p>
+            <p class="val">4,2 MB</p>
+          </div>
+        </div>
+        <div class="backup-actions">
+          <button class="btn" id="btnBackup">Fazer Backup Agora</button>
+          <button class="btn btn--outline" id="btnBaixar">Baixar Backup</button>
+        </div>
       </div>
 
       <!-- Controle de permissões -->
-      <div class="card">
+      <div class="card card--full">
         <h2>Controle de Permissões de Acesso</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Usuário</th>
-              <th>Tipo</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody id="tabelaUsuarios">
-            <!-- preenchido via JS -->
-          </tbody>
-        </table>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Usuário</th>
+                <th>Email</th>
+                <th>Tipo</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaUsuarios">
+              <!-- preenchido via JS -->
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- Log de atividades -->
-      <div class="card">
-        <h2>Log de Atividades do Sistema</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Data / Hora</th>
-              <th>Ação</th>
-            </tr>
-          </thead>
-          <tbody id="tabelaLogs">
-            <!-- preenchido via JS -->
-          </tbody>
-        </table>
-        <button class="btn" id="btnLimparLogs">Limpar Logs</button>
+      <div class="card card--full">
+        <div class="card-header">
+          <h2>Log de Atividades do Sistema</h2>
+          <button class="btn btn--danger" id="btnLimparLogs">Limpar Logs</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Data / Hora</th>
+                <th>Tipo</th>
+                <th>Ação</th>
+                <th>Usuário</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaLogs">
+              <!-- preenchido via JS -->
+            </tbody>
+          </table>
+        </div>
       </div>
 
     </div>
-
   </main>
 
   <!-- FOOTER -->
   <footer>
     <span>BibliotecaEscolar © 2026</span>
-    <span>Painel do Administrador</span>
+   
   </footer>
 
-  
+  <!-- Toast de feedback -->
+  <div class="toast" id="toast"></div>
 
-   
+  <script>
+    // ---------- Dados iniciais ----------
 
-    <script src="script/administracao.js"></script>
+    const usuarios = [
+      { nome: "Ana Paula",      email: "anapaula@escola.edu",  tipo: "admin", ativo: true  },
+      { nome: "Carlos Mendes",  email: "cmendes@escola.edu",   tipo: "prof",  ativo: true  },
+      { nome: "Beatriz Lima",   email: "blima@escola.edu",     tipo: "prof",  ativo: false },
+      { nome: "Diego Ferreira", email: "diego.f@escola.edu",   tipo: "aluno", ativo: true  },
+      { nome: "Júlia Santos",   email: "jsantos@escola.edu",   tipo: "aluno", ativo: true  },
+    ];
+
+    const logsIniciais = [
+      { ts: "26/05/2026 09:14", tipo: "cfg",  acao: "Prazo de empréstimo alterado para 7 dias",  usr: "Ana Paula"     },
+      { ts: "26/05/2026 08:30", tipo: "back", acao: "Backup automático concluído com sucesso",   usr: "Sistema"       },
+      { ts: "25/05/2026 17:45", tipo: "add",  acao: "Novo livro cadastrado: O Pequeno Príncipe", usr: "Carlos Mendes" },
+      { ts: "25/05/2026 14:22", tipo: "acc",  acao: "Login efetuado com sucesso",                usr: "Beatriz Lima"  },
+      { ts: "25/05/2026 11:05", tipo: "del",  acao: "Registro de empréstimo #204 removido",      usr: "Ana Paula"     },
+      { ts: "24/05/2026 16:30", tipo: "add",  acao: "Usuário Júlia Santos cadastrado",           usr: "Ana Paula"     },
+    ];
+
+    let logs = [...logsIniciais];
+
+    // ---------- Mapeamentos ----------
+
+    const tipoLabel = { admin: "Admin", prof: "Professor", aluno: "Aluno" };
+    const tipoClass = { admin: "role-admin", prof: "role-prof", aluno: "role-aluno" };
+
+    const logLabel = { cfg: "Config", back: "Backup", add: "Adição", del: "Remoção", acc: "Acesso" };
+    const logClass = { cfg: "log-cfg", back: "log-back", add: "log-add", del: "log-del", acc: "log-acc" };
+
+    // ---------- Render: Usuários ----------
+
+    function renderUsuarios() {
+      const tbody = document.getElementById("tabelaUsuarios");
+      tbody.innerHTML = usuarios.map((u, i) => `
+        <tr>
+          <td style="font-weight:500;color:#1a2740;">${u.nome}</td>
+          <td style="color:#5a80aa;">${u.email}</td>
+          <td><span class="role-tag ${tipoClass[u.tipo]}">${tipoLabel[u.tipo]}</span></td>
+          <td>
+            <span class="${u.ativo ? 'status-ativo' : 'status-inativo'}">
+              ${u.ativo ? '● Ativo' : '○ Inativo'}
+            </span>
+          </td>
+          <td class="table-actions">
+            <button class="btn-sm btn-sm--edit" onclick="editarPermissao(${i})">✎ Editar</button>
+            <button class="btn-sm ${u.ativo ? 'btn-sm--toggle-off' : 'btn-sm--toggle-on'}"
+                    onclick="toggleStatus(${i})">
+              ${u.ativo ? '○ Desativar' : '● Ativar'}
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // ---------- Render: Logs ----------
+
+    function renderLogs() {
+      const tbody = document.getElementById("tabelaLogs");
+
+      if (!logs.length) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="4" style="text-align:center;color:#8aabcc;padding:24px;font-style:italic;">
+              Nenhum log registrado.
+            </td>
+          </tr>`;
+        return;
+      }
+
+      tbody.innerHTML = logs.map(l => `
+        <tr>
+          <td style="color:#5a80aa;font-size:12px;">${l.ts}</td>
+          <td><span class="log-tag ${logClass[l.tipo]}">${logLabel[l.tipo]}</span></td>
+          <td>${l.acao}</td>
+          <td style="color:#5a80aa;font-size:12px;">${l.usr}</td>
+        </tr>
+      `).join('');
+    }
+
+    // ---------- Ações ----------
+
+    function salvarRegras() {
+      const dias = document.getElementById("diasEmprestimo").value;
+      const max  = document.getElementById("maxLivros").value;
+      adicionarLog("cfg", `Regras atualizadas: ${dias} dias de empréstimo / máx. ${max} livros`, "Admin");
+      mostrarToast(`✓ Regras salvas: ${dias} dias · máx. ${max} livros por aluno`);
+    }
+
+    function fazerBackup() {
+      const hora = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+      document.getElementById("ultimoBackup").textContent = `Hoje às ${hora}`;
+      adicionarLog("back", "Backup manual realizado com sucesso", "Admin");
+      mostrarToast("Backup concluído com sucesso!");
+    }
+
+    function baixarBackup() {
+      mostrarToast("↓ Download do backup iniciado...");
+    }
+
+    function editarPermissao(i) {
+      mostrarToast(`✎ Editando permissões de ${usuarios[i].nome}...`);
+    }
+
+    function toggleStatus(i) {
+      usuarios[i].ativo = !usuarios[i].ativo;
+      const estado = usuarios[i].ativo ? "ativado" : "desativado";
+      adicionarLog("cfg", `Usuário ${usuarios[i].nome} foi ${estado}`, "Admin");
+      renderUsuarios();
+      mostrarToast(`${usuarios[i].nome} foi ${estado}.`);
+    }
+
+    function limparLogs() {
+      logs = [];
+      renderLogs();
+      mostrarToast("Logs do sistema limpos.");
+    }
+
+    // ---------- Utilitários ----------
+
+    function adicionarLog(tipo, acao, usr) {
+      logs.unshift({ ts: agora(), tipo, acao, usr });
+      renderLogs();
+    }
+
+    function agora() {
+      return new Date().toLocaleString("pt-BR", {
+        day: "2-digit", month: "2-digit", year: "numeric",
+        hour: "2-digit", minute: "2-digit"
+      });
+    }
+
+    function mostrarToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.textContent = msg;
+      toast.style.display = "flex";
+      clearTimeout(toast._timer);
+      toast._timer = setTimeout(() => { toast.style.display = "none"; }, 3000);
+    }
+
+    // ---------- Event Listeners ----------
+
+    document.getElementById("btnSalvarRegras").addEventListener("click", salvarRegras);
+    document.getElementById("btnBackup").addEventListener("click", fazerBackup);
+    document.getElementById("btnBaixar").addEventListener("click", baixarBackup);
+    document.getElementById("btnLimparLogs").addEventListener("click", limparLogs);
+
+    // ---------- Init ----------
+
+    renderUsuarios();
+    renderLogs();
+  </script>
+
 </body>
-</html> 
-
+</html>
