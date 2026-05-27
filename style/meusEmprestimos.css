@@ -1,0 +1,376 @@
+ * {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #F4F7FB;
+  --surface: #FFFFFF;
+  --ink: #0A0F1C;
+  --ink-soft: #334155;
+  --line: #E2E8F0;
+  --accent: #1E3A8A;
+  --accent-light: #E6F1FB;
+  --gold: #C7A94F;
+
+  --blue-text: #185FA5;
+  --red-bg: #FCEBEB;
+  --red-text: #A32D2D;
+  --green-bg: #EAF3DE;
+  --green-text: #3B6D11;
+  --amber-bg: #FAEEDA;
+  --amber-text: #854F0B;
+
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'DM Sans', sans-serif;
+}
+
+body {
+  background: var(--bg);
+  font-family: var(--font-body);
+  color: var(--ink);
+}
+
+/* ─── HEADER ─────────────────────────────────────── */
+
+header {
+  background: var(--accent);
+  color: white;
+  padding: 20px 48px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid var(--gold);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  font-size: 14px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.header-name {
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.header-sub {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 2px;
+}
+
+.header-badge {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+
+/* ─── HERO ───────────────────────────────────────── */
+
+.hero {
+  background: var(--surface);
+  padding: 36px 48px 28px;
+  border-bottom: 1px solid var(--line);
+}
+
+.hero h1 {
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1.15;
+  margin-bottom: 8px;
+}
+
+.hero h1 span {
+  color: var(--accent);
+}
+
+.hero p {
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.6;
+  max-width: 520px;
+}
+
+/* ─── STATS ──────────────────────────────────────── */
+
+.stats {
+  background: var(--surface);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 20px 48px;
+  border-bottom: 1px solid var(--line);
+}
+
+.stat {
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 16px 18px;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.stat-val {
+  font-size: 28px;
+  font-weight: 500;
+}
+
+.stat-val.blue { color: var(--blue-text); }
+.stat-val.red  { color: var(--red-text); }
+.stat-val.green{ color: var(--green-text); }
+
+/* ─── FILTERS ────────────────────────────────────── */
+
+.filters {
+  background: var(--surface);
+  padding: 14px 48px;
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+.chip {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink-soft);
+  font-family: var(--font-body);
+  transition: all 0.15s;
+}
+
+.chip.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.chip:hover:not(.active) {
+  background: var(--bg);
+  border-color: #CBD5E1;
+}
+
+/* ─── MAIN / LOAN LIST ───────────────────────────── */
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 48px 48px;
+}
+
+.loan-list {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* ─── LOAN ITEM ──────────────────────────────────── */
+
+.loan-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--line);
+  transition: background 0.15s;
+}
+
+.loan-item:last-child {
+  border-bottom: none;
+}
+
+.loan-item:hover {
+  background: #FAFBFD;
+}
+
+/* Book icon */
+
+.book-icon {
+  width: 40px;
+  height: 52px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 20px;
+}
+
+.book-blue   { background: var(--accent-light); }
+.book-amber  { background: var(--amber-bg); }
+.book-red    { background: var(--red-bg); }
+.book-green  { background: var(--green-bg); }
+
+/* Loan info */
+
+.loan-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.loan-title {
+  font-weight: 500;
+  font-size: 15px;
+  margin-bottom: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.loan-author {
+  font-size: 12px;
+  color: var(--ink-soft);
+  margin-bottom: 10px;
+}
+
+.loan-dates {
+  display: flex;
+  gap: 20px;
+}
+
+.date-block {
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.date-block strong {
+  display: block;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* Loan right column */
+
+.loan-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+/* Status badges */
+
+.badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-active   { background: var(--accent-light); color: var(--blue-text); }
+.badge-delayed  { background: var(--red-bg);        color: var(--red-text); }
+.badge-returned { background: var(--green-bg);      color: var(--green-text); }
+
+/* Progress bar */
+
+.progress-wrap {
+  width: 90px;
+}
+
+.progress-label {
+  font-size: 10px;
+  color: var(--ink-soft);
+  margin-bottom: 4px;
+  text-align: right;
+}
+
+.progress-bar {
+  height: 4px;
+  background: var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+
+.prog-ok   { background: #378ADD; }
+.prog-warn { background: #EF9F27; }
+.prog-over { background: #E24B4A; }
+
+/* ─── EMPTY STATE ────────────────────────────────── */
+
+.empty {
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+
+.empty-icon {
+  font-size: 36px;
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* ─── RESPONSIVE ─────────────────────────────────── */
+
+@media (max-width: 768px) {
+
+  header,
+  .hero,
+  .stats,
+  .filters {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  main {
+    padding: 16px 20px 40px;
+  }
+
+  .hero h1 {
+    font-size: 28px;
+  }
+
+  .stats {
+    gap: 8px;
+  }
+
+  .loan-item {
+    padding: 16px;
+  }
+
+  .progress-wrap {
+    display: none;
+  }
+}

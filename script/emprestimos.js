@@ -1,42 +1,97 @@
- 
-    // IR PARA DEVOLUÇÃO
+import {
 
-    document
-      .getElementById("btnDevolucao")
-      .addEventListener("click", () => {
+  listarTodosEmprestimos
 
-        window.location.href = "./devolucao.html";
+}
 
-      });
+from "../firebase/services/emprestimosService.js";
 
-    // PEGAR DEVOLUÇÃO DO LOCALSTORAGE
 
-    const dadosSalvos =
-      localStorage.getItem("ultimaDevolucao");
+// ========================================
 
-    if (dadosSalvos) {
+const tbody =
+  document.querySelector("tbody");
 
-      const dados = JSON.parse(dadosSalvos);
 
-      const tbody = document.querySelector("tbody");
+// ========================================
 
-      const tr = document.createElement("tr");
+async function carregar() {
 
-      let statusClass = "returned";
+  const emprestimos =
+    await listarTodosEmprestimos();
 
-      if (dados.status === "Atrasado") statusClass = "delayed";
-      if (dados.status === "Em andamento") statusClass = "active";
+  tbody.innerHTML = "";
 
-      tr.innerHTML = `
-        <td>${dados.aluno}</td>
-        <td>${dados.livro}</td>
-        <td>${dados.retirada}</td>
-        <td>${dados.devolucao}</td>
-        <td><span class="status ${statusClass}">${dados.status}</span></td>
-      `;
+  emprestimos.forEach(emp => {
 
-      tbody.prepend(tr);
+    let status =
+      "Em andamento";
 
-      localStorage.removeItem("ultimaDevolucao");
+    let statusClass =
+      "active";
 
+    const hoje =
+      new Date();
+
+    const prazo =
+      emp.prazoEntrega.toDate();
+
+    if (hoje > prazo) {
+
+      status =
+        "Atrasado";
+
+      statusClass =
+        "delayed";
     }
+
+    const tr =
+      document.createElement("tr");
+
+    tr.innerHTML = `
+
+      <td>${emp.nomeUsuario}</td>
+
+      <td>${emp.tituloLivro}</td>
+
+      <td>${formatar(emp.retiradoEm)}</td>
+
+      <td>${formatar(emp.prazoEntrega)}</td>
+
+      <td>
+
+        <span class="status ${statusClass}">
+
+          ${status}
+
+        </span>
+
+      </td>
+    `;
+
+    tbody.appendChild(tr);
+  });
+}
+
+carregar();
+
+
+// ========================================
+
+function formatar(timestamp) {
+
+  return timestamp
+    .toDate()
+    .toLocaleDateString("pt-BR");
+}
+
+
+// ========================================
+
+document
+  .getElementById("btnDevolucao")
+  .addEventListener("click", () => {
+
+    window.location.href =
+      "./devolucao.html";
+  });
