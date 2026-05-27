@@ -222,4 +222,4 @@ document
 
       alert("Erro ao alterar senha.");
     }
-});
+}); 

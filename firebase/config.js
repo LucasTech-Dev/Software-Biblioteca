@@ -13,5 +13,5 @@ const firebaseConfig = {
 // APP 
 const app = initializeApp(firebaseConfig);
 
-// EXPORT
+// EXPORT 
 export { app };

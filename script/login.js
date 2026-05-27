@@ -19,7 +19,7 @@ import { auth } from "../firebase/auth.js";
 
 let role = null;
 
-
+ 
 
 const lbl =
   document.getElementById("lbl-id");
