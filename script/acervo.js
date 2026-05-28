@@ -547,8 +547,8 @@ async function reservarLivro(livroId) {
     carregarLivros();
 
   }
-
-  catch (error) {
+ 
+  catch (error) { 
 
     console.error(error);
 

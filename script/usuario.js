@@ -186,7 +186,7 @@ onAuthStateChanged(auth, async (user) => {
 // ========================================
 // ALTERAR SENHA
 // ========================================
-
+ 
 document
   .getElementById("btnAlterarSenha")
 

@@ -1,226 +1,156 @@
-import {
-
-  onAuthStateChanged
-
-}
-
+import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
-import {
-
-  doc,
-  getDoc
-
-}
-
+import { doc, getDoc } 
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-import { auth }
-
+import { auth } 
 from "../firebase/auth.js";
 
-import { db }
-
+import { db } 
 from "../firebase/firestore.js";
 
-import {
-
-  listarEmprestimosUsuario
-
-}
-
+import { listarEmprestimosUsuario } 
 from "../firebase/services/emprestimosService.js";
-
 
 // ========================================
 
 const loanList =
-  document.getElementById(
-    "loan-list"
-  );
+  document.getElementById("loan-list");
 
 const statActive =
-  document.getElementById(
-    "s-active"
-  );
+  document.getElementById("s-active");
 
 const statDelayed =
-  document.getElementById(
-    "s-delayed"
-  );
+  document.getElementById("s-delayed");
 
-const statReturned =
-  document.getElementById(
-    "s-returned"
-  );
-
+const statReservas =
+  document.getElementById("s-reservas");
 
 // ========================================
 
 onAuthStateChanged(auth, async (user) => {
 
-  if (!user) return;
+  if (!user) {
+    window.location.href = "login.html";
+    return;
+  }
 
-  const usuarioRef = doc(
-    db,
-    "usuarios",
-    user.uid
-  );
+  // ========================================
+  // DADOS DO USUÁRIO
+  // ========================================
 
-  const usuarioSnap =
-    await getDoc(usuarioRef);
+  const usuarioRef = doc(db, "usuarios", user.uid);
+  const usuarioSnap = await getDoc(usuarioRef);
+  const usuario = usuarioSnap.data();
 
-  const usuario =
-    usuarioSnap.data();
-
-  document.querySelector(
-    ".header-name"
-  ).innerText =
-    usuario.nome;
-
-  document.querySelector(
-    ".header-sub"
-  ).innerText =
+  document.getElementById("nomeUsuario").innerText = usuario.nome;
+  document.getElementById("dadosUsuario").innerText =
     `${usuario.turma} · Matrícula ${usuario.matricula}`;
 
-  const emprestimos =
-    await listarEmprestimosUsuario(
-      user.uid
-    );
+  // ========================================
+  // AVATAR
+  // ========================================
 
-  render(emprestimos);
+  const iniciais = usuario.nome
+    .split(" ")
+    .map(n => n[0])
+    .slice(0, 2)
+    .join("");
+
+  document.getElementById("avatarUsuario").innerText =
+    iniciais.toUpperCase();
+
+  // ========================================
+  // MOVIMENTAÇÕES
+  // ========================================
+
+  const lista = await listarEmprestimosUsuario(user.uid);
+  render(lista);
 });
-
 
 // ========================================
 
 function render(lista) {
-
   loanList.innerHTML = "";
 
   let ativos = 0;
-
   let atrasados = 0;
+  let reservas = 0;
 
-  let devolvidos = 0;
+  if (lista.length === 0) {
+    loanList.innerHTML = `
+      <div class="empty">
+        <span class="empty-icon">📚</span>
+        Nenhuma movimentação encontrada.
+      </div>
+    `;
+    return;
+  }
 
-  lista.forEach(emp => {
+  lista.forEach(item => {
+    let statusTexto = "";
+    let badge = "";
+    let iconClass = "book-blue";
 
-    let status =
-      "Em andamento";
-
-    let badge =
-      "badge-active";
-
-    const hoje =
-      new Date();
-
-    const prazo =
-      emp.prazoEntrega.toDate();
-
-    if (hoje > prazo) {
-
-      status =
-        "Atrasado";
-
-      badge =
-        "badge-delayed";
-
-      atrasados++;
+    // ========================================
+    // RESERVA
+    // ========================================
+    if (item.tipo === "reserva") {
+      statusTexto = "Reservado";
+      badge = "badge-active";
+      reservas++;
     }
 
-    else {
+    // ========================================
+    // EMPRÉSTIMO
+    // ========================================
+    if (item.tipo === "emprestimo") {
+      const hoje = new Date();
+      const prazo = item.prazoEntrega.toDate();
 
-      ativos++;
+      if (hoje > prazo) {
+        statusTexto = "Atrasado";
+        badge = "badge-delayed";
+        atrasados++;
+        iconClass = "book-red";
+      } else {
+        statusTexto = "Em andamento";
+        badge = "badge-active";
+        ativos++;
+      }
     }
 
     loanList.innerHTML += `
-
       <div class="loan-item">
-
-        <div class="book-icon book-blue">
-          📘
-        </div>
-
+        <div class="book-icon ${iconClass}">📘</div>
         <div class="loan-info">
-
-          <div class="loan-title">
-
-            ${emp.tituloLivro}
-
-          </div>
-
-          <div class="loan-author">
-
-            Matrícula:
-            ${emp.matricula}
-
-          </div>
-
+          <div class="loan-title">${item.tituloLivro}</div>
+          <div class="loan-author">${item.autorLivro || "Autor não informado"}</div>
           <div class="loan-dates">
-
             <div class="date-block">
-
-              Retirada
-
-              <strong>
-
-                ${formatar(
-                  emp.retiradoEm
-                )}
-
-              </strong>
-
+              Tipo <strong>${item.tipo}</strong>
             </div>
-
             <div class="date-block">
-
-              Prazo
-
-              <strong>
-
-                ${formatar(
-                  emp.prazoEntrega
-                )}
-
-              </strong>
-
+              Criado em <strong>${formatar(item.criadoEm)}</strong>
             </div>
-
           </div>
-
         </div>
-
         <div class="loan-right">
-
-          <span class="badge ${badge}">
-
-            ${status}
-
-          </span>
-
+          <span class="badge ${badge}">${statusTexto}</span>
         </div>
-
       </div>
     `;
   });
-
-  statActive.innerText =
-    ativos;
-
-  statDelayed.innerText =
-    atrasados;
-
-  statReturned.innerText =
-    devolvidos;
+ 
+  statActive.innerText = ativos;
+  statDelayed.innerText = atrasados;
+  statReservas.innerText = reservas;
 }
-
 
 // ========================================
 
 function formatar(timestamp) {
-
-  return timestamp
-    .toDate()
-    .toLocaleDateString("pt-BR");
+  if (!timestamp) return "-";
+  return timestamp.toDate().toLocaleDateString("pt-BR");
 }

@@ -28,14 +28,7 @@ import { db }
 
 from "../firestore.js";
 
-import {
-
-  criarLog
-
-}
-
-from "./logsService.js";
-
+import { criarLog } from "./logServices.js";
 
 // ========================================
 // REALIZAR EMPRÉSTIMO

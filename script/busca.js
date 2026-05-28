@@ -421,7 +421,7 @@ async function reservar(livroId) {
   }
 
 }
-
+ 
 window.reservar = reservar;
 
 

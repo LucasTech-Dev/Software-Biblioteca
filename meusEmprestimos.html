@@ -1,16 +1,20 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 
 <head>
+
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <link rel="stylesheet" href="style/meusEmprestimos.css">
-  <title>Meus Empréstimos — João da Silva</title>
+
+  <title>Meus Empréstimos</title>
 
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
     rel="stylesheet">
+
 </head>
 
 <body>
@@ -18,21 +22,45 @@
   <!-- HEADER -->
 
   <header>
+
     <div class="header-left">
-      <div class="avatar">JS</div>
-      <div class="header-info">
-        <div class="header-name">João da Silva</div>
-        <div class="header-sub">3º Ano A · Matrícula 2024087</div>
+
+      <div class="avatar" id="avatarUsuario">
+        --
       </div>
+
+      <div class="header-info">
+
+        <div class="header-name" id="nomeUsuario">
+          Carregando...
+        </div>
+
+        <div class="header-sub" id="dadosUsuario">
+          Carregando...
+        </div>
+
+      </div>
+
     </div>
-    <div class="header-badge">📚 Minha Biblioteca</div>
+
+    <div class="header-badge">
+      📚 Minha Biblioteca
+    </div>
+
   </header>
 
   <!-- HERO -->
 
   <div class="hero">
-    <h1>Meus <span>Empréstimos</span></h1>
-    <p>Acompanhe os livros que você retirou, os prazos de devolução e seu histórico de leituras.</p>
+
+    <h1>
+      Meus <span>Empréstimos</span>
+    </h1>
+
+    <p>
+      Acompanhe seus empréstimos e reservas.
+    </p>
+
   </div>
 
   <!-- STATS -->
@@ -40,40 +68,52 @@
   <div class="stats">
 
     <div class="stat">
-      <div class="stat-label">Em mãos</div>
-      <div class="stat-val blue" id="s-active">2</div>
+
+      <div class="stat-label">
+        Em andamento
+      </div>
+
+      <div class="stat-val blue" id="s-active">
+        0
+      </div>
+
     </div>
 
     <div class="stat">
-      <div class="stat-label">Atrasados</div>
-      <div class="stat-val red" id="s-delayed">1</div>
+
+      <div class="stat-label">
+        Atrasados
+      </div>
+
+      <div class="stat-val red" id="s-delayed">
+        0
+      </div>
+
     </div>
 
     <div class="stat">
-      <div class="stat-label">Devolvidos</div>
-      <div class="stat-val green" id="s-returned">1</div>
+
+      <div class="stat-label">
+        Reservas
+      </div>
+
+      <div class="stat-val green" id="s-reservas">
+        0
+      </div>
+
     </div>
 
   </div>
 
-  <!-- FILTERS -->
+  <!-- LISTA -->
 
-  <div class="filters">
-    <button class="chip active" data-filter="all">Todos</button>
-    <button class="chip" data-filter="active">Em andamento</button>
-    <button class="chip" data-filter="delayed">Atrasados</button>
-    <button class="chip" data-filter="returned">Devolvidos</button>
-  </div>
+  <main> 
 
-  <!-- LOAN LIST -->
-
-  <main>
     <div class="loan-list" id="loan-list"></div>
+
   </main>
 
-  <!-- SCRIPT -->
-
-  <script src="script/meusEmprestimos.js"></script>
+  <script type="module" src="script/meusEmprestimos.js"></script>
 
 </body>
 
