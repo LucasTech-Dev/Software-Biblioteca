@@ -1,112 +1,146 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BibliotecaEscolar — Relatórios</title>
-
-  <!-- Google Fonts -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
-    rel="stylesheet">
-
-  <!-- Chart.js -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
- 
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style/relatorio.css">
-    <title>relatorio</title>
+  <link rel="stylesheet" href="style/relatorio.css">
 </head>
-
 <body>
 
   <!-- HEADER -->
   <header>
-    <div class="logo">Biblioteca Escolar</div>
-    <div>Relatórios</div>
+    <div class="logo">
+      <span class="logo-icon">📚</span>
+      Biblioteca Escolar
+    </div>
+    <nav class="header-nav">
+      <span>Relatórios</span>
+    </nav>
   </header>
 
   <!-- HERO -->
-  <div class="hero">
-    <h1>Relatórios da Biblioteca</h1>
-    <p>Gere gráficos, tabelas e exportações para entender o uso da biblioteca e otimizar a gestão.</p>
-  </div>
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge">2026</div>
+      <h1>Relatórios<br><em>da Biblioteca</em></h1>
+      <p>Gere gráficos, tabelas e exportações para entender o uso da biblioteca e otimizar a gestão.</p>
+    </div>
+    <div class="hero-deco" aria-hidden="true">
+      <span>◈</span><span>◈</span><span>◈</span>
+    </div>
+  </section>
 
   <!-- MAIN -->
   <main>
 
+    <!-- KPIs -->
+    <section class="kpi-row">
+      <div class="kpi-card">
+        <span class="kpi-number" id="kpiTotal">0</span>
+        <span class="kpi-label">Empréstimos Totais</span>
+      </div>
+      <div class="kpi-card kpi-warn">
+        <span class="kpi-number" id="kpiAtrasos">0</span>
+        <span class="kpi-label">Em Atraso</span>
+      </div>
+      <div class="kpi-card kpi-ok">
+        <span class="kpi-number" id="kpiDevolvidos">0</span>
+        <span class="kpi-label">Devolvidos</span>
+      </div>
+      <div class="kpi-card">
+        <span class="kpi-number" id="kpiAndamento">0</span>
+        <span class="kpi-label">Em Andamento</span>
+      </div>
+    </section>
+
     <div class="grid">
 
       <!-- Ranking de livros -->
-      <div class="card">
-        <h2>Ranking de Livros Mais Lidos</h2>
-        <canvas id="graficoRanking"></canvas>
+      <div class="card card-wide">
+        <div class="card-header">
+          <h2>Ranking de Livros Mais Lidos</h2>
+          <span class="card-tag">Top 5</span>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="graficoRanking"></canvas>
+        </div>
       </div>
 
       <!-- Histórico de empréstimos -->
-      <div class="card">
-        <h2>Histórico de Empréstimos</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Aluno</th>
-              <th>Livro</th>
-              <th>Retirada</th>
-              <th>Devolução</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="tabelaHistorico">
-            <!-- preenchido via JS -->
-          </tbody>
-        </table>
+      <div class="card card-wide">
+        <div class="card-header">
+          <h2>Histórico de Empréstimos</h2>
+          <span class="card-tag" id="tagHistorico">— registros</span>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Aluno</th>
+                <th>Livro</th>
+                <th>Retirada</th>
+                <th>Devolução</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaHistorico">
+              <!-- preenchido via JS -->
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- Relatório de atrasos -->
       <div class="card">
-        <h2>Relatório de Atrasos e Pendências</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Aluno</th>
-              <th>Livro</th>
-              <th>Prazo</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody id="tabelaAtrasos">
-            <!-- preenchido via JS -->
-          </tbody>
-        </table>
+        <div class="card-header">
+          <h2>Atrasos e Pendências</h2>
+          <span class="card-tag card-tag-warn" id="tagAtrasos">— pendentes</span>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Aluno</th>
+                <th>Livro</th>
+                <th>Prazo</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="tabelaAtrasos">
+              <!-- preenchido via JS -->
+            </tbody>
+          </table>
+        </div>
       </div>
 
       <!-- Exportações -->
-      <div class="card">
-        <h2>Exportação de Dados</h2>
-        <button class="btn" id="btnPDF">Exportar PDF</button>
-        <button class="btn" id="btnExcel">Exportar Excel</button>
+      <div class="card card-export">
+        <div class="card-header">
+          <h2>Exportação de Dados</h2>
+        </div>
+        <p class="export-desc">Baixe os relatórios nos formatos mais usados pela gestão escolar.</p>
+        <div class="export-buttons">
+          <button class="btn btn-pdf" id="btnPDF">
+            <span class="btn-icon">⬇</span> Exportar PDF
+          </button>
+          <button class="btn btn-excel" id="btnExcel">
+            <span class="btn-icon">⬇</span> Exportar Excel
+          </button>
+        </div>
       </div>
 
     </div>
-
   </main>
 
   <!-- FOOTER -->
   <footer>
-    <span>BibliotecaEscolar © 2026</span>
-    <span>Relatórios</span>
+    <span class="footer-logo">BibliotecaEscolar</span>
+    <span>© 2026 — Relatórios</span>
   </footer>
 
-
-
-
-
-    <script src="script/relatorio.js"></script>
-</body> 
-</html> 
-
+  <script src="script/relatorio.js"></script>
+</body>
+</html>
