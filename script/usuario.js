@@ -187,8 +187,7 @@ onAuthStateChanged(auth, async (user) => {
 // ALTERAR SENHA
 // ========================================
  
-document
-  .getElementById("btnAlterarSenha")
+document.getElementById("btnAlterarSenha")
 
   .addEventListener("click", async () => {
 

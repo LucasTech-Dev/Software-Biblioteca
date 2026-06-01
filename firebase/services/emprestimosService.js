@@ -179,12 +179,27 @@ export async function listarEmprestimosUsuario(uid) {
   const snapshot =
     await getDocs(q);
 
-  return snapshot.docs.map(doc => ({
+  const lista = snapshot.docs.map(doc => ({
 
     id: doc.id,
 
     ...doc.data()
+
   }));
+
+  lista.sort((a, b) => {
+
+    const dataA =
+      a.criadoEm?.seconds || 0;
+
+    const dataB =
+      b.criadoEm?.seconds || 0;
+
+    return dataB - dataA;
+
+  });
+
+  return lista;
 }
 
 

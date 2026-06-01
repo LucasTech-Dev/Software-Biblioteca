@@ -7,7 +7,8 @@ import {
   serverTimestamp,
   doc,
   updateDoc,
-  increment
+  increment,
+  arrayUnion
 }
 
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
@@ -526,6 +527,61 @@ async function reservarLivro(livroId) {
 
       }
     );
+
+
+    // ========================================
+// CRIAR MOVIMENTAÇÃO EM EMPRÉSTIMOS
+// ========================================
+
+await addDoc(
+  collection(db, "emprestimos"),
+  {
+
+    usuarioId: usuarioAtual.uid,
+
+    nomeUsuario: usuario.nome,
+
+    matricula: usuario.matricula,
+
+    turma: usuario.turma,
+
+    livroId: livroId,
+
+    tituloLivro: livro.titulo,
+
+    autorLivro: livro.autor,
+
+    tipo: "reserva",
+
+    status: "reservado",
+
+    criadoEm: serverTimestamp()
+
+  }
+);
+
+// ========================================
+// HISTÓRICO DO USUÁRIO
+// ========================================
+
+await updateDoc(
+  doc(db, "usuarios", usuarioAtual.uid),
+  {
+
+    historico: arrayUnion({
+
+      nome: livro.titulo,
+
+      retirada: "-",
+
+      devolucao: "-",
+
+      status: "Reservado"
+
+    })
+
+  }
+);
 
     // atualizar livro
 

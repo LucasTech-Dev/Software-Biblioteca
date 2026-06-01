@@ -65,8 +65,47 @@ onAuthStateChanged(auth, async (user) => {
   // MOVIMENTAÇÕES
   // ========================================
 
-  const lista = await listarEmprestimosUsuario(user.uid);
-  render(lista);
+// export async function listarEmprestimosUsuario(uid) {
+
+//   const q = query(
+//     collection(db, "emprestimos"),
+//     where("usuarioId", "==", uid)
+//   );
+
+//   const snapshot =
+//     await getDocs(q);
+
+//   const lista = snapshot.docs.map(doc => ({
+
+//     id: doc.id,
+
+//     ...doc.data()
+
+//   }));
+
+//   lista.sort((a, b) => {
+
+//     const dataA =
+//       a.criadoEm?.seconds || 0;
+
+//     const dataB =
+//       b.criadoEm?.seconds || 0;
+
+//     return dataB - dataA;
+
+//   });
+
+//   return lista;
+// }
+
+
+
+
+const lista =
+  await listarEmprestimosUsuario(user.uid);
+
+render(lista);
+
 });
 
 // ========================================
