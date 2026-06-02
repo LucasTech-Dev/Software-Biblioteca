@@ -189,7 +189,7 @@ function render(lista) {
 
 // ========================================
 
-function formatar(timestamp) {
+function formatar(timestamp) { 
   if (!timestamp) return "-";
   return timestamp.toDate().toLocaleDateString("pt-BR");
 }

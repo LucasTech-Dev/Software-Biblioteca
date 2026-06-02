@@ -158,7 +158,7 @@ export async function realizarEmprestimo({
   }
 }
 
-
+ 
 // ========================================
 // LISTAR USUÁRIO
 // ========================================
