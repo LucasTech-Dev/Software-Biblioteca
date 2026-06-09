@@ -1,23 +1,15 @@
 import {
 
   collection,
-
   addDoc,
-
   getDocs,
-
   query,
-
   where,
-
   updateDoc,
-
   doc,
-
+  deleteDoc,
   increment,
-
   serverTimestamp,
-
   Timestamp
 
 }
@@ -25,16 +17,12 @@ import {
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 import { db }
-
 from "../firestore.js";
 
 import {
-
   criarLog
-
 }
-
-from "./logsService.js";
+from "./logServices.js";
 
 
 // ========================================
@@ -44,15 +32,13 @@ from "./logsService.js";
 export async function reservarLivro({
 
   usuario,
-
   livro
 
 }) {
 
   try {
 
-    const prazo =
-      new Date();
+    const prazo = new Date();
 
     prazo.setDate(
       prazo.getDate() + 2
@@ -95,7 +81,9 @@ export async function reservarLivro({
 
         criadoEm:
           serverTimestamp()
+
       }
+
     );
 
     // LIVRO
@@ -113,6 +101,7 @@ export async function reservarLivro({
 
       quantidadeDisponivel:
         increment(-1)
+
     });
 
     // USUÁRIO
@@ -127,6 +116,7 @@ export async function reservarLivro({
 
       reservasAtivas:
         increment(1)
+
     });
 
     // LOG
@@ -143,13 +133,14 @@ export async function reservarLivro({
         usuario.matricula,
 
       tipo:
-        "RESERVA",
-
+        "RESERVA", 
+ 
       livroId:
         livro.id,
 
       tituloLivro:
         livro.titulo
+
     });
 
     alert("Livro reservado.");
@@ -160,15 +151,15 @@ export async function reservarLivro({
 
     console.error(error);
 
-    alert(
-      "Erro ao reservar."
-    );
+    alert("Erro ao reservar.");
+
   }
+
 }
 
 
 // ========================================
-// LISTAR RESERVAS USUÁRIO
+// LISTAR RESERVAS DO USUÁRIO
 // ========================================
 
 export async function listarReservasUsuario(uid) {
@@ -182,6 +173,7 @@ export async function listarReservasUsuario(uid) {
       "==",
       uid
     )
+
   );
 
   const snapshot =
@@ -192,12 +184,14 @@ export async function listarReservasUsuario(uid) {
     id: doc.id,
 
     ...doc.data()
+
   }));
+
 }
 
 
 // ========================================
-// LISTAR TODAS
+// LISTAR TODAS AS RESERVAS
 // ========================================
 
 export async function listarTodasReservas() {
@@ -212,5 +206,72 @@ export async function listarTodasReservas() {
     id: doc.id,
 
     ...doc.data()
+
   }));
+
+}
+
+
+// ========================================
+// LISTAR RESERVAS PENDENTES
+// ========================================
+
+export async function listarReservasPendentes() {
+
+  const q = query(
+
+    collection(db, "reservas"),
+
+    where(
+      "status",
+      "==",
+      "esperando"
+    )
+
+  );
+
+  const snapshot =
+    await getDocs(q);
+
+  return snapshot.docs.map(doc => ({
+
+    id: doc.id,
+
+    ...doc.data()
+
+  }));
+
+}
+
+
+// ========================================
+// EXCLUIR RESERVA
+// ========================================
+
+export async function excluirReserva(
+  reservaId
+) {
+
+  try {
+
+    await deleteDoc(
+      doc(
+        db,
+        "reservas",
+        reservaId
+      )
+    );
+
+    return true;
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    throw error;
+
+  }
+
 }

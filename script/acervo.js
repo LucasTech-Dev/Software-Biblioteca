@@ -518,7 +518,7 @@ async function reservarLivro(livroId) {
 
         autorLivro: livro.autor,
 
-        status: "reservado",
+        status: "esperando",
 
         dataReserva:
           new Date().toISOString(),
@@ -528,37 +528,12 @@ async function reservarLivro(livroId) {
       }
     );
 
-
+ 
     // ========================================
 // CRIAR MOVIMENTAÇÃO EM EMPRÉSTIMOS
 // ========================================
 
-await addDoc(
-  collection(db, "emprestimos"),
-  {
 
-    usuarioId: usuarioAtual.uid,
-
-    nomeUsuario: usuario.nome,
-
-    matricula: usuario.matricula,
-
-    turma: usuario.turma,
-
-    livroId: livroId,
-
-    tituloLivro: livro.titulo,
-
-    autorLivro: livro.autor,
-
-    tipo: "reserva",
-
-    status: "reservado",
-
-    criadoEm: serverTimestamp()
-
-  }
-);
 
 // ========================================
 // HISTÓRICO DO USUÁRIO

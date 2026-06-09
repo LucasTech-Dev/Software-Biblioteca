@@ -68,7 +68,7 @@
 
     /* MAIN */
 
-    main {
+    main { 
       max-width: 1200px;
       margin: auto;
       padding: 40px 48px;
@@ -76,36 +76,56 @@
 
     /* ACTIONS */
 
-    .actions {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 20px;
-    }
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
 
-    .btn {
-      padding: 12px 16px;
-      border-radius: 10px;
-      border: none;
-      cursor: pointer;
-      font-weight: 500;
-      transition: .2s;
-    }
+.btn {
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: .2s;
+  font-family: var(--font-body);
+}
 
-    .btn-primary {
-      background: var(--accent);
-      color: white;
-    }
+/* BOTÃO PRINCIPAL */
 
-    .btn-secondary {
-      background: white;
-      border: 1px solid var(--line);
-      color: var(--accent);
-    }
+.btn-primary {
+  background: var(--accent);
+  color: white;
+}
 
-    .btn:hover {
-      transform: translateY(-2px);
-    }
+/* BOTÕES SECUNDÁRIOS */
 
+.btn-secondary {
+  background: white;
+  border: 1px solid var(--line);
+  color: var(--accent);
+}
+
+.btn-secondary:hover {
+  background: #EFF6FF;
+}
+
+/* BOTÃO SELECIONADO */
+
+.btn.active {
+  background: var(--accent) !important;
+  color: white !important;
+  border: 1px solid var(--accent) !important;
+}
+
+/* HOVER GERAL */
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
     /* TABLE */
 
     .card {
@@ -157,3 +177,94 @@
       background: #DCFCE7;
       color: #16A34A;
     }
+
+    .modal {
+
+  display: none;
+
+  position: fixed;
+
+  inset: 0;
+
+  background: rgba(0,0,0,.5);
+
+  justify-content: center;
+
+  align-items: center;
+
+  z-index: 9999;
+
+}
+
+.modal.show {
+
+  display: flex;
+
+}
+
+.modal-content {
+
+  background: white;
+
+  padding: 24px;
+
+  border-radius: 12px;
+
+  width: 400px;
+
+  max-width: 90%;
+
+}
+
+.modal-content h2 {
+
+  margin-bottom: 20px;
+
+}
+
+.modal-content label {
+
+  display: block;
+
+  margin-top: 12px;
+
+  margin-bottom: 6px;
+
+}
+
+.modal-content input {
+
+  width: 100%;
+
+  padding: 10px;
+
+  border: 1px solid #ddd;
+
+  border-radius: 8px;
+
+}
+
+.modal-actions {
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  margin-top: 20px;
+
+}
+
+.btn-danger {
+
+  background: #DC2626;
+  color: white;
+
+}
+
+.btn-danger:hover {
+
+  background: #B91C1C;
+
+}
