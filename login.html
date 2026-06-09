@@ -1,179 +1,95 @@
-<!-- login.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <meta name="description" content="Sistema Biblioteca Escolar — Login" />
-  <meta name="author" content="Lucas Sant'Ana Dias" />
-
-  <title>BibliotecaEscolar — Acesso</title>
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="style/login.css" />
-
-  <!-- Google Fonts -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;700&family=Inter:wght@400;500;600&display=swap"
-    rel="stylesheet"
-  />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Biblioteca Escolar — Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:wght@500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="style/login.css">
 </head>
-
 <body>
+    <div class="lb-card">
+        <div class="left-panel">
+            <div>
+                <div class="brand-logo">
+                    <i class="fa-solid fa-book-open"></i>
+                </div>
+                <h1 class="left-title">Biblioteca  
+Escolar</h1>
+                <p class="left-desc">
+                    Sistema integrado de gestão de acervo, empréstimos, reservas e devoluções.
+                </p>
+            </div>
+            <p class="left-quote">
+                "A leitura é o exercício pleno da inteligência."
+            </p>
+        </div>
 
-  <div class="lb-card">
+        <div class="right-panel">
+            <div class="form-box">
+                <div class="form-header">
+                    <h2>Acesso ao Sistema</h2>
+                    <p>Entre com seu e-mail institucional.</p>
+                </div>
 
-    <!-- Painel esquerdo -->
-    <div class="left-panel">
+                <div class="role-group">
+                    <button class="role-opt active" id="opt-professor" type="button">
+                        <div class="role-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+                        <div class="role-text">
+                            <strong>Professor</strong>
+                            <span>Acesso administrativo</span>
+                        </div>
+                    </button>
+                    <button class="role-opt" id="opt-aluno" type="button">
+                        <div class="role-icon"><i class="fa-solid fa-user-graduate"></i></div>
+                        <div class="role-text">
+                            <strong>Aluno</strong>
+                            <span>Consulta e empréstimos</span>
+                        </div>
+                    </button>
+                </div>
 
-      <div class="left-pattern"></div>
+                <div class="field">
+                    <label>E-mail Institucional</label>
+                    <div class="input-wrap">
+                        <i class="fa-regular fa-envelope"></i>
+                        <input type="email" id="inp-id" placeholder="nome@educar.rs.gov.br" autocomplete="email">
+                    </div>
+                    <div class="email-helper">Use seu e-mail institucional (Ex: nome@educar.rs.gov.br)</div>
+                    <div id="email-error" class="email-error">Acesso permitido apenas para contas educacionais autorizadas.</div>
+                </div>
 
-      <div class="left-top">
-        <h1 class="left-title">
-          Biblioteca<br />
-          Escolar
-        </h1>
+                <div class="field">
+                    <div class="field-row">
+                        <label>Senha</label>
+                        <a href="#" class="forgot">Esqueceu?</a>
+                    </div>
+                    <div class="input-wrap">
+                        <i class="fa-solid fa-lock"></i>
+                        <input id="senha" type="password" placeholder="••••••••">
+                        <button type="button" class="toggle-password" onclick="togglePassword()" aria-label="Mostrar ou ocultar senha">
+                            <i id="eye" class="fa-regular fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
 
-        <p class="left-desc">
-          Sistema integrado de gestão de acervo e empréstimos.
-        </p>
-      </div>
+                <button type="button" class="btn-submit" onclick="handleLogin()">Entrar</button>
 
-      <div class="left-bottom">
-        <p class="left-quote">
-          "A leitura é o exercício pleno da inteligência."
-        </p>
-      </div>
-
+                <div class="register-text">
+                    Não possui conta? <a href="cadastro.html">Cadastre-se</a>
+                </div>
+                <div class="help-text">
+                    Problemas de acesso? <a href="#">Contate a secretaria</a>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Painel direito -->
-    <div class="right-panel">
-
-      <div class="form-box">
-
-        <!-- Cabeçalho -->
-        <div class="form-header">
-          <h2>Acesso ao Sistema</h2>
-          <p>Selecione seu perfil e insira suas credenciais</p>
-        </div>
-
-        <!-- Seleção de perfil -->
-        <div class="role-group">
-
-          <!-- Professor -->
-          <button
-            type="button"
-            class="role-opt"
-            id="opt-professor"
-            onclick="selectRole('professor')"
-          >
-            <div class="role-dot"></div>
-
-            <div class="role-text">
-              <strong>Professor</strong>
-              <span>Acesso completo</span>
-            </div>
-          </button>
-
-          <!-- Aluno -->
-          <button
-            type="button"
-            class="role-opt"
-            id="opt-aluno"
-            onclick="selectRole('aluno')"
-          >
-            <div class="role-dot"></div>
-
-            <div class="role-text">
-              <strong>Aluno</strong>
-              <span>Empréstimos</span>
-            </div>
-          </button>
-
-        </div>
-
-        <!-- Campo identificação -->
-        <div class="field">
-
-          <label id="lbl-id">
-            Identificação
-          </label>
-
-          <input
-            type="text"
-            id="inp-id"
-            placeholder="Digite sua identificação"
-            autocomplete="off"
-          />
-
-        </div>
-
-        <!-- Campo senha -->
-        <div class="field">
-
-          <div class="field-row">
-
-            <label for="inp-senha">
-              Senha
-            </label>
-
-            <a class="forgot" href="#">
-              Esqueceu?
-            </a>
-
-          </div>
-
-          <input
-            type="password"
-            id="inp-senha"
-            placeholder="••••••••"
-          />
-
-        </div>
-
-        <!-- Botão -->
-        <button
-          type="button"
-          class="btn-submit"
-          id="btn-entrar"
-          onclick="handleLogin()"
-        >
-          Entrar
-        </button>
-
-        <!-- Mensagem -->
-        <div id="msg-feedback" class="msg"></div>
-
-        <!-- Cadastro -->
-        <div class="register-text">
-          Não possui conta?
-          <a href="cadastro.html">
-            Cadastre-se
-          </a>
-        </div>
-
-        <!-- Rodapé -->
-        <div class="help-text">
-          Problemas de acesso?
-          <a href="#">
-            Contate a secretaria
-          </a>
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-  <!-- Firebase -->
-
-  <!-- Scripts -->
-<script type="module" src="script/login.js"></script>
+    <!-- Firebase Compat (sem type=module, funções ficam globais) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="firebase/config-compat.js"></script>
+    <script src="script.js"></script>
 </body>
-
 </html>
