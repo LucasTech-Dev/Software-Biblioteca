@@ -1,111 +1,371 @@
-// script.js — sem import/export, Firebase já está global via compat
+// ========================================
+// FIREBASE
+// ========================================
 
-let perfilSelecionado = "professor";
+import {
+  signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
-document.addEventListener("DOMContentLoaded", () => {
-    const professorBtn = document.getElementById("opt-professor");
-    const alunoBtn = document.getElementById("opt-aluno");
+import { auth } from "../firebase/auth.js";
 
-    professorBtn?.addEventListener("click", () => selectRole("professor"));
-    alunoBtn?.addEventListener("click", () => selectRole("aluno"));
+// ========================================
+// ELEMENTOS
+// ========================================
 
-    // Inicializa na tela
-    selectRole("professor");
-});
+const elements = {
+  lblId: document.getElementById("lbl-id"),
+  inpId: document.getElementById("inp-id"),
+  inpSenha: document.getElementById("inp-senha"),
+  btnEntrar: document.getElementById("btn-entrar"),
+  optProfessor: document.getElementById("opt-professor"),
+  optAluno: document.getElementById("opt-aluno")
+};
+// ========================================
+// MOSTRAR / OCULTAR SENHA
+// ========================================
 
-function selectRole(role) {
-    perfilSelecionado = role;
+const togglePassword =
+  document.getElementById(
+    "toggle-password"
+  );
 
-    const professorBtn = document.getElementById("opt-professor");
-    const alunoBtn = document.getElementById("opt-aluno");
+if (togglePassword) {
 
-    if (professorBtn) professorBtn.classList.toggle("active", role === "professor");
-    if (alunoBtn) alunoBtn.classList.toggle("active", role === "aluno");
+  togglePassword.addEventListener(
+    "click",
+    () => {
 
-    atualizarInterface();
+      const visivel =
+        elements.inpSenha.type ===
+        "text";
+
+      elements.inpSenha.type =
+        visivel
+          ? "password"
+          : "text";
+
+      togglePassword.innerHTML =
+        visivel
+          ? `
+          <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="22"
+              height="22"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2">
+
+              <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7S3.732 16.057 2.458 12z"/>
+
+              <circle
+                  cx="12"
+                  cy="12"
+                  r="3"/>
+
+          </svg>
+          `
+          : `
+          <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="22"
+              height="22"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2">
+
+              <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M17.94 17.94A10.94 10.94 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.95 10.95 0 012.88-4.568"/>
+
+              <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M1 1l22 22"/>
+
+              <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9.88 9.88A3 3 0 0014.12 14.12"/>
+
+          </svg>
+          `;
+    }
+  );
+
+}
+// ========================================
+// CONFIGURAÇÕES
+// ========================================
+
+const roleConfig = {
+  professor: {
+    placeholder: "Ex: professor@educar.rs.gov.br",
+    domain: "@educar",
+    errorMessage:
+      "Email inválido. O email do professor deve conter @educar."
+  },
+
+  aluno: {
+    placeholder: "Ex: aluno@estudante.rs.gov.br",
+    domain: "@estudante",
+    errorMessage:
+      "Email inválido. O email do aluno deve conter @estudante."
+  }
+};
+
+// ========================================
+// ESTADO
+// ========================================
+
+let role = null;
+
+// ========================================
+// LIMPAR ERRO
+// ========================================
+
+function clearError() {
+  elements.inpId.classList.remove("input-error");
+
+  const msg = document.getElementById(
+    "msg-email-invalido"
+  );
+
+  if (msg) {
+    msg.remove();
+  }
 }
 
-function atualizarInterface() {
-    const emailInput = document.getElementById("inp-id");
-    const helper = document.querySelector(".email-helper");
-    const erroMsg = document.getElementById("email-error");
+// ========================================
+// MOSTRAR ERRO
+// ========================================
 
-    if (emailInput && helper) {
-        if (perfilSelecionado === "professor") {
-            emailInput.placeholder = "nome@educar.rs.gov.br";
-            helper.textContent = "Use seu e-mail institucional (Ex: nome@educar.rs.gov.br)";
-        } else {
-            emailInput.placeholder = "nome@estudante.rs.gov.br";
-            helper.textContent = "Use seu e-mail institucional (Ex: nome@estudante.rs.gov.br)";
-        }
-    }
+function showError(message) {
+  clearError();
 
-    if (emailInput) emailInput.classList.remove("input-error");
-    if (erroMsg) erroMsg.style.display = "none";
+  elements.inpId.classList.add(
+    "input-error"
+  );
+
+  const msg =
+    document.createElement("span");
+
+  msg.id = "msg-email-invalido";
+
+  msg.textContent = message;
+
+  msg.style.color = "var(--error)";
+  msg.style.fontSize = "13px";
+  msg.style.marginTop = "5px";
+  msg.style.display = "block";
+
+  elements.inpId.insertAdjacentElement(
+    "afterend",
+    msg
+  );
 }
 
-function togglePassword() {
-    const senhaInput = document.getElementById("senha");
-    const eye = document.getElementById("eye");
-    if (!senhaInput || !eye) return;
+// ========================================
+// BOTÃO LOADING
+// ========================================
 
-    if (senhaInput.type === "password") {
-        senhaInput.type = "text";
-        eye.classList.replace("fa-eye", "fa-eye-slash");
-    } else {
-        senhaInput.type = "password";
-        eye.classList.replace("fa-eye-slash", "fa-eye");
-    }
+function setLoading(status) {
+  elements.btnEntrar.disabled =
+    status;
+
+  elements.btnEntrar.textContent =
+    status
+      ? "Verificando..."
+      : "Entrar";
 }
 
-async function handleLogin() {
-    const emailInput = document.getElementById("inp-id");
-    const senhaInput = document.getElementById("senha");
-    const submitBtn = document.querySelector(".btn-submit");
-    const erroMsg = document.getElementById("email-error");
+// ========================================
+// VALIDAR EMAIL POR PERFIL
+// ========================================
 
-    function mostrarErroLocal(m) {
-        emailInput.classList.add("input-error");
-        if (erroMsg) {
-            erroMsg.textContent = m;
-            erroMsg.style.display = "block";
-        }
+function validateRoleEmail(
+  email,
+  currentRole
+) {
+  const config =
+    roleConfig[currentRole];
+
+  if (!config) {
+    return false;
+  }
+
+  return email.includes(
+    config.domain
+  );
+}
+
+// ========================================
+// SELECIONAR PERFIL
+// ========================================
+
+window.selectRole = function (r) {
+  role = r;
+
+  elements.optProfessor.classList.toggle(
+    "active",
+    r === "professor"
+  );
+
+  elements.optAluno.classList.toggle(
+    "active",
+    r === "aluno"
+  );
+
+  clearError();
+
+  const config = roleConfig[r];
+
+  elements.lblId.textContent =
+    "E-mail Institucional";
+
+  elements.inpId.placeholder =
+    config.placeholder;
+
+  elements.inpId.type = "email";
+};
+
+// ========================================
+// MENSAGENS FIREBASE
+// ========================================
+
+const firebaseErrors = {
+  "auth/user-not-found":
+    "Nenhum usuário encontrado com esse email.",
+
+  "auth/wrong-password":
+    "Senha incorreta.",
+
+  "auth/invalid-email":
+    "Formato de email inválido.",
+
+  "auth/too-many-requests":
+    "Muitas tentativas. Tente novamente mais tarde."
+};
+
+// ========================================
+// LOGIN
+// ========================================
+
+window.handleLogin =
+  async function () {
+
+    // ===============================
+    // PERFIL
+    // ===============================
+
+    if (!role) {
+      alert(
+        "Selecione o perfil antes de continuar."
+      );
+
+      return;
     }
 
-    const email = emailInput?.value.trim();
-    const senha = senhaInput?.value.trim();
+    // ===============================
+    // CAMPOS
+    // ===============================
+
+    const email =
+      elements.inpId.value.trim();
+
+    const senha =
+      elements.inpSenha.value.trim();
+
+    // ===============================
+    // VALIDAÇÃO
+    // ===============================
 
     if (!email || !senha) {
-        alert("Preencha todos os campos.");
-        return;
+      alert(
+        "Preencha todos os campos."
+      );
+
+      return;
     }
 
-    const dominio = email.split("@")[1]?.toLowerCase();
-    if (perfilSelecionado === "professor" && dominio !== "educar.rs.gov.br") {
-        mostrarErroLocal("Professores devem utilizar @educar.rs.gov.br");
-        return;
-    }
-    if (perfilSelecionado === "aluno" && dominio !== "estudante.rs.gov.br") {
-        mostrarErroLocal("Alunos devem utilizar @estudante.rs.gov.br");
-        return;
+    clearError();
+
+    if (
+      !validateRoleEmail(
+        email,
+        role
+      )
+    ) {
+      showError(
+        roleConfig[role]
+          .errorMessage
+      );
+
+      return;
     }
 
-    if (submitBtn) {
-        submitBtn.textContent = "Verificando...";
-        submitBtn.disabled = true;
-    }
+    // ===============================
+    // LOGIN
+    // ===============================
+
+    setLoading(true);
 
     try {
-        await firebase.auth().signInWithEmailAndPassword(email, senha);
-        window.location.href = (perfilSelecionado === "professor")
-            ? "telaProfessor.html"
-            : "indexTelaAluno.html";
+      const response =
+        await signInWithEmailAndPassword(
+          auth,
+          email,
+          senha
+        );
+
+      console.log(
+        "Login realizado com sucesso"
+      );
+
+      console.log(
+        response.user
+      );
+
+      // ===========================
+      // REDIRECIONAMENTO
+      // ===========================
+
+      if (
+        role === "professor"
+      ) {
+        window.location.href =
+          "telaProfessor.html";
+
+        return;
+      }
+
+      if (
+        role === "aluno"
+      ) {
+        window.location.href =
+          "indexTelaAluno.html";
+
+        return;
+      }
+
     } catch (error) {
-        console.error("Erro:", error.code);
-        alert("E-mail ou senha incorretos.");
-        if (submitBtn) {
-            submitBtn.textContent = "Entrar";
-            submitBtn.disabled = false;
-        }
+
+      console.error(error);
+
+      const mensagem =
+        firebaseErrors[
+          error.code
+        ] ||
+        error.message ||
+        "Usuário ou senha inválidos.";
+
+      alert(mensagem);
+
+      setLoading(false);
     }
-}
+  };
