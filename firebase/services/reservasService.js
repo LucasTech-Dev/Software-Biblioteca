@@ -275,3 +275,27 @@ export async function excluirReserva(
   }
 
 }
+
+
+// ========================================
+// EXCLUIR TODAS RESERVAS PENDENTES
+// ========================================
+
+export async function excluirTodasReservasPendentes() {
+
+  const reservas =
+    await listarReservasPendentes();
+
+  for (const reserva of reservas) {
+
+    await deleteDoc(
+      doc(
+        db,
+        "reservas",
+        reserva.id
+      )
+    );
+
+  }
+
+}

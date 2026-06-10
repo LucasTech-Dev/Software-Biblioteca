@@ -403,3 +403,54 @@ export async function aprovarReserva({
   }
 
 }
+// ========================================
+// EXCLUIR EMPRÉSTIMO
+// ========================================
+
+export async function excluirEmprestimo(
+  emprestimoId
+) {
+
+  try {
+
+    await deleteDoc(
+      doc(
+        db,
+        "emprestimos",
+        emprestimoId
+      )
+    );
+
+    return true;
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    throw error;
+
+  }
+
+}
+
+
+// ========================================
+// EXCLUIR TODOS EMPRÉSTIMOS
+// ========================================
+
+export async function excluirTodosEmprestimos() {
+
+  const snapshot =
+    await getDocs(
+      collection(db, "emprestimos")
+    );
+
+  for (const item of snapshot.docs) {
+
+    await deleteDoc(item.ref);
+
+  }
+
+}

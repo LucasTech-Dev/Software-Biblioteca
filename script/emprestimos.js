@@ -1,13 +1,15 @@
 import {
   listarTodosEmprestimos,
-  aprovarReserva
+  aprovarReserva,
+  excluirTodosEmprestimos
 }
 from "../firebase/services/emprestimosService.js";
 
 
 import {
-  listarReservasPendentes,
-   excluirReserva
+   listarReservasPendentes,
+  excluirReserva,
+  excluirTodasReservasPendentes
 }
 from "../firebase/services/reservasService.js";
 
@@ -21,6 +23,10 @@ let EMPRESTIMOS = [];
 let RESERVAS = [];
 let filtroAtivo = "todos";
 
+const btnExcluirGeral =
+  document.getElementById(
+    "btnExcluirGeral"
+  ); 
 
 const modal =
   document.getElementById("modalAprovacao");
@@ -285,6 +291,21 @@ document
       filtroAtivo =
         btn.dataset.filter;
 
+       btnExcluirGeral.style.display =
+  "none";
+
+if (
+  filtroAtivo === "esperando" ||
+  filtroAtivo === "todos" ||
+  filtroAtivo === "ativo" ||
+  filtroAtivo === "atrasado"
+) {
+
+  btnExcluirGeral.style.display =
+    "inline-flex";
+
+}
+
       if (filtroAtivo === "esperando") {
 
         renderTabela(RESERVAS);
@@ -422,6 +443,8 @@ btnConfirmarModal.addEventListener(
 
     }
 
+
+
   }
 );
 
@@ -483,5 +506,54 @@ btnNegarModal.addEventListener(
 );
 
 
+btnExcluirGeral.addEventListener(
+  "click",
+  async () => {
+
+    const confirmar =
+      confirm(
+        "Deseja excluir todos os registros desta área?"
+      );
+
+    if (!confirmar) {
+      return;
+    }
+
+    try {
+
+      if (
+        filtroAtivo === "esperando"
+      ) {
+
+        await excluirTodasReservasPendentes();
+
+      }
+
+      else {
+
+        await excluirTodosEmprestimos();
+
+      }
+
+      await carregar();
+
+      alert(
+        "Registros removidos."
+      );
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+      alert(
+        "Erro ao excluir."
+      );
+
+    }
+
+  }
+);
 
 carregar();
