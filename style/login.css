@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&display=swap');
+
 :root {
     --navy: #001f3f;
     --cream: #fdf5e6;
@@ -171,7 +173,7 @@ body {
 .role-text strong {
     display: block;
 
-    font-family: 'EB Garamond', serif;
+    font-family: "Cinzel", "EB Garamond", serif;
 
     color: var(--navy);
     font-size: 28px;
@@ -429,4 +431,3 @@ body {
         z-index: 10;
     }
 }
-

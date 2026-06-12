@@ -5,17 +5,13 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Sistema Biblioteca Escolar — Acervo">
-  <title>BibliotecaEscolar — Acervo</title>
+  <meta name="description" content="Sistema Biblioteca Escolar - Novo livro">
+  <title>BibliotecaEscolar - Novo Livro</title>
   <link rel="stylesheet" href="style/addLivros.css">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 </head>
 
 <body>
-
-  <!-- ========================= -->
-  <!-- HEADER (compartilhado)    -->
-  <!-- ========================= -->
 
   <header>
     <div class="logo">
@@ -25,90 +21,12 @@
     <span class="header-meta">Versão 1.0</span>
   </header>
 
-  <!-- ========================= -->
-  <!-- PÁGINA: ACERVO            -->
-  <!-- ========================= -->
-
-  <div class="page active" id="page-acervo">
+  <div class="page active" id="page-adicionar">
 
     <nav class="breadcrumb">
-      <!-- CORREÇÃO: era href="#" que recarregava a página -->
-      <a href="javascript:void(0)" onclick="navegarPara('page-acervo')">Início</a>
+      <a href="telaProfessor.html">Início</a>
       <span class="breadcrumb-sep">›</span>
-      <span class="breadcrumb-current">Acervo</span>
-    </nav>
-
-    <div class="hero">
-      <h1>Acervo<br><span>Literário</span></h1>
-      <p class="hero-desc">Explore o catálogo completo da biblioteca. Pesquise por título, autor ou categoria e verifique a disponibilidade em tempo real.</p>
-    </div>
-
-    <div class="stats">
-      <div class="stat"><span class="stat-num" id="stat-total">0</span><span class="stat-label">Títulos</span></div>
-      <div class="stat"><span class="stat-num" id="stat-disp">0</span><span class="stat-label">Disponíveis</span></div>
-      <div class="stat"><span class="stat-num" id="stat-emp">0</span><span class="stat-label">Emprestados</span></div>
-      <div class="stat"><span class="stat-num" id="stat-res">0</span><span class="stat-label">Reservados</span></div>
-    </div>
-
-    <main>
-
-      <div class="toolbar">
-        <div class="toolbar-left">
-          <div class="search-wrapper">
-            <span class="search-icon">🔍</span>
-            <input class="search-input" id="search-input" type="search" placeholder="Buscar por título ou autor...">
-          </div>
-          <select class="filter-select" id="filter-categoria">
-            <option value="">Todas as categorias</option>
-            <option value="Literatura">Literatura</option>
-            <option value="Ciências">Ciências</option>
-            <option value="História">História</option>
-            <option value="Matemática">Matemática</option>
-            <option value="Filosofia">Filosofia</option>
-            <option value="Artes">Artes</option>
-          </select>
-        </div>
-        <div class="toolbar-right">
-          <div class="view-toggle">
-            <button class="view-btn active" id="btn-grid" onclick="setView('grid')" title="Grade">⊞</button>
-            <button class="view-btn" id="btn-list" onclick="setView('list')" title="Lista">☰</button>
-          </div>
-          <button class="btn-primary" onclick="navegarPara('page-adicionar')">
-            ＋ Novo livro
-          </button>
-        </div>
-      </div>
-
-      <div class="quick-filters">
-        <span class="quick-label">Status:</span>
-        <button class="chip active" data-status="" onclick="setStatus(this, '')">Todos</button>
-        <button class="chip" data-status="disponivel" onclick="setStatus(this, 'disponivel')">Disponíveis</button>
-        <button class="chip" data-status="emprestado" onclick="setStatus(this, 'emprestado')">Emprestados</button>
-        <button class="chip" data-status="reservado" onclick="setStatus(this, 'reservado')">Reservados</button>
-      </div>
-
-      <div class="books-grid" id="books-grid"></div>
-      <div class="pagination" id="pagination"></div>
-
-    </main>
-
-    <footer>
-      <span>BibliotecaEscolar — Sistema de Gestão &copy; 2025</span>
-      <span>Módulo: Acervo v1.0</span>
-    </footer>
-
-  </div>
-
-  <!-- ========================= -->
-  <!-- PÁGINA: ADICIONAR LIVRO   -->
-  <!-- ========================= -->
-
-  <div class="page" id="page-adicionar">
-
-    <nav class="breadcrumb">
-      <a href="javascript:void(0)" onclick="navegarPara('page-acervo')">Início</a>
-      <span class="breadcrumb-sep">›</span>
-      <a href="javascript:void(0)" onclick="navegarPara('page-acervo')">Acervo</a>
+      <a href="acervo.html">Acervo</a>
       <span class="breadcrumb-sep">›</span>
       <span class="breadcrumb-current">Novo Livro</span>
     </nav>
@@ -120,56 +38,38 @@
 
     <div class="add-main">
 
-      <!-- Painel de entrada -->
       <div class="add-panel">
         <div class="add-panel-field">
-          <label>Título do livro</label>
+          <label for="add-titulo">Título do livro</label>
           <input type="text" id="add-titulo" placeholder="Ex: Dom Casmurro">
         </div>
+
         <div class="add-panel-field">
-          <label>Autor</label>
+          <label for="add-autor">Autor</label>
           <input type="text" id="add-autor" placeholder="Ex: Machado de Assis">
         </div>
+
         <div class="add-panel-field">
-          <label>ISBN</label>
+          <label for="add-isbn">ISBN</label>
           <input type="text" id="add-isbn" placeholder="Ex: 9788535902775">
         </div>
-        <button class="btn-primary" onclick="adicionarLivro()" style="align-self:flex-end; padding: 10px 24px;">
+
+        <button class="btn-primary btn-add-book" onclick="adicionarLivro()">
           ＋ Adicionar
         </button>
       </div>
 
-      <!-- Catálogo de livros cadastrados -->
       <div class="added-section-title">Livros Cadastrados</div>
-
       <div class="catalogo-grid" id="catalogo-grid"></div>
 
     </div>
 
     <footer>
-      <span>BibliotecaEscolar — Sistema de Gestão &copy; 2025</span>
+      <span>BibliotecaEscolar - Sistema de Gestão &copy; 2025</span>
       <span>Módulo: Acervo v1.0</span>
     </footer>
 
   </div>
-
-  <!-- ========================= -->
-  <!-- MODAL DETALHES            -->
-  <!-- ========================= -->
-
-  <div class="modal-overlay" id="modal-overlay" onclick="closeModalOnOverlay(event)">
-    <div class="modal" id="modal">
-      <div class="modal-header">
-        <span class="modal-title" id="modal-title">Detalhes do livro</span>
-        <button class="modal-close" onclick="closeModal()">✕</button>
-      </div>
-      <div class="modal-body" id="modal-body"></div>
-    </div>
-  </div>
-
-  <!-- ========================= -->
-  <!-- SCRIPT                    -->
-  <!-- ========================= -->
 
   <script src="script/addLivros.js"></script>
 

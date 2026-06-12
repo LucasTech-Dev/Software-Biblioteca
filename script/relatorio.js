@@ -129,7 +129,7 @@ function popularAtrasos() {
     tbody.innerHTML = `
       <tr>
         <td colspan="4" style="text-align:center; color: var(--ink-muted); padding:24px;">
-          Nenhum atraso registrado 🎉
+          Nenhum atraso registrado
         </td>
       </tr>`;
   } else {
@@ -217,11 +217,11 @@ function iniciarGrafico() {
 // EXPORTAÇÕES
 // ------------------------------------------------------------------
 document.getElementById("btnPDF").addEventListener("click", () => {
-  alert("📄 Funcionalidade de exportar PDF será integrada em breve!");
+  alert("Funcionalidade de exportar PDF será integrada em breve!");
 });
 
 document.getElementById("btnExcel").addEventListener("click", () => {
-  alert("📊 Funcionalidade de exportar Excel será integrada em breve!");
+  alert("Funcionalidade de exportar Excel será integrada em breve!");
 });
 
 // ------------------------------------------------------------------

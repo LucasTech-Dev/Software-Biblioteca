@@ -1,80 +1,92 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BibliotecaEscolar — Relatórios</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <meta name="description" content="Sistema Biblioteca Escolar - Relatórios">
+  <meta name="author" content="Lucas Sant'Ana Dias">
+
+  <title>BibliotecaEscolar - Relatórios</title>
+
   <link rel="stylesheet" href="style/relatorio.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+
 <body>
 
-  <!-- HEADER -->
   <header>
     <div class="logo">
-      <span class="logo-icon">📚</span>
-      Biblioteca Escolar
+      <span class="logo-mark">Instituto Estadual Riachuelo</span>
+      <span class="logo-tag">Biblioteca Online</span>
     </div>
-    <nav class="header-nav">
-      <span>Relatórios</span>
-    </nav>
+
+    <span class="header-meta">Versão 1.0</span>
   </header>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-inner">
-      <div class="hero-badge">2026</div>
-      <h1>Relatórios<br><em>da Biblioteca</em></h1>
-      <p>Gere gráficos, tabelas e exportações para entender o uso da biblioteca e otimizar a gestão.</p>
-    </div>
-    <div class="hero-deco" aria-hidden="true">
-      <span>◈</span><span>◈</span><span>◈</span>
-    </div>
-  </section>
+  <nav class="breadcrumb">
+    <a href="telaProfessor.html">Início</a>
+    <span class="breadcrumb-sep">›</span>
+    <span class="breadcrumb-current">Relatórios</span>
+  </nav>
 
-  <!-- MAIN -->
+  <div class="hero">
+    <h1>
+      Relatórios<br>
+      <span>da Biblioteca</span>
+    </h1>
+
+    <p class="hero-desc">
+      Acompanhe empréstimos, atrasos e devoluções para entender o uso da
+      biblioteca e apoiar a gestão escolar.
+    </p>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <span class="stat-num" id="kpiTotal">0</span>
+      <span class="stat-label">Empréstimos</span>
+    </div>
+
+    <div class="stat">
+      <span class="stat-num stat-danger" id="kpiAtrasos">0</span>
+      <span class="stat-label">Em Atraso</span>
+    </div>
+
+    <div class="stat">
+      <span class="stat-num stat-success" id="kpiDevolvidos">0</span>
+      <span class="stat-label">Devolvidos</span>
+    </div>
+
+    <div class="stat">
+      <span class="stat-num" id="kpiAndamento">0</span>
+      <span class="stat-label">Em Andamento</span>
+    </div>
+  </div>
+
   <main>
+    <div class="report-grid">
 
-    <!-- KPIs -->
-    <section class="kpi-row">
-      <div class="kpi-card">
-        <span class="kpi-number" id="kpiTotal">0</span>
-        <span class="kpi-label">Empréstimos Totais</span>
-      </div>
-      <div class="kpi-card kpi-warn">
-        <span class="kpi-number" id="kpiAtrasos">0</span>
-        <span class="kpi-label">Em Atraso</span>
-      </div>
-      <div class="kpi-card kpi-ok">
-        <span class="kpi-number" id="kpiDevolvidos">0</span>
-        <span class="kpi-label">Devolvidos</span>
-      </div>
-      <div class="kpi-card">
-        <span class="kpi-number" id="kpiAndamento">0</span>
-        <span class="kpi-label">Em Andamento</span>
-      </div>
-    </section>
-
-    <div class="grid">
-
-      <!-- Ranking de livros -->
-      <div class="card card-wide">
-        <div class="card-header">
+      <section class="panel panel-wide">
+        <div class="panel-header">
           <h2>Ranking de Livros Mais Lidos</h2>
-          <span class="card-tag">Top 5</span>
+          <span class="panel-tag">Top 5</span>
         </div>
+
         <div class="chart-wrap">
           <canvas id="graficoRanking"></canvas>
         </div>
-      </div>
+      </section>
 
-      <!-- Histórico de empréstimos -->
-      <div class="card card-wide">
-        <div class="card-header">
+      <section class="panel panel-wide">
+        <div class="panel-header">
           <h2>Histórico de Empréstimos</h2>
-          <span class="card-tag" id="tagHistorico">— registros</span>
+          <span class="panel-tag" id="tagHistorico">0 registros</span>
         </div>
+
         <div class="table-scroll">
           <table>
             <thead>
@@ -86,19 +98,17 @@
                 <th>Status</th>
               </tr>
             </thead>
-            <tbody id="tabelaHistorico">
-              <!-- preenchido via JS -->
-            </tbody>
+            <tbody id="tabelaHistorico"></tbody>
           </table>
         </div>
-      </div>
+      </section>
 
-      <!-- Relatório de atrasos -->
-      <div class="card">
-        <div class="card-header">
+      <section class="panel">
+        <div class="panel-header">
           <h2>Atrasos e Pendências</h2>
-          <span class="card-tag card-tag-warn" id="tagAtrasos">— pendentes</span>
+          <span class="panel-tag panel-tag-danger" id="tagAtrasos">0 pendentes</span>
         </div>
+
         <div class="table-scroll">
           <table>
             <thead>
@@ -109,38 +119,35 @@
                 <th>Status</th>
               </tr>
             </thead>
-            <tbody id="tabelaAtrasos">
-              <!-- preenchido via JS -->
-            </tbody>
+            <tbody id="tabelaAtrasos"></tbody>
           </table>
         </div>
-      </div>
+      </section>
 
-      <!-- Exportações -->
-      <div class="card card-export">
-        <div class="card-header">
+      <section class="panel export-panel">
+        <div class="panel-header">
           <h2>Exportação de Dados</h2>
         </div>
-        <p class="export-desc">Baixe os relatórios nos formatos mais usados pela gestão escolar.</p>
+
+        <p class="export-desc">
+          Baixe os relatórios nos formatos mais usados pela gestão escolar.
+        </p>
+
         <div class="export-buttons">
-          <button class="btn btn-pdf" id="btnPDF">
-            <span class="btn-icon">⬇</span> Exportar PDF
-          </button>
-          <button class="btn btn-excel" id="btnExcel">
-            <span class="btn-icon">⬇</span> Exportar Excel
-          </button>
+          <button class="btn btn-primary" id="btnPDF">Exportar PDF</button>
+          <button class="btn btn-secondary" id="btnExcel">Exportar Excel</button>
         </div>
-      </div>
+      </section>
 
     </div>
   </main>
 
-  <!-- FOOTER -->
   <footer>
-    <span class="footer-logo">BibliotecaEscolar</span>
-    <span>© 2026 — Relatórios</span>
+    <span>BibliotecaEscolar - Sistema de Gestão &copy; 2025</span>
+    <span>Módulo: Relatórios v1.0</span>
   </footer>
 
   <script src="script/relatorio.js"></script>
+
 </body>
 </html>
