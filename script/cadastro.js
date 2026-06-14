@@ -186,6 +186,11 @@ window.handleCadastro = async function() {
 
       totalReservas: 0,
 
+      // VISUALIZAÇÃO
+      emprestimosOcultos: [],
+
+      reservasOcultas: [],
+
 
       // ÚLTIMA ATIVIDADE
       ultimoLogin: null,
