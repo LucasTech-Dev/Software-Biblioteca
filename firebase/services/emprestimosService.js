@@ -7,7 +7,7 @@ import {
   where,
   updateDoc,
   getDoc,
-  doc,
+  doc, 
   deleteDoc,
   increment,
   serverTimestamp,
@@ -450,6 +450,45 @@ export async function excluirTodosEmprestimos() {
   for (const item of snapshot.docs) {
 
     await deleteDoc(item.ref);
+
+  }
+
+}
+
+
+// ========================================
+// MARCAR COMO DEVOLVIDO
+// ========================================
+
+export async function marcarComoDevolvido(
+  emprestimoId
+) {
+
+  try {
+
+    const emprestimoRef =
+      doc(
+        db,
+        "emprestimos",
+        emprestimoId
+      );
+
+    await updateDoc(
+      emprestimoRef,
+      {
+        status: "devolvido"
+      }
+    );
+
+    return true;
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    throw error;
 
   }
 

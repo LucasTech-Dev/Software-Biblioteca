@@ -1,19 +1,25 @@
 import {
   listarTodosEmprestimos,
   aprovarReserva,
-  excluirTodosEmprestimos
+  marcarComoDevolvido
 }
 from "../firebase/services/emprestimosService.js";
 
 
 import {
    listarReservasPendentes,
-  excluirReserva,
-  excluirTodasReservasPendentes
+  excluirReserva
 }
 from "../firebase/services/reservasService.js";
 
+import {
+  obterUsuarioAtual,
+  ocultarEmprestimos,
+  ocultarReservas
+}
+from "../firebase/services/usuariosService.js";
 
+ 
 // ========================================
 
 const tbody =
@@ -22,6 +28,9 @@ const tbody =
 let EMPRESTIMOS = [];
 let RESERVAS = [];
 let filtroAtivo = "todos";
+
+let EMPRESTIMOS_OCULTOS = [];
+let RESERVAS_OCULTAS = [];
 
 const btnExcluirGeral =
   document.getElementById(
@@ -54,7 +63,41 @@ const btnConfirmarModal =
     "btnNegarModal"
   );
 
+const modalDevolucao =
+  document.getElementById(
+    "modalDevolucao"
+  );
+
+const devolucaoAluno =
+  document.getElementById(
+    "devolucaoAluno"
+  );
+
+const devolucaoLivro =
+  document.getElementById(
+    "devolucaoLivro"
+  );
+
+const devolucaoPrazo =
+  document.getElementById(
+    "devolucaoPrazo"
+  );
+
+const btnCancelarDevolucao =
+  document.getElementById(
+    "btnCancelarDevolucao"
+  );
+
+const btnConfirmarDevolucao =
+  document.getElementById(
+    "btnConfirmarDevolucao"
+  );
+
 let reservaSelecionada = null;
+
+let emprestimoSelecionado = null;
+
+let modoDevolucao = false;
 
 // ========================================
 
@@ -66,9 +109,17 @@ async function carregar() {
   RESERVAS =
     await listarReservasPendentes();
 
+  const usuario =
+    await obterUsuarioAtual();
+
+  EMPRESTIMOS_OCULTOS =
+    usuario?.emprestimosOcultos || [];
+
+  RESERVAS_OCULTAS =
+    usuario?.reservasOcultas || [];
+
   console.log("EMPRESTIMOS", EMPRESTIMOS);
   console.log("RESERVAS", RESERVAS);
-  // CORREÇÃO 4: log para conferir reservas pendentes
   console.log(
     "RESERVAS PENDENTES:",
     RESERVAS.length
@@ -84,7 +135,29 @@ function renderTabela(lista) {
 
   tbody.innerHTML = "";
 
-  const listaFiltrada = lista.filter(emp => {
+  const ocultos =
+    filtroAtivo === "esperando"
+      ? RESERVAS_OCULTAS
+      : EMPRESTIMOS_OCULTOS;
+
+  const listaVisivel =
+    lista.filter(emp =>
+
+      !ocultos.includes(emp.id)
+
+      &&
+
+      emp.status !== "devolvido"
+
+    );
+
+  const listaFiltrada = listaVisivel.filter(emp => {
+
+    if (modoDevolucao) {
+
+      return emp.status !== "devolvido";
+
+    }
 
     if (
       filtroAtivo === "todos" ||
@@ -129,7 +202,6 @@ function renderTabela(lista) {
 
   listaFiltrada.forEach(emp => {
 
-    // CORREÇÃO 3: status baseado em emp.status, não no filtroAtivo
     let status = "Em andamento";
     let statusClass = "active";
 
@@ -158,6 +230,18 @@ function renderTabela(lista) {
 
     const tr =
   document.createElement("tr");
+
+if (modoDevolucao) {
+
+  tr.style.cursor = "pointer";
+
+  tr.addEventListener("click", () => {
+
+    abrirModalDevolucao(emp);
+
+  });
+
+}
 
 if (filtroAtivo === "esperando") {
 
@@ -291,15 +375,30 @@ document
       filtroAtivo =
         btn.dataset.filter;
 
-       btnExcluirGeral.style.display =
-  "none";
+      const textosBotao = {
+        todos:
+          "🗑 Apagar Todos",
+        ativo:
+          "🗑 Apagar Empréstimos",
+        atrasado:
+          "🗑 Apagar Atrasados",
+        esperando:
+          "🗑 Apagar Reservas"
+      };
+
+      btnExcluirGeral.textContent =
+        textosBotao[filtroAtivo] ||
+        "🗑 Apagar";
 
 if (
-  filtroAtivo === "esperando" ||
-  filtroAtivo === "todos" ||
-  filtroAtivo === "ativo" ||
-  filtroAtivo === "atrasado"
+  filtroAtivo === "devolucao"
 ) {
+
+  btnExcluirGeral.style.display =
+    "none";
+
+}
+else {
 
   btnExcluirGeral.style.display =
     "inline-flex";
@@ -308,29 +407,31 @@ if (
 
       if (filtroAtivo === "esperando") {
 
+        modoDevolucao = false;
+
         renderTabela(RESERVAS);
+
         return;
 
       }
+
+      if (filtroAtivo === "devolucao") {
+
+        modoDevolucao = true;
+
+        renderTabela(EMPRESTIMOS);
+
+        return;
+
+      }
+
+      modoDevolucao = false;
 
       renderTabela(EMPRESTIMOS);
 
     });
 
   });
-
-// ========================================
-
-document
-  .getElementById("btnDevolucao") 
-  ?.addEventListener("click", () => {
-
-    window.location.href =
-      "./devolucao.html";
-
-  });
-
-// ========================================
 
 // ========================================
 // APROVAR RESERVA
@@ -371,7 +472,6 @@ btnCancelarModal.addEventListener(
   }
 );
 
-// CORREÇÃO 1: apenas UM listener no btnConfirmarModal
 btnConfirmarModal.addEventListener(
   "click",
   async () => {
@@ -443,8 +543,6 @@ btnConfirmarModal.addEventListener(
 
     }
 
-
-
   }
 );
 
@@ -476,7 +574,6 @@ btnNegarModal.addEventListener(
         "show"
       );
 
-      // CORREÇÃO 2: forçar filtroAtivo antes de renderizar
       RESERVAS =
         await listarReservasPendentes();
 
@@ -512,7 +609,7 @@ btnExcluirGeral.addEventListener(
 
     const confirmar =
       confirm(
-        "Deseja excluir todos os registros desta área?"
+        `Deseja realmente ${btnExcluirGeral.textContent.toLowerCase()}?`
       );
 
     if (!confirmar) {
@@ -521,24 +618,40 @@ btnExcluirGeral.addEventListener(
 
     try {
 
-      if (
-        filtroAtivo === "esperando"
-      ) {
+      if (filtroAtivo === "esperando") {
 
-        await excluirTodasReservasPendentes();
+        const ids =
+          RESERVAS
+            .filter(r => !RESERVAS_OCULTAS.includes(r.id))
+            .map(r => r.id);
+
+        await ocultarReservas(ids);
+
+        RESERVAS_OCULTAS =
+          [...RESERVAS_OCULTAS, ...ids];
+
+        renderTabela(RESERVAS);
 
       }
 
       else {
 
-        await excluirTodosEmprestimos();
+        const ids =
+          EMPRESTIMOS
+            .filter(e => !EMPRESTIMOS_OCULTOS.includes(e.id))
+            .map(e => e.id);
+
+        await ocultarEmprestimos(ids);
+
+        EMPRESTIMOS_OCULTOS =
+          [...EMPRESTIMOS_OCULTOS, ...ids];
+
+        renderTabela(EMPRESTIMOS);
 
       }
 
-      await carregar();
-
       alert(
-        "Registros removidos."
+        "Registros apagados com sucesso."
       );
 
     }
@@ -548,12 +661,105 @@ btnExcluirGeral.addEventListener(
       console.error(error);
 
       alert(
-        "Erro ao excluir."
+        "Erro ao ocultar registros."
       );
 
     }
 
   }
 );
+
+
+// ========================================
+// REGISTRAR DEVOLUÇÃO
+// ========================================
+
+function abrirModalDevolucao(
+  emprestimo
+) {
+
+  emprestimoSelecionado =
+    emprestimo;
+
+  devolucaoAluno.textContent =
+    emprestimo.nomeUsuario;
+
+  devolucaoLivro.textContent =
+    emprestimo.tituloLivro;
+
+  devolucaoPrazo.textContent =
+    formatar(
+      emprestimo.prazoEntrega
+    );
+
+  modalDevolucao
+    .classList
+    .add("show");
+
+}
+
+btnCancelarDevolucao
+  .addEventListener(
+    "click",
+    () => {
+
+      modalDevolucao
+        .classList
+        .remove("show");
+
+    }
+  );
+
+btnConfirmarDevolucao
+  .addEventListener(
+    "click",
+    async () => {
+
+      if (
+        !emprestimoSelecionado
+      ) {
+        return;
+      }
+
+      try {
+
+        await marcarComoDevolvido(
+          emprestimoSelecionado.id
+        );
+
+        modalDevolucao
+          .classList
+          .remove("show");
+
+        await carregar();
+
+        filtroAtivo =
+          "devolucao";
+
+        modoDevolucao =
+          true;
+
+        renderTabela(
+          EMPRESTIMOS
+        );
+
+        alert(
+          "Livro devolvido com sucesso."
+        );
+
+      }
+
+      catch (error) {
+
+        console.error(error);
+
+        alert(
+          "Erro ao registrar devolução."
+        );
+
+      }
+
+    }
+  );
 
 carregar();

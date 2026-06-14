@@ -6,8 +6,8 @@ import {
   query,
   where,
   updateDoc,
-  doc,
-  deleteDoc,
+  doc, 
+  deleteDoc, 
   increment,
   serverTimestamp,
   Timestamp

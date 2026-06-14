@@ -18,6 +18,11 @@ import {
 }
 from "../firebase/services/reservasService.js";
 
+import {
+  obterUsuario
+}
+from "../firebase/services/usuariosService.js";
+
 // ========================================
 let RESERVAS = [];
 
@@ -26,6 +31,10 @@ let EMPRESTIMOS = [];
 let filtroAtivo = "todos";
 
 let termoBusca = "";
+
+// CORREÇÃO 5: ocultos do aluno
+let EMPRESTIMOS_OCULTOS = [];
+let RESERVAS_OCULTAS = [];
 
 const loanList =
   document.getElementById("loan-list");
@@ -47,7 +56,6 @@ EMPRESTIMOS =
 RESERVAS =
   await listarReservasUsuario(user.uid);
 
-renderizarLista();
   // ========================================
   // DADOS DO USUÁRIO
   // ========================================
@@ -55,6 +63,13 @@ renderizarLista();
   const usuarioRef = doc(db, "usuarios", user.uid);
   const usuarioSnap = await getDoc(usuarioRef);
   const usuario = usuarioSnap.data();
+
+  // CORREÇÃO 5: carregar listas de ocultos do aluno
+  EMPRESTIMOS_OCULTOS =
+    usuario?.emprestimosOcultos || [];
+
+  RESERVAS_OCULTAS =
+    usuario?.reservasOcultas || [];
 
   document.getElementById("nomeUsuario").innerText = usuario.nome;
   document.getElementById("dadosUsuario").innerText =
@@ -74,6 +89,8 @@ renderizarLista();
   iniciais.toUpperCase();
   // ========================================
 
+renderizarLista();
+
 // ========================================
 });
 
@@ -82,6 +99,28 @@ function formatar(timestamp) {
   return timestamp.toDate().toLocaleDateString("pt-BR"); 
 }
 
+
+function obterStatus(item) {
+
+  if (item.status === "esperando") {
+    return "Reserva";
+  }
+
+  if (!item.prazoEntrega) {
+    return item.status;
+  }
+
+  const hoje = new Date();
+
+  if (hoje > item.prazoEntrega.toDate()) {
+    return "atrasado";
+  }
+
+  return "ativo";
+
+}
+
+
 function renderizarLista() {
 
   console.log(EMPRESTIMOS);
@@ -89,28 +128,63 @@ function renderizarLista() {
   const lista =
     document.getElementById("loan-list");
 
+  // CORREÇÃO 5: filtrar ocultos antes de montar a origem
+  const emprestimosVisiveis =
+    EMPRESTIMOS.filter(item =>
+      !EMPRESTIMOS_OCULTOS.includes(item.id)
+    );
+
+  const reservasVisiveis =
+    RESERVAS.filter(item =>
+      !RESERVAS_OCULTAS.includes(item.id)
+    );
+
 let origem = [];
 
 if (filtroAtivo === "todos") {
 
   origem = [
-    ...RESERVAS,
-    ...EMPRESTIMOS
+    ...reservasVisiveis,
+    ...emprestimosVisiveis
   ];
 
 }
 
 else if (filtroAtivo === "reserva") {
 
-  origem = RESERVAS;
+  origem = reservasVisiveis;
 
 }
 
-else {
+else if (filtroAtivo === "ativo") {
 
-  origem = EMPRESTIMOS.filter(item =>
-    item.status === filtroAtivo
-  );
+  origem = emprestimosVisiveis.filter(item => {
+
+    if (!item.prazoEntrega) {
+      return false;
+    }
+
+    const hoje = new Date();
+
+    return hoje <= item.prazoEntrega.toDate();
+
+  });
+
+}
+
+else if (filtroAtivo === "atrasado") {
+
+  origem = emprestimosVisiveis.filter(item => {
+
+    if (!item.prazoEntrega) {
+      return false;
+    }
+
+    const hoje = new Date();
+
+    return hoje > item.prazoEntrega.toDate();
+
+  });
 
 }
 
@@ -176,7 +250,7 @@ const itens =
 
             <strong>
 
-              ${item.status}
+              ${obterStatus(item)}
 
             </strong>
 
@@ -202,7 +276,7 @@ const itens =
 
         <span class="badge badge-active">
 
-          ${item.status}
+          ${obterStatus(item)}
 
         </span>
 

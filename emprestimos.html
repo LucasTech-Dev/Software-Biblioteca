@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="style/emprestimos.css">
 
   <title>BibliotecaEscolar — Empréstimos</title>
-
+ 
   <!-- FONTS -->
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
@@ -122,7 +122,7 @@
 
   <button
     class="btn btn-secondary"
-    id="btnDevolucao">
+    data-filter="devolucao">
     ↩️ Registrar Devolução
   </button>
 
@@ -233,6 +233,53 @@
   </div>
 
 </div>
+
+<div id="modalDevolucao" class="modal">
+
+  <div class="modal-content">
+
+    <h2>
+      Registrar Devolução
+    </h2>
+
+    <p>
+      <strong>Aluno:</strong>
+      <span id="devolucaoAluno"></span>
+    </p>
+
+    <p>
+      <strong>Livro:</strong>
+      <span id="devolucaoLivro"></span>
+    </p>
+
+    <p>
+      <strong>Prazo:</strong>
+      <span id="devolucaoPrazo"></span>
+    </p>
+
+    <div class="modal-actions">
+
+      <button
+        id="btnCancelarDevolucao"
+        class="btn btn-secondary">
+
+        Cancelar
+
+      </button>
+
+      <button
+        id="btnConfirmarDevolucao"
+        class="btn btn-primary">
+
+        Marcar como devolvido
+
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
     
 
 
@@ -244,4 +291,4 @@
 </script>
 </body>
 
-</html>  
+</html>
