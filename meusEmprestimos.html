@@ -63,97 +63,70 @@
 
   </div>
 
-  <!-- STATS -->
+  <!-- SEARCH -->
 
-  <!-- <div class="stats">
+  <div class="toolbar">
 
-    <div class="stat">
+    <input
+      id="searchInput"
+      type="text"
+      placeholder="Buscar livro..."
+    >
 
-      <div class="stat-label">
-        Em andamento
-      </div>
+  </div>
 
-      <div class="stat-val blue" id="s-active">
-        0
-      </div>
+  <!-- FILTROS -->
 
-    </div>
+  <div class="filters">
 
-    <div class="stat">
+    <button
+      class="chip active"
+      data-filter="todos">
+      Todos
+    </button>
 
-      <div class="stat-label">
-        Atrasados
-      </div>
+    <button
+      class="chip"
+      data-filter="reserva">
+      Em análise
+    </button>
 
-      <div class="stat-val red" id="s-delayed">
-        0
-      </div>
+    <button
+      class="chip"
+      data-filter="ativo">
+      Minhas Retiradas
+    </button>
 
-    </div>
+    <button
+      class="chip"
+      data-filter="atrasado">
+      Atrasados
+    </button>
 
-    <div class="stat">
+    <button
+      class="chip"
+      data-filter="devolvido">
+      Devolvidos
+    </button>
 
-      <div class="stat-label">
-        Reservas
-      </div>
+  </div>
 
-      <div class="stat-val green" id="s-reservas">
-        0
-      </div>
+  <!-- BOTÃO APAGAR -->
 
-    </div>
+  <div class="actions-bar">
 
-  </div> -->
-      
+    <button
+      id="btnApagar"
+      class="btn-apagar"
+      style="display:none;">
+      🗑 Apagar
+    </button>
 
-<div class="toolbar">
-
-  <input
-    id="searchInput"
-    type="text"
-    placeholder="Buscar livro..."
-  >
-
-</div>
-
-<div class="filters">
-
-  <button
-    class="chip active"
-    data-filter="todos">
-    Todos
-  </button>
-
-  <button
-    class="chip"
-    data-filter="reserva">
-   Em análise
-  </button>
-
- <button
-  class="chip"
-  data-filter="ativo">
-  Minhas Retiradas
-</button>
-
-  <button
-    class="chip"
-    data-filter="atrasado">
-    Atrasados
-  </button>
-
-  <button
-    class="chip"
-    data-filter="devolvido">
-    Devolvidos
-  </button>
-
-</div>
-
+  </div>
 
   <!-- LISTA -->
 
-  <main> 
+  <main>
 
     <div class="loan-list" id="loan-list"></div>
 
@@ -161,6 +134,6 @@
 
   <script type="module" src="script/meusEmprestimos.js"></script>
 
-</body> 
+</body>
 
 </html>

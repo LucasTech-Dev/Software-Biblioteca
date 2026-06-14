@@ -15,14 +15,6 @@
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
     rel="stylesheet">
 
-
-
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style/emprestimos.css">
-  <title>Empréstimos</title>
-  
 </head>
 
 <body>
@@ -38,7 +30,6 @@
 
   <div class="hero">
 
-
     <h1>
       Controle de <span>Empréstimos</span><br>
       e <span>Devoluções</span>
@@ -50,245 +41,201 @@
 
   </div>
 
-  <!-- MAIN -->
+  <!-- SEARCH -->
 
-
-<div style="
-  background: #FFFFFF;
-  padding: 16px 20px;
-  border-bottom: 1px solid #E2E8F0;
-">
   <div style="
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: #F4F7FB;
-    border: 1px solid #E2E8F0;
-    border-radius: 8px;
-    padding: 0 14px;
+    background: #FFFFFF;
+    padding: 16px 20px;
+    border-bottom: 1px solid #E2E8F0;
   ">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-      stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-      style="flex-shrink:0;">
-      <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-    </svg>
-    <input
-      type="text"
-      id="searchInput"
-      placeholder="Pesquisar aluno, turma ou livro..."
-      style="
-        width: 100%;
-        padding: 11px 0;
-        border: none;
-        background: transparent;
-        font-family: 'DM Sans', sans-serif;
-        font-size: 13px;
-        color: #0A0F1C;
-        outline: none;
-      "
-    > 
+    <div style="
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #F4F7FB;
+      border: 1px solid #E2E8F0;
+      border-radius: 8px;
+      padding: 0 14px;
+    ">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+        stroke="#334155" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+        style="flex-shrink:0;">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="Pesquisar aluno, turma ou livro..."
+        style="
+          width: 100%;
+          padding: 11px 0;
+          border: none;
+          background: transparent;
+          font-family: 'DM Sans', sans-serif;
+          font-size: 13px;
+          color: #0A0F1C;
+          outline: none;
+        "
+      >
+    </div>
   </div>
-</div>
-
-
 
   <main>
 
     <div class="actions">
 
-  <button
-  class="btn btn-secondary"
-  data-filter="esperando">
-  ➕ Novo Empréstimo
-</button>
- 
-  <button
-  class="btn btn-secondary active"
-  data-filter="todos">
-  📚 Todos
-</button>
+      <button
+        class="btn btn-secondary"
+        data-filter="esperando">
+        ➕ Novo Empréstimo
+      </button>
 
-  <button
-    class="btn btn-secondary"
-    data-filter="ativo">
-    📖 Emprestados
-  </button>
+      <button
+        class="btn btn-secondary active"
+        data-filter="todos">
+        📚 Todos
+      </button>
 
-  <button
-    class="btn btn-secondary"
-    data-filter="atrasado">
-    ⚠️ Atrasados
-  </button>
+      <button
+        class="btn btn-secondary"
+        data-filter="ativo">
+        📖 Emprestados
+      </button>
 
-  <button
-    class="btn btn-secondary"
-    data-filter="devolucao">
-    ↩️ Registrar Devolução
-  </button>
+      <button
+        class="btn btn-secondary"
+        data-filter="atrasado">
+        ⚠️ Atrasados
+      </button>
 
-  <button
-  class="btn btn-danger"
-  id="btnExcluirGeral"
-  style="display:none;">
-  🗑 Excluir Tudo
-</button>
+      <!-- ETAPA 1: texto atualizado -->
+      <button
+        class="btn btn-secondary"
+        data-filter="devolucao">
+        ↩️ Devoluções / Devolvidos
+      </button>
 
-</div>
-  
+      <button
+        class="btn btn-danger"
+        id="btnExcluirGeral"
+        style="display:none;">
+        🗑 Excluir Tudo
+      </button>
+
+    </div>
 
     <!-- TABLE -->
 
     <div class="card">
- 
+
       <table>
 
         <thead>
           <tr>
             <th>Aluno</th>
-<th>Turma</th>
-<th>Livro</th>
-<th>Retirada</th>
-<th>Devolução</th>
-<th>Status</th>
+            <th>Turma</th>
+            <th>Livro</th>
+            <th>Retirada</th>
+            <th>Devolução</th>
+            <th>Status</th>
           </tr>
         </thead>
 
         <tbody>
-
-          <tr>
-            <!-- <td>Maria Oliveira</td>
-            <td>Dom Casmurro</td>
-            <td>10/05/2026</td>
-            <td>17/05/2026</td>
-            <td><span class="status delayed">Atrasado</span></td> -->
-          </tr>
-
+          <tr></tr>
         </tbody>
 
       </table>
 
     </div>
 
-  </main> 
+  </main>
 
-  <!-- SCRIPT -->
+  <!-- MODAL APROVAÇÃO -->
 
+  <div id="modalAprovacao" class="modal">
 
+    <div class="modal-content">
 
-<div id="modalAprovacao" class="modal">
+      <h2>Aprovar Empréstimo</h2>
 
-  <div class="modal-content">
+      <p>
+        <strong>Aluno:</strong>
+        <span id="modalAluno"></span>
+      </p>
 
-    <h2>Aprovar Empréstimo</h2>
+      <p>
+        <strong>Livro:</strong>
+        <span id="modalLivro"></span>
+      </p>
 
-    <p>
-      <strong>Aluno:</strong>
-      <span id="modalAluno"></span>
-    </p>
+      <label>Data de Retirada</label>
+      <input type="date" id="dataRetirada">
 
-    <p>
-      <strong>Livro:</strong>
-      <span id="modalLivro"></span>
-    </p>
+      <label>Data de Entrega</label>
+      <input type="date" id="dataEntrega">
 
-    <label>
-      Data de Retirada
-    </label>
+      <div class="modal-actions">
 
-    <input
-      type="date"
-      id="dataRetirada"
-    >
+        <button id="btnNegarModal" class="btn btn-danger">
+          Negar
+        </button>
 
-    <label>
-      Data de Entrega
-    </label>
+        <button id="btnCancelarModal" class="btn btn-secondary">
+          Cancelar
+        </button>
 
-    <input
-      type="date"
-      id="dataEntrega"
-    >
+        <button id="btnConfirmarModal" class="btn btn-primary">
+          Confirmar
+        </button>
 
-    <div class="modal-actions">
-
-  <button
-    id="btnNegarModal"
-    class="btn btn-danger">
-    Negar
-  </button>
-
-  <button
-    id="btnCancelarModal"
-    class="btn btn-secondary">
-    Cancelar
-  </button>
-
-  <button
-    id="btnConfirmarModal"
-    class="btn btn-primary">
-    Confirmar
-  </button>
-
-</div>
-  </div>
-
-</div>
-
-<div id="modalDevolucao" class="modal">
-
-  <div class="modal-content">
-
-    <h2>
-      Registrar Devolução
-    </h2>
-
-    <p>
-      <strong>Aluno:</strong>
-      <span id="devolucaoAluno"></span>
-    </p>
-
-    <p>
-      <strong>Livro:</strong>
-      <span id="devolucaoLivro"></span>
-    </p>
-
-    <p>
-      <strong>Prazo:</strong>
-      <span id="devolucaoPrazo"></span>
-    </p>
-
-    <div class="modal-actions">
-
-      <button
-        id="btnCancelarDevolucao"
-        class="btn btn-secondary">
-
-        Cancelar
-
-      </button>
-
-      <button
-        id="btnConfirmarDevolucao"
-        class="btn btn-primary">
-
-        Marcar como devolvido
-
-      </button>
+      </div>
 
     </div>
 
   </div>
 
-</div>
-    
+  <!-- MODAL DEVOLUÇÃO -->
 
+  <div id="modalDevolucao" class="modal">
 
+    <div class="modal-content">
 
-<script type="module" src="script/emprestimos.js">
+      <h2>Registrar Devolução</h2>
 
+      <p>
+        <strong>Aluno:</strong>
+        <span id="devolucaoAluno"></span>
+      </p>
 
-  
-</script>
+      <p>
+        <strong>Livro:</strong>
+        <span id="devolucaoLivro"></span>
+      </p>
+
+      <p>
+        <strong>Prazo:</strong>
+        <span id="devolucaoPrazo"></span>
+      </p>
+
+      <div class="modal-actions">
+
+        <button id="btnCancelarDevolucao" class="btn btn-secondary">
+          Cancelar
+        </button>
+
+        <button id="btnConfirmarDevolucao" class="btn btn-primary">
+          Marcar como devolvido
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script type="module" src="script/emprestimos.js"></script>
+
 </body>
 
 </html>

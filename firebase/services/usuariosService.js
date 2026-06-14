@@ -208,7 +208,7 @@ export async function limparReservasOcultas() {
 
   await updateDoc(
     usuarioRef,
-    {
+    { 
 
       reservasOcultas: []
 

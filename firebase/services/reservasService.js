@@ -79,6 +79,10 @@ export async function reservarLivro({
         status:
           "esperando",
 
+        // aluno enxerga a reserva por padrão
+        visivelAluno:
+          true,
+
         criadoEm:
           serverTimestamp()
 
@@ -294,6 +298,29 @@ export async function excluirTodasReservasPendentes() {
         "reservas",
         reserva.id
       )
+    );
+
+  }
+
+}
+
+
+// ========================================
+// OCULTAR RESERVAS DO ALUNO
+// altera visivelAluno: false no documento
+// professor continua vendo normalmente
+// histórico futuro não é afetado
+// ========================================
+
+export async function ocultarReservasAluno(ids) {
+
+  for (const id of ids) {
+
+    await updateDoc(
+      doc(db, "reservas", id),
+      {
+        visivelAluno: false
+      }
     );
 
   }

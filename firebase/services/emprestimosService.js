@@ -45,6 +45,7 @@ export async function excluirReserva(
 // ========================================
 // REALIZAR EMPRÉSTIMO
 // ========================================
+
 export async function realizarEmprestimo({
 
   usuario,
@@ -96,6 +97,10 @@ export async function realizarEmprestimo({
 
         status:
           "ativo",
+
+        // aluno enxerga o empréstimo por padrão
+        visivelAluno:
+          true,
 
         criadoEm:
           serverTimestamp()
@@ -245,52 +250,42 @@ export async function aprovarReserva({
 
 }) {
 
-  // FIX: normaliza string YYYY-MM-DD → Date local (evita timezone shift)
   const normalizarData = (data) => {
 
-  if (!data) {
-    throw new Error("Data inválida: vazia");
-  }
+    if (!data) {
+      throw new Error("Data inválida: vazia");
+    }
 
-  let d;
+    let d;
 
-  // CASO 1: já é Date
-  if (data instanceof Date) {
-    d = data;
-  }
+    if (data instanceof Date) {
+      d = data;
+    }
 
-  // CASO 2: Timestamp do Firestore
-  else if (data?.toDate) {
-    d = data.toDate();
-  }
+    else if (data?.toDate) {
+      d = data.toDate();
+    }
 
-  // CASO 3: string
-  else if (typeof data === "string") {
-    d = new Date(data.includes("T") ? data : data + "T00:00:00");
-  }
+    else if (typeof data === "string") {
+      d = new Date(data.includes("T") ? data : data + "T00:00:00");
+    }
 
-  // CASO 4: número (timestamp)
-  else if (typeof data === "number") {
-    d = new Date(data);
-  }
+    else if (typeof data === "number") {
+      d = new Date(data);
+    }
 
-  else {
-    throw new Error("Tipo inválido de data: " + typeof data);
-  }
+    else {
+      throw new Error("Tipo inválido de data: " + typeof data);
+    }
 
-  if (isNaN(d.getTime())) {
-    throw new Error("Data inválida: " + data);
-  }
+    if (isNaN(d.getTime())) {
+      throw new Error("Data inválida: " + data);
+    }
 
-  return Timestamp.fromDate(d);
-};
+    return Timestamp.fromDate(d);
+  };
 
   try {
-
-    console.log("DATA RETIRADA RAW:", dataRetirada);
-    console.log("DATA ENTREGA RAW:", dataEntrega);
-    console.log("DATA RETIRADA JS:", new Date(dataRetirada + "T00:00:00"));
-    console.log("DATA ENTREGA JS:", new Date(dataEntrega + "T00:00:00"));
 
     const reservaRef =
       doc(db, "reservas", reservaId);
@@ -318,7 +313,6 @@ export async function aprovarReserva({
         usuarioId:
           reserva.usuarioId,
 
-        // FIX: fallback para inconsistência de schema (nomeUsuario ou nome)
         nomeUsuario:
           reserva.nomeUsuario ||
           reserva.nome ||
@@ -336,7 +330,6 @@ export async function aprovarReserva({
         tituloLivro:
           reserva.tituloLivro,
 
-        // FIX: normalização de data com timezone seguro
         retiradoEm:
           normalizarData(dataRetirada),
 
@@ -346,6 +339,10 @@ export async function aprovarReserva({
         status:
           "ativo",
 
+        // aluno enxerga o empréstimo aprovado por padrão
+        visivelAluno:
+          true,
+
         criadoEm:
           serverTimestamp()
 
@@ -353,29 +350,20 @@ export async function aprovarReserva({
 
     );
 
-    await updateDoc(
-
-      reservaRef,
-
-      {
-
-        status:
-          "aprovado"
-
-      }
-
-    );
+    // reserva aprovada é removida — aluno deixa de ver em "Em análise"
+    // e passa a ver em "Minhas Retiradas" via listener em tempo real
+    await deleteDoc(reservaRef);
 
     await criarLog({
 
       usuarioId:
         reserva.usuarioId,
 
-      // FIX: consistência com o resto do sistema
-        nomeUsuario:
-          reserva.nomeUsuario ||
-          reserva.nome ||
-          "Sem nome",
+      nomeUsuario:
+        reserva.nomeUsuario ||
+        reserva.nome ||
+        "Sem nome",
+
       matricula:
         reserva.matricula,
 
@@ -403,6 +391,7 @@ export async function aprovarReserva({
   }
 
 }
+
 // ========================================
 // EXCLUIR EMPRÉSTIMO
 // ========================================
@@ -489,6 +478,29 @@ export async function marcarComoDevolvido(
     console.error(error);
 
     throw error;
+
+  }
+
+}
+
+
+// ========================================
+// OCULTAR EMPRÉSTIMOS DO ALUNO
+// altera visivelAluno: false no documento
+// professor continua vendo normalmente
+// histórico futuro não é afetado
+// ========================================
+
+export async function ocultarEmprestimosAluno(ids) {
+
+  for (const id of ids) {
+
+    await updateDoc(
+      doc(db, "emprestimos", id),
+      {
+        visivelAluno: false
+      }
+    );
 
   }
 

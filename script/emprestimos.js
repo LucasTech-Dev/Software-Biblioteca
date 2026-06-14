@@ -141,21 +141,26 @@ function renderTabela(lista) {
       : EMPRESTIMOS_OCULTOS;
 
   const listaVisivel =
-    lista.filter(emp =>
+    lista.filter(emp => {
 
-      !ocultos.includes(emp.id)
+      if (ocultos.includes(emp.id)) {
+        return false;
+      }
 
-      &&
+      // no modo devolução mostra ativos E devolvidos
+      if (filtroAtivo === "devolucao") {
+        return true;
+      }
 
-      emp.status !== "devolvido"
+      return emp.status !== "devolvido";
 
-    );
+    });
 
   const listaFiltrada = listaVisivel.filter(emp => {
 
     if (modoDevolucao) {
 
-      return emp.status !== "devolvido";
+      return true;
 
     }
 
@@ -210,6 +215,11 @@ function renderTabela(lista) {
       status = "Aguardando";
       statusClass = "active";
 
+    } else if (emp.status === "devolvido") {
+
+      status = "Devolvido";
+      statusClass = "returned";
+
     } else {
 
       const hoje = new Date();
@@ -231,7 +241,10 @@ function renderTabela(lista) {
     const tr =
   document.createElement("tr");
 
-if (modoDevolucao) {
+if (
+  modoDevolucao &&
+  emp.status !== "devolvido"
+) {
 
   tr.style.cursor = "pointer";
 

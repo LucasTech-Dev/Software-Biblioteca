@@ -1,7 +1,14 @@
 import { onAuthStateChanged } 
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
-import { doc, getDoc } 
+import {
+  doc,
+  getDoc,
+  collection,
+  query,
+  where,
+  onSnapshot
+} 
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 import { auth } 
@@ -10,20 +17,14 @@ from "../firebase/auth.js";
 import { db } 
 from "../firebase/firestore.js";
 
-import { listarEmprestimosUsuario } 
+import { ocultarEmprestimosAluno }
 from "../firebase/services/emprestimosService.js";
 
-import {
-  listarReservasUsuario
-}
+import { ocultarReservasAluno }
 from "../firebase/services/reservasService.js";
 
-import {
-  obterUsuario
-}
-from "../firebase/services/usuariosService.js";
-
 // ========================================
+
 let RESERVAS = [];
 
 let EMPRESTIMOS = [];
@@ -32,46 +33,52 @@ let filtroAtivo = "todos";
 
 let termoBusca = "";
 
-// CORREÇÃO 5: ocultos do aluno
-let EMPRESTIMOS_OCULTOS = [];
-let RESERVAS_OCULTAS = [];
-
 const loanList =
   document.getElementById("loan-list");
+
+const btnApagar =
+  document.getElementById("btnApagar");
+
+// ========================================
+// TEXTOS DO BOTÃO POR FILTRO
+// ========================================
+
+const textosBotao = {
+  todos:      "🗑 Apagar Todos",
+  reserva:    "🗑 Apagar Reservas",
+  ativo:      "🗑 Apagar Retiradas",
+  atrasado:   "🗑 Apagar Atrasados",
+  devolvido:  "🗑 Apagar Devolvidos"
+};
+
 // ========================================
 
 onAuthStateChanged(auth, async (user) => {
 
   if (!user) {
 
-  window.location.href = "login.html";
+    window.location.href = "login.html";
 
-  return;
+    return;
 
-}
-
-EMPRESTIMOS =
-  await listarEmprestimosUsuario(user.uid);
-
-RESERVAS =
-  await listarReservasUsuario(user.uid);
+  }
 
   // ========================================
   // DADOS DO USUÁRIO
   // ========================================
 
-  const usuarioRef = doc(db, "usuarios", user.uid);
-  const usuarioSnap = await getDoc(usuarioRef);
-  const usuario = usuarioSnap.data();
+  const usuarioRef =
+    doc(db, "usuarios", user.uid);
 
-  // CORREÇÃO 5: carregar listas de ocultos do aluno
-  EMPRESTIMOS_OCULTOS =
-    usuario?.emprestimosOcultos || [];
+  const usuarioSnap =
+    await getDoc(usuarioRef);
 
-  RESERVAS_OCULTAS =
-    usuario?.reservasOcultas || [];
+  const usuario =
+    usuarioSnap.data();
 
-  document.getElementById("nomeUsuario").innerText = usuario.nome;
+  document.getElementById("nomeUsuario").innerText =
+    usuario.nome;
+
   document.getElementById("dadosUsuario").innerText =
     `${usuario.turma} · Matrícula ${usuario.matricula}`;
 
@@ -86,124 +93,307 @@ RESERVAS =
     .join("");
 
   document.getElementById("avatarUsuario").innerText =
-  iniciais.toUpperCase();
+    iniciais.toUpperCase();
+
+  // ========================================
+  // LISTENER — EMPRÉSTIMOS
   // ========================================
 
-renderizarLista();
+  const qEmprestimos = query(
+    collection(db, "emprestimos"),
+    where("usuarioId", "==", user.uid)
+  );
 
-// ========================================
+  onSnapshot(qEmprestimos, snapshot => {
+
+    EMPRESTIMOS = snapshot.docs
+      .map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }))
+      .filter(item =>
+        item.visivelAluno !== false
+      );
+
+    renderizarLista();
+
+  });
+
+  // ========================================
+  // LISTENER — RESERVAS
+  // ========================================
+
+  const qReservas = query(
+    collection(db, "reservas"),
+    where("usuarioId", "==", user.uid)
+  );
+
+  onSnapshot(qReservas, snapshot => {
+
+    RESERVAS = snapshot.docs
+      .map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }))
+      .filter(item =>
+        item.visivelAluno !== false
+      );
+
+    renderizarLista();
+
+  });
+
+  // ========================================
+  // BOTÃO APAGAR — lógica de clique
+  // ========================================
+
+  btnApagar.addEventListener("click", async () => {
+
+    const confirmar = confirm(
+      `Deseja realmente ${btnApagar.textContent.toLowerCase()}?`
+    );
+
+    if (!confirmar) {
+      return;
+    }
+
+    try {
+
+      if (filtroAtivo === "reserva") {
+
+        const ids = RESERVAS.map(r => r.id);
+
+        await ocultarReservasAluno(ids);
+
+      }
+
+      else if (filtroAtivo === "todos") {
+
+        const idsReservas =
+          RESERVAS.map(r => r.id);
+
+        const idsEmprestimos =
+          EMPRESTIMOS.map(e => e.id);
+
+        await ocultarReservasAluno(idsReservas);
+
+        await ocultarEmprestimosAluno(idsEmprestimos);
+
+      }
+
+      else {
+
+        // filtros: ativo, atrasado, devolvido
+        // apaga somente os itens visíveis no filtro atual
+        const ids = obterItensDoFiltro().map(e => e.id);
+
+        await ocultarEmprestimosAluno(ids);
+
+      }
+
+      alert("Registros apagados da sua visualização.");
+
+    }
+
+    catch (error) {
+
+      console.error(error);
+
+      alert("Erro ao apagar registros.");
+
+    }
+
+  });
+
 });
 
+// ========================================
+
 function formatar(timestamp) {
+
   if (!timestamp) return "-";
-  return timestamp.toDate().toLocaleDateString("pt-BR"); 
+
+  return timestamp
+    .toDate()
+    .toLocaleDateString("pt-BR");
+
 }
 
+// ========================================
 
 function obterStatus(item) {
 
   if (item.status === "esperando") {
-    return "Reserva";
+    return "Em análise";
   }
 
-  if (!item.prazoEntrega) {
-    return item.status;
+  if (item.status === "devolvido") {
+    return "Devolvido";
   }
 
-  const hoje = new Date();
+  if (item.status === "ativo") {
 
-  if (hoje > item.prazoEntrega.toDate()) {
-    return "atrasado";
+    if (
+      item.prazoEntrega &&
+      new Date() > item.prazoEntrega.toDate()
+    ) {
+      return "Atrasado";
+    }
+
+    return "Ativo";
+
   }
 
-  return "ativo";
+  return item.status;
 
 }
 
+// ========================================
+// Retorna os itens do filtro atual
+// (usado pelo botão apagar)
+// ========================================
+
+function obterItensDoFiltro() {
+
+  if (filtroAtivo === "todos") {
+
+    return [
+      ...RESERVAS,
+      ...EMPRESTIMOS
+    ];
+
+  }
+
+  if (filtroAtivo === "reserva") {
+
+    return RESERVAS;
+
+  }
+
+  if (filtroAtivo === "ativo") {
+
+    return EMPRESTIMOS.filter(item =>
+      item.status === "ativo"
+    );
+
+  }
+
+  if (filtroAtivo === "atrasado") {
+
+    return EMPRESTIMOS.filter(item => {
+
+      if (item.status !== "ativo") {
+        return false;
+      }
+
+      if (!item.prazoEntrega) {
+        return false;
+      }
+
+      return new Date() > item.prazoEntrega.toDate();
+
+    });
+
+  }
+
+  if (filtroAtivo === "devolvido") {
+
+    return EMPRESTIMOS.filter(item =>
+      item.status === "devolvido"
+    );
+
+  }
+
+  return [];
+
+}
+
+// ========================================
+
+function atualizarBotaoApagar() {
+
+  btnApagar.textContent =
+    textosBotao[filtroAtivo] || "🗑 Apagar";
+
+  // esconde o botão se a lista estiver vazia
+  const itens = obterItensDoFiltro();
+
+  btnApagar.style.display =
+    itens.length > 0
+      ? "inline-flex"
+      : "none";
+
+}
+
+// ========================================
 
 function renderizarLista() {
-
-  console.log(EMPRESTIMOS);
 
   const lista =
     document.getElementById("loan-list");
 
-  // CORREÇÃO 5: filtrar ocultos antes de montar a origem
-  const emprestimosVisiveis =
-    EMPRESTIMOS.filter(item =>
-      !EMPRESTIMOS_OCULTOS.includes(item.id)
+  let origem = [];
+
+  if (filtroAtivo === "todos") {
+
+    origem = [
+      ...RESERVAS,
+      ...EMPRESTIMOS
+    ];
+
+  }
+
+  else if (filtroAtivo === "reserva") {
+
+    origem = RESERVAS;
+
+  }
+
+  else if (filtroAtivo === "ativo") {
+
+    origem = EMPRESTIMOS.filter(item =>
+      item.status === "ativo"
     );
 
-  const reservasVisiveis =
-    RESERVAS.filter(item =>
-      !RESERVAS_OCULTAS.includes(item.id)
+  }
+
+  else if (filtroAtivo === "atrasado") {
+
+    origem = EMPRESTIMOS.filter(item => {
+
+      if (item.status !== "ativo") {
+        return false;
+      }
+
+      if (!item.prazoEntrega) {
+        return false;
+      }
+
+      return new Date() > item.prazoEntrega.toDate();
+
+    });
+
+  }
+
+  else if (filtroAtivo === "devolvido") {
+
+    origem = EMPRESTIMOS.filter(item =>
+      item.status === "devolvido"
     );
 
-let origem = [];
+  }
 
-if (filtroAtivo === "todos") {
+  const itens = origem.filter(item => {
 
-  origem = [
-    ...reservasVisiveis,
-    ...emprestimosVisiveis
-  ];
-
-}
-
-else if (filtroAtivo === "reserva") {
-
-  origem = reservasVisiveis;
-
-}
-
-else if (filtroAtivo === "ativo") {
-
-  origem = emprestimosVisiveis.filter(item => {
-
-    if (!item.prazoEntrega) {
-      return false;
-    }
-
-    const hoje = new Date();
-
-    return hoje <= item.prazoEntrega.toDate();
+    return termoBusca === ""
+      || item.tituloLivro
+          ?.toLowerCase()
+          .includes(termoBusca);
 
   });
 
-}
-
-else if (filtroAtivo === "atrasado") {
-
-  origem = emprestimosVisiveis.filter(item => {
-
-    if (!item.prazoEntrega) {
-      return false;
-    }
-
-    const hoje = new Date();
-
-    return hoje > item.prazoEntrega.toDate();
-
-  });
-
-}
-
-const itens =
-  origem.filter(item => {
-
-    const passaBusca =
-
-      termoBusca === ""
-
-      ||
-
-      item.tituloLivro
-        ?.toLowerCase()
-        .includes(termoBusca);
-
-    return passaBusca;
-
-  });
+  // atualiza o botão sempre que a lista re-renderiza
+  atualizarBotaoApagar();
 
   if (!itens.length) {
 
@@ -224,11 +414,34 @@ const itens =
     return;
   }
 
-  lista.innerHTML = itens.map(item => `
+  lista.innerHTML = itens.map(item => {
+
+    const statusTexto =
+      obterStatus(item);
+
+    const badgeClass =
+      item.status === "devolvido"
+        ? "badge-returned"
+        : item.status === "esperando"
+          ? "badge-pending"
+          : statusTexto === "Atrasado"
+            ? "badge-delayed"
+            : "badge-active";
+
+    const bookClass =
+      item.status === "devolvido"
+        ? "book-green"
+        : item.status === "esperando"
+          ? "book-amber"
+          : statusTexto === "Atrasado"
+            ? "book-red"
+            : "book-blue";
+
+    return `
 
     <div class="loan-item">
 
-      <div class="book-icon book-blue">
+      <div class="book-icon ${bookClass}">
         📖
       </div>
 
@@ -245,28 +458,27 @@ const itens =
         <div class="loan-dates">
 
           <div class="date-block">
-
-            Tipo
-
+            Status
             <strong>
-
-              ${obterStatus(item)}
-
+              ${statusTexto}
             </strong>
-
           </div>
 
           <div class="date-block">
-
             Criado em
-
             <strong>
-
               ${formatar(item.criadoEm)}
-
             </strong>
-
           </div>
+
+          ${item.prazoEntrega ? `
+          <div class="date-block">
+            Devolução
+            <strong>
+              ${formatar(item.prazoEntrega)}
+            </strong>
+          </div>
+          ` : ""}
 
         </div>
 
@@ -274,19 +486,24 @@ const itens =
 
       <div class="loan-right">
 
-        <span class="badge badge-active">
-
-          ${obterStatus(item)}
-
+        <span class="badge ${badgeClass}">
+          ${statusTexto}
         </span>
 
       </div>
 
     </div>
 
-  `).join("");
+  `;
+
+  }).join("");
 
 }
+
+// ========================================
+// FILTROS
+// ========================================
+
 document
   .querySelectorAll(".chip")
   .forEach(btn => {
@@ -296,7 +513,6 @@ document
       document
         .querySelectorAll(".chip")
         .forEach(c =>
-
           c.classList.remove("active")
         );
 
@@ -311,14 +527,18 @@ document
 
   });
 
-  document
+// ========================================
+// BUSCA
+// ========================================
+
+document
   .getElementById("searchInput")
   .addEventListener("input", e => {
 
     termoBusca =
       e.target.value
-      .toLowerCase()
-      .trim();
+        .toLowerCase()
+        .trim();
 
     renderizarLista();
 
