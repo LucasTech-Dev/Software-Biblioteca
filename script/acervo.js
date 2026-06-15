@@ -1,6 +1,7 @@
 import {
   collection,
   getDocs,
+  getDoc,
   addDoc,
   query,
   where,
@@ -9,15 +10,11 @@ import {
   updateDoc,
   increment,
   arrayUnion
-}
-
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 import {
   onAuthStateChanged
-}
-
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
 import { db } from "../firebase/firestore.js";
 import { auth } from "../firebase/auth.js";
@@ -28,7 +25,6 @@ import { auth } from "../firebase/auth.js";
 // ========================================
 
 function addnovolivro() {
-
   window.location.href = "addLivros.html";
 }
 
@@ -40,39 +36,60 @@ window.addnovolivro = addnovolivro;
 // ========================================
 
 let LIVROS = [];
-
 let usuarioAtual = null;
-
-let filtroTexto = '';
-let filtroCateg = '';
+let filtroTexto  = '';
+let filtroCateg  = '';
 let filtroStatus = '';
-
-let viewMode = 'grid';
-
-let paginaAtual = 1;
+let viewMode     = 'grid';
+let paginaAtual  = 1;
 
 const POR_PAGINA = 8;
+
+
+// ========================================
+// PERMISSÕES
+// ========================================
+
+async function aplicarPermissoes(uid) {
+
+  try {
+
+    const usuarioSnap = await getDoc(doc(db, "usuarios", uid));
+
+    if (!usuarioSnap.exists()) return;
+
+    const dados = usuarioSnap.data();
+
+    const tipo = dados.tipo || dados.perfil || dados.cargo || "";
+
+    if (tipo === "aluno") {
+      document.getElementById("btnNovoLivro").style.display = "none";
+    }
+
+  } catch (error) {
+
+    console.error("Erro ao validar permissões:", error);
+  }
+}
 
 
 // ========================================
 // AUTH
 // ========================================
 
-onAuthStateChanged(auth, async(user) => {
+onAuthStateChanged(auth, async (user) => {
 
   if (!user) {
-
     alert("Faça login.");
-
     window.location.href = "login.html";
-
     return;
   }
 
   usuarioAtual = user;
 
-  await carregarLivros();
+  await aplicarPermissoes(user.uid);
 
+  await carregarLivros();
 });
 
 
@@ -89,30 +106,17 @@ async function carregarLivros() {
     LIVROS = [];
 
     snap.forEach((docSnap) => {
-
-      LIVROS.push({
-
-        id: docSnap.id,
-        ...docSnap.data()
-
-      });
-
+      LIVROS.push({ id: docSnap.id, ...docSnap.data() });
     });
 
     renderStats();
-
     renderGrid();
 
-  }
-
-  catch (error) {
+  } catch (error) {
 
     console.error(error);
-
     alert("Erro ao carregar livros.");
-
   }
-
 }
 
 
@@ -126,25 +130,19 @@ function livrosFiltrados() {
 
     const textoOk =
       !filtroTexto ||
-
       l.titulo.toLowerCase().includes(filtroTexto.toLowerCase()) ||
-
       l.autor.toLowerCase().includes(filtroTexto.toLowerCase());
 
     const categOk =
       !filtroCateg ||
-
       l.categoria === filtroCateg;
 
     const statusOk =
       !filtroStatus ||
-
       l.status === filtroStatus;
 
     return textoOk && categOk && statusOk;
-
   });
-
 }
 
 
@@ -165,7 +163,6 @@ function renderStats() {
 
   document.getElementById('stat-res').textContent =
     LIVROS.filter(l => l.status === 'reservado').length;
-
 }
 
 
@@ -174,15 +171,11 @@ function renderStats() {
 // ========================================
 
 function labelStatus(s) {
-
   return {
-
     disponivel: 'Disponível',
     emprestado: 'Emprestado',
-    reservado: 'Reservado'
-
-  } [s] || s;
-
+    reservado:  'Reservado'
+  }[s] || s;
 }
 
 
@@ -192,30 +185,19 @@ function labelStatus(s) {
 
 function renderGrid() {
 
-  const grid = document.getElementById('books-grid');
-
+  const grid  = document.getElementById('books-grid');
   const todos = livrosFiltrados();
+  const inicio = (paginaAtual - 1) * POR_PAGINA;
+  const pagina = todos.slice(inicio, inicio + POR_PAGINA);
 
-  const inicio =
-    (paginaAtual - 1) * POR_PAGINA;
-
-  const pagina =
-    todos.slice(inicio, inicio + POR_PAGINA);
-
-  grid.className =
-    'books-grid' +
-    (viewMode === 'list'
-      ? ' list-view'
-      : '');
+  grid.className = 'books-grid' + (viewMode === 'list' ? ' list-view' : '');
 
   if (pagina.length === 0) {
 
     grid.innerHTML = `
       <div class="empty-state">
         <div class="empty-state-icon">📭</div>
-        <div class="empty-state-title">
-          Nenhum livro encontrado
-        </div>
+        <div class="empty-state-title">Nenhum livro encontrado</div>
       </div>
     `;
 
@@ -224,40 +206,21 @@ function renderGrid() {
 
   grid.innerHTML = pagina.map((l) => `
 
-    <div class="book-card"
-      onclick="openModal('${l.id}')">
+    <div class="book-card" onclick="openModal('${l.id}')">
 
-      <div class="book-cover"
-        style="background:${l.cor}">
-
+      <div class="book-cover" style="background:${l.cor}">
         ${l.emoji}
-
       </div>
 
       <div class="book-info">
 
-        <div class="book-category">
-          ${l.categoria}
-        </div>
-
-        <div class="book-title">
-          ${l.titulo}
-        </div>
-
-        <div class="book-author">
-          ${l.autor}
-        </div>
+        <div class="book-category">${l.categoria}</div>
+        <div class="book-title">${l.titulo}</div>
+        <div class="book-author">${l.autor}</div>
 
         <div class="book-footer">
-
-          <span class="book-copies">
-            ${l.disponiveis}/${l.exemplares}
-          </span>
-
-          <span class="status-badge ${l.status}">
-            ${labelStatus(l.status)}
-          </span>
-
+          <span class="book-copies">${l.disponiveis}/${l.exemplares}</span>
+          <span class="status-badge ${l.status}">${labelStatus(l.status)}</span>
         </div>
 
       </div>
@@ -265,7 +228,6 @@ function renderGrid() {
     </div>
 
   `).join('');
-
 }
 
 window.renderGrid = renderGrid;
@@ -276,11 +238,8 @@ window.renderGrid = renderGrid;
 // ========================================
 
 function goPage(n) {
-
   paginaAtual = n;
-
   renderGrid();
-
 }
 
 window.goPage = goPage;
@@ -294,18 +253,10 @@ function setView(mode) {
 
   viewMode = mode;
 
-  document
-    .getElementById('btn-grid')
-    .classList
-    .toggle('active', mode === 'grid');
-
-  document
-    .getElementById('btn-list')
-    .classList
-    .toggle('active', mode === 'list');
+  document.getElementById('btn-grid').classList.toggle('active', mode === 'grid');
+  document.getElementById('btn-list').classList.toggle('active', mode === 'list');
 
   renderGrid();
-
 }
 
 window.setView = setView;
@@ -318,18 +269,12 @@ window.setView = setView;
 function setStatus(btn, status) {
 
   filtroStatus = status;
+  paginaAtual  = 1;
 
-  paginaAtual = 1;
-
-  document
-    .querySelectorAll('.chip')
-    .forEach(c =>
-      c.classList.remove('active'));
-
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
   btn.classList.add('active');
 
   renderGrid();
-
 }
 
 window.setStatus = setStatus;
@@ -339,30 +284,20 @@ window.setStatus = setStatus;
 // SEARCH
 // ========================================
 
-document
-  .getElementById('search-input')
-  .addEventListener('input', (e) => {
-
-    filtroTexto = e.target.value;
-
-    renderGrid();
-
-  });
+document.getElementById('search-input').addEventListener('input', (e) => {
+  filtroTexto = e.target.value;
+  renderGrid();
+});
 
 
 // ========================================
 // CATEGORIA
 // ========================================
 
-document
-  .getElementById('filter-categoria')
-  .addEventListener('change', (e) => {
-
-    filtroCateg = e.target.value;
-
-    renderGrid();
-
-  });
+document.getElementById('filter-categoria').addEventListener('change', (e) => {
+  filtroCateg = e.target.value;
+  renderGrid();
+});
 
 
 // ========================================
@@ -371,8 +306,7 @@ document
 
 function openModal(id) {
 
-  const l =
-    LIVROS.find(x => x.id === id);
+  const l = LIVROS.find(x => x.id === id);
 
   if (!l) return;
 
@@ -380,21 +314,14 @@ function openModal(id) {
 
     <div class="modal-book-header">
 
-      <div class="modal-cover"
-        style="background:${l.cor}">
+      <div class="modal-cover" style="background:${l.cor}">
         ${l.emoji}
       </div>
 
       <div>
-
         <h2>${l.titulo}</h2>
-
         <p>${l.autor}</p>
-
-        <span class="status-badge ${l.status}">
-          ${labelStatus(l.status)}
-        </span>
-
+        <span class="status-badge ${l.status}">${labelStatus(l.status)}</span>
       </div>
 
     </div>
@@ -405,21 +332,13 @@ function openModal(id) {
 
     <br>
 
-    <button
-      class="btn-reserve"
-      onclick="reservarLivro('${l.id}')">
-
+    <button class="btn-reserve" onclick="reservarLivro('${l.id}')">
       📚 Reservar Livro
-
     </button>
 
   `;
 
-  document
-    .getElementById('modal-overlay')
-    .classList
-    .add('open');
-
+  document.getElementById('modal-overlay').classList.add('open');
 }
 
 window.openModal = openModal;
@@ -430,12 +349,7 @@ window.openModal = openModal;
 // ========================================
 
 function closeModal() {
-
-  document
-    .getElementById('modal-overlay')
-    .classList
-    .remove('open');
-
+  document.getElementById('modal-overlay').classList.remove('open');
 }
 
 window.closeModal = closeModal;
@@ -446,20 +360,12 @@ window.closeModal = closeModal;
 // ========================================
 
 function closeModalOnOverlay(e) {
-
-  if (
-    e.target ===
-    document.getElementById('modal-overlay')
-  ) {
-
+  if (e.target === document.getElementById('modal-overlay')) {
     closeModal();
-
   }
-
 }
 
-window.closeModalOnOverlay =
-  closeModalOnOverlay;
+window.closeModalOnOverlay = closeModalOnOverlay;
 
 
 // ========================================
@@ -470,106 +376,50 @@ async function reservarLivro(livroId) {
 
   try {
 
-    const livro =
-      LIVROS.find(l => l.id === livroId);
+    const livro = LIVROS.find(l => l.id === livroId);
 
     if (!livro) return;
-
-    // usuário
 
     const qUser = query(
       collection(db, "usuarios"),
       where("uid", "==", usuarioAtual.uid)
     );
 
-    const snapUser =
-      await getDocs(qUser);
+    const snapUser = await getDocs(qUser);
 
     if (snapUser.empty) {
-
       alert("Usuário não encontrado.");
-
       return;
     }
 
-    const usuarioDoc =
-      snapUser.docs[0];
+    const usuario = snapUser.docs[0].data();
 
-    const usuario =
-      usuarioDoc.data();
+    await addDoc(collection(db, "reservas"), {
+      usuarioId:   usuarioAtual.uid,
+      matricula:   usuario.matricula,
+      nome:        usuario.nome,
+      turma:       usuario.turma,
+      livroId:     livroId,
+      tituloLivro: livro.titulo,
+      autorLivro:  livro.autor,
+      status:      "esperando",
+      dataReserva: new Date().toISOString(),
+      criadoEm:    serverTimestamp()
+    });
 
-    // criar reserva
+    await updateDoc(doc(db, "usuarios", usuarioAtual.uid), {
+      historico: arrayUnion({
+        nome:      livro.titulo,
+        retirada:  "-",
+        devolucao: "-",
+        status:    "Reservado"
+      })
+    });
 
-    await addDoc(
-      collection(db, "reservas"),
-      {
-
-        usuarioId: usuarioAtual.uid,
-
-        matricula: usuario.matricula,
-
-        nome: usuario.nome,
-
-        turma: usuario.turma,
-
-        livroId: livroId,
-
-        tituloLivro: livro.titulo,
-
-        autorLivro: livro.autor,
-
-        status: "esperando",
-
-        dataReserva:
-          new Date().toISOString(),
-
-        criadoEm: serverTimestamp()
-
-      }
-    );
-
- 
-    // ========================================
-// CRIAR MOVIMENTAÇÃO EM EMPRÉSTIMOS
-// ========================================
-
-
-
-// ========================================
-// HISTÓRICO DO USUÁRIO
-// ========================================
-
-await updateDoc(
-  doc(db, "usuarios", usuarioAtual.uid),
-  {
-
-    historico: arrayUnion({
-
-      nome: livro.titulo,
-
-      retirada: "-",
-
-      devolucao: "-",
-
-      status: "Reservado"
-
-    })
-
-  }
-);
-
-    // atualizar livro
-
-    await updateDoc(
-      doc(db, "livros", livroId),
-      {
-
-        status: "reservado",
-
-        disponiveis: increment(-1)
-
-      }
-    );
+    await updateDoc(doc(db, "livros", livroId), {
+      status:      "reservado",
+      disponiveis: increment(-1)
+    });
 
     alert("Livro reservado.");
 
@@ -577,16 +427,11 @@ await updateDoc(
 
     carregarLivros();
 
-  }
- 
-  catch (error) { 
+  } catch (error) {
 
     console.error(error);
-
     alert("Erro ao reservar.");
-
   }
-
 }
 
 window.reservarLivro = reservarLivro;

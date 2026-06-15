@@ -18,7 +18,7 @@
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
     rel="stylesheet"
   >
- 
+
   <link
     rel="stylesheet"
     href="style/usuario.css"
@@ -72,19 +72,16 @@
 
           <div>
             <strong>Nome:</strong>
-
             <span id="nomeUsuario"></span>
           </div>
 
           <div>
             <strong>Matrícula:</strong>
-
             <span id="matriculaUsuario"></span>
           </div>
 
           <div>
             <strong>Turma:</strong>
-
             <span id="turmaUsuario"></span>
           </div>
 
@@ -120,9 +117,31 @@
       <!-- HISTÓRICO E NOTIFICAÇÕES -->
       <div class="card">
 
-        <h2>
-          Histórico de Leituras
-        </h2>
+        <div class="historico-header">
+
+          <h2>
+            Histórico de Leituras
+          </h2>
+
+          <div class="acoes-historico">
+
+            <button
+              class="btn btn-danger"
+              id="btnApagarHistorico"
+            >
+              🗑 Limpar
+            </button>
+
+            <button
+              class="btn"
+              id="btnRestaurarHistorico"
+            >
+              ↩ Restaurar
+            </button>
+
+          </div>
+
+        </div>
 
         <div
           class="list"
