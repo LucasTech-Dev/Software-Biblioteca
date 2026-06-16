@@ -288,56 +288,87 @@ window.handleCadastro = async function() {
 // ========================================
 // SENHA
 // ========================================
-
 window.avaliarSenha = function(senha) {
 
   const segs = [
-
     document.getElementById("seg1"),
-
     document.getElementById("seg2"),
-
     document.getElementById("seg3"),
-
     document.getElementById("seg4")
-
   ];
 
   const label =
     document.getElementById("lbl-forca");
 
+  // Limpa as barras
   segs.forEach(seg => {
-
     seg.style.background = "#ddd";
   });
 
   let forca = 0;
 
-  if (senha.length >= 6) forca++;
-
-  if (/[A-Z]/.test(senha)) forca++;
-
-  if (/[0-9]/.test(senha)) forca++;
-
-  if (/[^A-Za-z0-9]/.test(senha)) forca++;
-
-  for (let i = 0; i < forca; i++) {
-
-    segs[i].style.background = "#22c55e";
+  // Qualquer caractere já mostra Fraca
+  if (senha.length > 0) {
+    forca = 1;
   }
 
-  const niveis = [
+  // 6+ caracteres
+  if (senha.length >= 6) {
+    forca = 2;
+  }
 
-    "",
+  // 8+ caracteres e número ou maiúscula
+  if (
+    senha.length >= 8 &&
+    (/[0-9]/.test(senha) || /[A-Z]/.test(senha))
+  ) {
+    forca = 3;
+  }
 
-    "Fraca",
+  // 10+ caracteres, maiúscula, número e símbolo
+  if (
+    senha.length >= 10 &&
+    /[A-Z]/.test(senha) &&
+    /[0-9]/.test(senha) &&
+    /[^A-Za-z0-9]/.test(senha)
+  ) {
+    forca = 4;
+  }
 
-    "Média",
+  let cor = "#666";
+  let texto = "";
 
-    "Boa",
+  switch (forca) {
 
-    "Forte"
-  ];
+    case 1:
+      cor = "#e53935";
+      texto = "Fraca";
+      break;
 
-  label.innerText = niveis[forca];
+    case 2:
+      cor = "#fb8c00";
+      texto = "Média";
+      break;
+
+    case 3:
+      cor = "#fdd835";
+      texto = "Boa";
+      break;
+
+    case 4:
+      cor = "#43a047";
+      texto = "Forte";
+      break;
+
+    default:
+      texto = "";
+  }
+
+  // Preenche as barras com a cor atual
+  for (let i = 0; i < forca; i++) {
+    segs[i].style.background = cor;
+  }
+
+  label.innerText = texto;
+  label.style.color = cor;
 };
