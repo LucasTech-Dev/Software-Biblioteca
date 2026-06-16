@@ -1,393 +1,371 @@
+// ========================================
+// FIREBASE
+// ========================================
+
 import {
-
   signInWithEmailAndPassword
-
-}
-
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
-
-
-// ========================================
-// IMPORT FIREBASE AUTH
-// ========================================
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
 import { auth } from "../firebase/auth.js";
 
 // ========================================
-// CONTROLE DE PERFIL
+// ELEMENTOS
 // ========================================
 
-let role = null;
-
- 
-
-const lbl =
-  document.getElementById("lbl-id");
-
-const inp =
-  document.getElementById("inp-id");
-
-
-
+const elements = {
+  lblId: document.getElementById("lbl-id"),
+  inpId: document.getElementById("inp-id"),
+  inpSenha: document.getElementById("inp-senha"),
+  btnEntrar: document.getElementById("btn-entrar"),
+  optProfessor: document.getElementById("opt-professor"),
+  optAluno: document.getElementById("opt-aluno")
+};
 // ========================================
-// SELECIONAR PERFIL
+// MOSTRAR / OCULTAR SENHA
 // ========================================
 
-window.selectRole = function (r) {
+const togglePassword =
+  document.getElementById(
+    "toggle-password"
+  );
 
-  role = r;
+if (togglePassword) {
 
+  togglePassword.addEventListener(
+    "click",
+    () => {
 
-  document
-    .getElementById("opt-professor")
-    .classList.toggle(
-      "active",
-      r === "professor"
-    );
+      const visivel =
+        elements.inpSenha.type ===
+        "text";
 
+      elements.inpSenha.type =
+        visivel
+          ? "password"
+          : "text";
 
-  document
-    .getElementById("opt-aluno")
-    .classList.toggle(
-      "active",
-      r === "aluno"
-    );
+      togglePassword.innerHTML =
+        visivel
+          ? `
+          <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="22"
+              height="22"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2">
 
+              <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5s8.268 2.943 9.542 7c-1.274 4.057-5.065 7-9.542 7S3.732 16.057 2.458 12z"/>
 
-  clearError();
+              <circle
+                  cx="12"
+                  cy="12"
+                  r="3"/>
 
+          </svg>
+          `
+          : `
+          <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="22"
+              height="22"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2">
 
-  if (r === "professor") {
+              <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M17.94 17.94A10.94 10.94 0 0112 19c-4.478 0-8.268-2.943-9.542-7a10.95 10.95 0 012.88-4.568"/>
 
-    lbl.textContent =
-      "E-mail Institucional";
+              <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M1 1l22 22"/>
 
-    inp.placeholder =
-      "Ex: professor@educar.rs.gov.br";
+              <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M9.88 9.88A3 3 0 0014.12 14.12"/>
 
-    inp.type = "email";
-  }
+          </svg>
+          `;
+    }
+  );
 
-  else {
+}
+// ========================================
+// CONFIGURAÇÕES
+// ========================================
 
-    lbl.textContent =
-      "E-mail Institucional";
+const roleConfig = {
+  professor: {
+    placeholder: "Ex: professor@educar.rs.gov.br",
+    domain: "@educar",
+    errorMessage:
+      "Email inválido. O email do professor deve conter @educar."
+  },
 
-    inp.placeholder =
-      "Ex: aluno@estudante.rs.gov.br";
-
-    inp.type = "email";
+  aluno: {
+    placeholder: "Ex: aluno@estudante.rs.gov.br",
+    domain: "@estudante",
+    errorMessage:
+      "Email inválido. O email do aluno deve conter @estudante."
   }
 };
 
+// ========================================
+// ESTADO
+// ========================================
 
+let role = null;
 
 // ========================================
 // LIMPAR ERRO
 // ========================================
 
 function clearError() {
+  elements.inpId.classList.remove("input-error");
 
-  const campo =
-    document.getElementById("inp-id");
-
-
-  campo.style.borderColor = "";
-
-
-  const msg =
-    document.getElementById(
-      "msg-email-invalido"
-    );
-
+  const msg = document.getElementById(
+    "msg-email-invalido"
+  );
 
   if (msg) {
-
     msg.remove();
   }
 }
-
-
 
 // ========================================
 // MOSTRAR ERRO
 // ========================================
 
 function showError(message) {
-
   clearError();
 
-
-  const campo =
-    document.getElementById("inp-id");
-
-
-  campo.style.borderColor = "red";
-
+  elements.inpId.classList.add(
+    "input-error"
+  );
 
   const msg =
     document.createElement("span");
 
-
-  msg.id =
-    "msg-email-invalido";
+  msg.id = "msg-email-invalido";
 
   msg.textContent = message;
 
-
-  msg.style.color = "red";
-
+  msg.style.color = "var(--error)";
   msg.style.fontSize = "13px";
-
   msg.style.marginTop = "5px";
-
   msg.style.display = "block";
 
-
-  campo.insertAdjacentElement(
+  elements.inpId.insertAdjacentElement(
     "afterend",
     msg
   );
 }
 
+// ========================================
+// BOTÃO LOADING
+// ========================================
 
+function setLoading(status) {
+  elements.btnEntrar.disabled =
+    status;
+
+  elements.btnEntrar.textContent =
+    status
+      ? "Verificando..."
+      : "Entrar";
+}
+
+// ========================================
+// VALIDAR EMAIL POR PERFIL
+// ========================================
+
+function validateRoleEmail(
+  email,
+  currentRole
+) {
+  const config =
+    roleConfig[currentRole];
+
+  if (!config) {
+    return false;
+  }
+
+  return email.includes(
+    config.domain
+  );
+}
+
+// ========================================
+// SELECIONAR PERFIL
+// ========================================
+
+window.selectRole = function (r) {
+  role = r;
+
+  elements.optProfessor.classList.toggle(
+    "active",
+    r === "professor"
+  );
+
+  elements.optAluno.classList.toggle(
+    "active",
+    r === "aluno"
+  );
+
+  clearError();
+
+  const config = roleConfig[r];
+
+  elements.lblId.textContent =
+    "E-mail Institucional";
+
+  elements.inpId.placeholder =
+    config.placeholder;
+
+  elements.inpId.type = "email";
+};
+
+// ========================================
+// MENSAGENS FIREBASE
+// ========================================
+
+const firebaseErrors = {
+  "auth/user-not-found":
+    "Nenhum usuário encontrado com esse email.",
+
+  "auth/wrong-password":
+    "Senha incorreta.",
+
+  "auth/invalid-email":
+    "Formato de email inválido.",
+
+  "auth/too-many-requests":
+    "Muitas tentativas. Tente novamente mais tarde."
+};
 
 // ========================================
 // LOGIN
 // ========================================
 
 window.handleLogin =
-async function () {
+  async function () {
 
+    // ===============================
+    // PERFIL
+    // ===============================
 
-  // =====================================
-  // VERIFICA PERFIL
-  // =====================================
-
-  if (!role) {
-
-    alert(
-      "Selecione o perfil antes de continuar."
-    );
-
-    return;
-  }
-
-
-  // =====================================
-  // PEGAR CAMPOS
-  // =====================================
-
-  const id =
-    document
-      .getElementById("inp-id")
-      .value
-      .trim();
-
-
-  const senha =
-    document
-      .getElementById("inp-senha")
-      .value
-      .trim();
-
-
-
-  // =====================================
-  // VALIDAR CAMPOS
-  // =====================================
-
-  if (!id || !senha) {
-
-    alert(
-      "Preencha todos os campos."
-    );
-
-    return;
-  }
-
-
-  clearError();
-
-
-
-  // =====================================
-  // VALIDAR PROFESSOR
-  // =====================================
-
-  if (
-
-    role === "professor"
-
-    &&
-
-    !id.includes("@educar")
-
-  ) {
-
-    showError(
-
-      "Email inválido. O email do professor deve conter @educar."
-
-    );
-
-    return;
-  }
-
-
-
-  // =====================================
-  // VALIDAR ALUNO
-  // =====================================
-
-  if (
-
-    role === "aluno"
-
-    &&
-
-    !id.includes("@estudante")
-
-  ) {
-
-    showError(
-
-      "Email inválido. O email do aluno deve conter @estudante."
-
-    );
-
-    return;
-  }
-
-
-
-  // =====================================
-  // BOTÃO
-  // =====================================
-
-  const btn =
-    document.getElementById(
-      "btn-entrar"
-    );
-
-
-  btn.textContent =
-    "Verificando...";
-
-  btn.disabled = true;
-
-
-
-  // =====================================
-  // LOGIN FIREBASE
-  // =====================================
-
-  try {
-
-    const response =
-
-      await signInWithEmailAndPassword(
-
-        auth,
-
-        id,
-
-        senha
+    if (!role) {
+      alert(
+        "Selecione o perfil antes de continuar."
       );
 
-
-    console.log(
-      "login sucesso"
-    );
-
-
-    console.log(
-      response.user
-    );
-
-
-
-    // ===================================
-    // REDIRECIONAMENTO
-    // ===================================
-
-    if (role === "professor") {
-
-      window.location.href =
-        "telaProfessor.html";
+      return;
     }
 
-    else if (role === "aluno") {
+    // ===============================
+    // CAMPOS
+    // ===============================
 
-      window.location.href =
-        "indexTelaAluno.html";
+    const email =
+      elements.inpId.value.trim();
+
+    const senha =
+      elements.inpSenha.value.trim();
+
+    // ===============================
+    // VALIDAÇÃO
+    // ===============================
+
+    if (!email || !senha) {
+      alert(
+        "Preencha todos os campos."
+      );
+
+      return;
     }
 
-  }
+    clearError();
 
+    if (
+      !validateRoleEmail(
+        email,
+        role
+      )
+    ) {
+      showError(
+        roleConfig[role]
+          .errorMessage
+      );
 
-  catch (error) {
-
-    console.log(error);
-
-
-    let mensagem =
-      "Usuário ou senha inválidos.";
-
-
-
-    switch (error.code) {
-
-
-      case "auth/user-not-found":
-
-        mensagem =
-          "Nenhum usuário encontrado com esse email.";
-
-        break;
-
-
-
-      case "auth/wrong-password":
-
-        mensagem =
-          "Senha incorreta.";
-
-        break;
-
-
-
-      case "auth/invalid-email":
-
-        mensagem =
-          "Formato de email inválido.";
-
-        break;
-
-
-
-      case "auth/too-many-requests":
-
-        mensagem =
-          "Muitas tentativas. Tente novamente mais tarde.";
-
-        break;
-
-
-
-      default:
-
-        mensagem =
-          error.message;
+      return;
     }
 
+    // ===============================
+    // LOGIN
+    // ===============================
 
-    alert(mensagem);
+    setLoading(true);
 
+    try {
+      const response =
+        await signInWithEmailAndPassword(
+          auth,
+          email,
+          senha
+        );
 
-    btn.textContent =
-      "Entrar";
+      console.log(
+        "Login realizado com sucesso"
+      );
 
-    btn.disabled = false;
-  }
-};
+      console.log(
+        response.user
+      );
+
+      // ===========================
+      // REDIRECIONAMENTO
+      // ===========================
+
+      if (
+        role === "professor"
+      ) {
+        window.location.href =
+          "telaProfessor.html";
+
+        return;
+      }
+
+      if (
+        role === "aluno"
+      ) {
+        window.location.href =
+          "indexTelaAluno.html";
+
+        return;
+      }
+
+    } catch (error) {
+
+      console.error(error);
+
+      const mensagem =
+        firebaseErrors[
+          error.code
+        ] ||
+        error.message ||
+        "Usuário ou senha inválidos.";
+
+      alert(mensagem);
+
+      setLoading(false);
+    }
+  };
