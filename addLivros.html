@@ -8,10 +8,7 @@
   <meta name="description" content="Sistema Biblioteca Escolar — Acervo">
   <title>BibliotecaEscolar — Acervo</title>
   <link rel="stylesheet" href="style/addLivros.css">
-
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-
-  
 </head>
 
 <body>
@@ -35,7 +32,8 @@
   <div class="page active" id="page-acervo">
 
     <nav class="breadcrumb">
-      <a href="#">Início</a>
+      <!-- CORREÇÃO: era href="#" que recarregava a página -->
+      <a href="javascript:void(0)" onclick="navegarPara('page-acervo')">Início</a>
       <span class="breadcrumb-sep">›</span>
       <span class="breadcrumb-current">Acervo</span>
     </nav>
@@ -108,9 +106,9 @@
   <div class="page" id="page-adicionar">
 
     <nav class="breadcrumb">
-      <a onclick="navegarPara('page-acervo')">Início</a>
+      <a href="javascript:void(0)" onclick="navegarPara('page-acervo')">Início</a>
       <span class="breadcrumb-sep">›</span>
-      <a onclick="navegarPara('page-acervo')">Acervo</a>
+      <a href="javascript:void(0)" onclick="navegarPara('page-acervo')">Acervo</a>
       <span class="breadcrumb-sep">›</span>
       <span class="breadcrumb-current">Novo Livro</span>
     </nav>
@@ -173,8 +171,7 @@
   <!-- SCRIPT                    -->
   <!-- ========================= -->
 
-  <script src="script/addLivros.js">
-  </script>
+  <script src="script/addLivros.js"></script>
 
 </body>
 </html>

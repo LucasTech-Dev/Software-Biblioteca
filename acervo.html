@@ -1,34 +1,27 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 
-
 <head>
+
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <meta name="description" content="Sistema Biblioteca Escolar — Acervo">
   <meta name="keywords" content="programação, css, html, javascript, biblioteca, acervo">
   <meta name="author" content="Lucas Sant'Ana Dias">
+
   <link rel="stylesheet" href="style/acervo.css">
 
   <title>BibliotecaEscolar — Acervo</title>
 
-  <!-- Google Fonts -->
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
     rel="stylesheet"
   >
 
-  
-
 </head>
 
 <body>
-
-  <!-- ========================= -->
-  <!-- HEADER -->
-  <!-- ========================= -->
 
   <header>
 
@@ -41,19 +34,11 @@
 
   </header>
 
-  <!-- ========================= -->
-  <!-- BREADCRUMB -->
-  <!-- ========================= -->
-
   <nav class="breadcrumb">
     <a href="telaProfessor.html">Início</a>
     <span class="breadcrumb-sep">›</span>
     <span class="breadcrumb-current">Acervo</span>
   </nav>
-
-  <!-- ========================= -->
-  <!-- HERO -->
-  <!-- ========================= -->
 
   <div class="hero">
 
@@ -68,10 +53,6 @@
     </p>
 
   </div>
-
-  <!-- ========================= -->
-  <!-- STATS -->
-  <!-- ========================= -->
 
   <div class="stats" id="stats-bar">
 
@@ -97,15 +78,7 @@
 
   </div>
 
-  <!-- ========================= -->
-  <!-- MAIN -->
-  <!-- ========================= -->
-
   <main>
-
-    <!-- ========================= -->
-    <!-- TOOLBAR -->
-    <!-- ========================= -->
 
     <div class="toolbar">
 
@@ -140,17 +113,17 @@
           <button class="view-btn" id="btn-list" onclick="setView('list')" title="Lista">☰</button>
         </div>
 
-        <button onclick="addnovolivro()" class="btn-primary">
+        <button
+          id="btnNovoLivro"
+          onclick="addnovolivro()"
+          class="btn-primary"
+        >
           ＋ Novo livro
         </button>
 
       </div>
 
     </div>
-
-    <!-- ========================= -->
-    <!-- FILTROS RÁPIDOS -->
-    <!-- ========================= -->
 
     <div class="quick-filters">
 
@@ -163,27 +136,11 @@
 
     </div>
 
-    <!-- ========================= -->
-    <!-- GRID DE LIVROS -->
-    <!-- ========================= -->
+    <div class="books-grid" id="books-grid"></div>
 
-    <div class="books-grid" id="books-grid">
-      <!-- preenchido pelo JS -->
-    </div>
-
-    <!-- ========================= -->
-    <!-- PAGINAÇÃO -->
-    <!-- ========================= -->
-
-    <div class="pagination" id="pagination">
-      <!-- preenchido pelo JS -->
-    </div>
+    <div class="pagination" id="pagination"></div>
 
   </main>
-
-  <!-- ========================= -->
-  <!-- MODAL DETALHES -->
-  <!-- ========================= -->
 
   <div class="modal-overlay" id="modal-overlay" onclick="closeModalOnOverlay(event)">
 
@@ -194,29 +151,18 @@
         <button class="modal-close" onclick="closeModal()">✕</button>
       </div>
 
-      <div class="modal-body" id="modal-body">
-        <!-- preenchido pelo JS -->
-      </div>
+      <div class="modal-body" id="modal-body"></div>
 
     </div>
 
   </div>
-
-  <!-- ========================= -->
-  <!-- FOOTER -->
-  <!-- ========================= -->
 
   <footer>
     <span>BibliotecaEscolar — Sistema de Gestão &copy; 2025</span>
     <span>Módulo: Acervo v1.0</span>
   </footer>
 
-  <!-- ========================= -->
-  <!-- SCRIPT -->
-  <!-- ========================= -->
-
-  <script src="script/acervo.js"></script>
+  <script type="module" src="script/acervo.js"></script>
 
 </body>
-
-</html> 
+</html>

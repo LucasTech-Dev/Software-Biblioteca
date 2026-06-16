@@ -1029,6 +1029,31 @@
     /* ANIMAÇÕES */
     /* ========================= */
 
+
+     
+   .historico-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.historico-header h2 {
+  margin: 0;
+}
+
+.acoes-historico {
+  display: flex;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+
+
+
+
+
     @keyframes fadeUp {
 
       from {

@@ -1,244 +1,343 @@
- let roleAtual = null;
+// ========================================
+// IMPORTS
+// ========================================
 
-    function selectRole(role) {
-      roleAtual = role;
+import {
+  createUserWithEmailAndPassword
+}
 
-      document
-        .querySelectorAll('.role-opt')
-        .forEach(el => el.classList.remove('active'));
+from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
-      document
-        .getElementById('opt-' + role)
-        .classList.add('active');
+import {
 
-      const lblId = document.getElementById('lbl-id');
-      const lblExtra = document.getElementById('lbl-extra');
-      const wrapTurma = document.getElementById('wrap-turma');
-      const inpTurma = document.getElementById('inp-turma');
+  doc,
+  setDoc,
+  serverTimestamp
 
-      if (role === 'professor') {
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-        lblId.textContent = 'Registro funcional';
-        lblExtra.textContent = 'Disciplina';
+import { auth } from "../firebase/auth.js";
 
-        if (inpTurma.tagName === 'SELECT') {
-          swapTurmaParaInput('Português, Matemática...');
-        }
+import { db } from "../firebase/firestore.js";
 
-        wrapTurma.style.display = '';
 
-      } else {
+// ========================================
+// ROLE
+// ========================================
 
-        lblId.textContent = 'Matrícula';
-        lblExtra.textContent = 'Turma';
+let roleSelecionada = "";
 
-        if (document.getElementById('inp-turma').tagName === 'INPUT') {
-          swapTurmaParaSelect();
-        }
+window.selectRole = function(role) {
 
-        wrapTurma.style.display = '';
-      }
-    }
+  roleSelecionada = role;
 
-    function swapTurmaParaInput(ph) {
+  document
+    .querySelectorAll(".role-opt")
+    .forEach(btn => btn.classList.remove("active"));
 
-      const wrap = document.querySelector('#wrap-turma .select-wrap');
+  document
+    .getElementById(`opt-${role}`)
+    .classList.add("active");
+};
 
-      const input = document.createElement('input');
 
-      input.type = 'text';
-      input.id = 'inp-turma';
-      input.placeholder = ph;
+// ========================================
+// CADASTRO
+// ========================================
 
-      wrap.replaceChild(
-        input,
-        document.getElementById('inp-turma')
+window.handleCadastro = async function() {
+
+  // ========================================
+  // INPUTS
+  // ========================================
+
+  const nome =
+    document.getElementById("inp-nome")
+    .value
+    .trim();
+
+  const matricula =
+    document.getElementById("inp-id")
+    .value
+    .trim();
+
+  const turma =
+    document.getElementById("inp-turma")
+    .value;
+
+  const email =
+    document.getElementById("inp-email")
+    .value
+    .trim();
+
+  const senha =
+    document.getElementById("inp-senha")
+    .value;
+
+  const confirma =
+    document.getElementById("inp-confirma")
+    .value;
+
+  const feedback =
+    document.getElementById("msg-feedback");
+
+
+  // ========================================
+  // RESET FEEDBACK
+  // ========================================
+
+  feedback.innerText = "";
+
+
+  // ========================================
+  // VALIDAÇÕES
+  // ========================================
+
+  if (!roleSelecionada) {
+
+    feedback.innerText =
+      "Selecione um perfil.";
+
+    return;
+  }
+
+  if (
+    !nome ||
+    !matricula ||
+    !email ||
+    !senha
+  ) {
+
+    feedback.innerText =
+      "Preencha todos os campos.";
+
+    return;
+  }
+
+  if (senha.length < 6) {
+
+    feedback.innerText =
+      "Senha precisa ter no mínimo 6 caracteres.";
+
+    return;
+  }
+
+  if (senha !== confirma) {
+
+    feedback.innerText =
+      "As senhas não coincidem.";
+
+    return;
+  }
+
+
+  try {
+
+    // ========================================
+    // AUTHENTICATION
+    // ========================================
+
+    const userCredential =
+      await createUserWithEmailAndPassword(
+        auth,
+        email,
+        senha
       );
+
+    const user = userCredential.user;
+
+
+    // ========================================
+    // ESTRUTURA BASE DO USUÁRIO
+    // ========================================
+
+    const dadosUsuario = {
+
+      // IDENTIFICAÇÃO
+      uid: user.uid,
+
+      nome: nome,
+
+      email: email,
+
+      matricula: matricula,
+
+      turma: turma || "Não definida",
+
+      perfil: roleSelecionada,
+
+
+      // STATUS
+      ativo: true,
+
+      bloqueado: false,
+
+
+      // CONTROLE
+      livrosPegos: 0,
+
+      reservasAtivas: 0,
+
+      multas: 0,
+
+
+      // ESTATÍSTICAS
+      totalEmprestimos: 0,
+
+      totalReservas: 0,
+
+      // VISUALIZAÇÃO
+      emprestimosOcultos: [],
+
+      reservasOcultas: [],
+
+
+      // ÚLTIMA ATIVIDADE
+      ultimoLogin: null,
+
+
+      // TIMESTAMPS
+      criadoEm: serverTimestamp(),
+
+      atualizadoEm: serverTimestamp()
+    };
+
+
+    // ========================================
+    // FIRESTORE
+    // ========================================
+
+    await setDoc(
+
+      doc(db, "usuarios", user.uid),
+
+      dadosUsuario
+    );
+
+
+    // ========================================
+    // SUCESSO
+    // ========================================
+
+    feedback.innerText =
+      "Conta criada com sucesso!";
+
+    console.log(
+      "Usuário criado:",
+      user
+    );
+
+
+    // ========================================
+    // REDIRECT
+    // ========================================
+
+    setTimeout(() => {
+
+      window.location.href =
+        "login.html";
+
+    }, 1500);
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+
+    // ========================================
+    // ERROS FIREBASE
+    // ========================================
+
+    switch (error.code) {
+
+      case "auth/email-already-in-use":
+
+        feedback.innerText =
+          "Este email já está cadastrado.";
+
+        break;
+
+
+      case "auth/invalid-email":
+
+        feedback.innerText =
+          "Email inválido.";
+
+        break;
+
+
+      case "auth/weak-password":
+
+        feedback.innerText =
+          "Senha muito fraca.";
+
+        break;
+
+
+      default:
+
+        feedback.innerText =
+          "Erro ao criar conta.";
     }
+  }
+};
 
-    function swapTurmaParaSelect() {
 
-      const wrap = document.querySelector('#wrap-turma .select-wrap');
+// ========================================
+// SENHA
+// ========================================
 
-      const sel = document.createElement('select');
+window.avaliarSenha = function(senha) {
 
-      sel.id = 'inp-turma';
+  const segs = [
 
-      [
-        '',
-        '1º A',
-        '1º B',
-        '2º A',
-        '2º B',
-        '3º A',
-        '3º B'
-      ].forEach(v => {
+    document.getElementById("seg1"),
 
-        const o = document.createElement('option');
+    document.getElementById("seg2"),
 
-        o.value = v;
-        o.textContent = v || 'Selecione';
+    document.getElementById("seg3"),
 
-        sel.appendChild(o);
-      });
+    document.getElementById("seg4")
 
-      const old = document.getElementById('inp-turma');
+  ];
 
-      if (old) {
-        wrap.replaceChild(sel, old);
-      } else {
-        wrap.appendChild(sel);
-      }
-    }
+  const label =
+    document.getElementById("lbl-forca");
 
-    function avaliarSenha(val) {
+  segs.forEach(seg => {
 
-      const segs = [1, 2, 3, 4].map(i =>
-        document.getElementById('seg' + i)
-      );
+    seg.style.background = "#ddd";
+  });
 
-      const lbl = document.getElementById('lbl-forca');
+  let forca = 0;
 
-      const pontos = calcularForca(val);
+  if (senha.length >= 6) forca++;
 
-      segs.forEach(s => {
-        s.className = 'strength-seg';
-      });
+  if (/[A-Z]/.test(senha)) forca++;
 
-      if (!val) {
-        lbl.textContent = '';
-        return;
-      }
+  if (/[0-9]/.test(senha)) forca++;
 
-      if (pontos <= 1) {
+  if (/[^A-Za-z0-9]/.test(senha)) forca++;
 
-        segs[0].classList.add('fraca');
+  for (let i = 0; i < forca; i++) {
 
-        lbl.style.color = '#C05050';
-        lbl.textContent = 'Senha fraca';
+    segs[i].style.background = "#22c55e";
+  }
 
-      } else if (pontos === 2) {
+  const niveis = [
 
-        segs[0].classList.add('media');
-        segs[1].classList.add('media');
+    "",
 
-        lbl.style.color = '#B09040';
-        lbl.textContent = 'Senha razoável';
+    "Fraca",
 
-      } else if (pontos === 3) {
+    "Média",
 
-        [0, 1, 2].forEach(i => {
-          segs[i].classList.add('forte');
-        });
+    "Boa",
 
-        lbl.style.color = '#4A8C6A';
-        lbl.textContent = 'Senha boa';
+    "Forte"
+  ];
 
-      } else {
-
-        segs.forEach(s => {
-          s.classList.add('forte');
-        });
-
-        lbl.style.color = '#2E6B4A';
-        lbl.textContent = 'Senha forte';
-      }
-    }
-
-    function calcularForca(p) {
-
-      let pts = 0;
-
-      if (p.length >= 8) pts++;
-      if (/[A-Z]/.test(p)) pts++;
-      if (/[0-9]/.test(p)) pts++;
-      if (/[^A-Za-z0-9]/.test(p)) pts++;
-
-      return pts;
-    }
-
-    function handleCadastro() {
-
-      const nome = document
-        .getElementById('inp-nome')
-        .value
-        .trim();
-
-      const id = document
-        .getElementById('inp-id')
-        .value
-        .trim();
-
-      const email = document
-        .getElementById('inp-email')
-        .value
-        .trim();
-
-      const senha = document
-        .getElementById('inp-senha')
-        .value;
-
-      const confirma = document
-        .getElementById('inp-confirma')
-        .value;
-
-      const fb = document.getElementById('msg-feedback');
-
-      fb.className = 'msg';
-
-      if (!roleAtual) {
-        return mostrarErro('Selecione um perfil.');
-      }
-
-      if (!nome) {
-        return mostrarErro('Informe o nome completo.');
-      }
-
-      if (!id) {
-        return mostrarErro('Informe a identificação.');
-      }
-
-      if (!email || !email.includes('@')) {
-        return mostrarErro('E-mail inválido.');
-      }
-
-      if (senha.length < 6) {
-        return mostrarErro('A senha deve ter pelo menos 6 caracteres.');
-      }
-
-      if (senha !== confirma) {
-        return mostrarErro('As senhas não coincidem.');
-      }
-
-      const btn = document.getElementById('btn-cadastrar');
-
-      btn.disabled = true;
-      btn.textContent = 'Cadastrando...';
-
-      setTimeout(() => {
-
-        btn.disabled = false;
-        btn.textContent = 'Criar conta';
-
-        mostrarOk('Conta criada com sucesso!');
-
-        // window.location.href = 'login.html';
-
-      }, 1400);
-    }
-
-    function mostrarErro(txt) {
-
-      const fb = document.getElementById('msg-feedback');
-
-      fb.className = 'msg erro';
-      fb.textContent = txt;
-    }
-
-    function mostrarOk(txt) {
-
-      const fb = document.getElementById('msg-feedback');
-
-      fb.className = 'msg ok';
-      fb.textContent = txt;
-    }
+  label.innerText = niveis[forca];
+};

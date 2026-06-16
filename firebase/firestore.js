@@ -4,4 +4,4 @@ import { app } from "./config.js";
 
 const db = getFirestore(app);
 
-export { db };
+export { db };  

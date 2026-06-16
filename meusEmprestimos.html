@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+ 
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="style/meusEmprestimos.css">
+
+  <title>Meus Empréstimos</title>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet">
+
+</head>
+
+<body>
+
+  <!-- HEADER -->
+
+  <header>
+
+    <div class="header-left">
+
+      <div class="avatar" id="avatarUsuario">
+        --
+      </div>
+
+      <div class="header-info">
+
+        <div class="header-name" id="nomeUsuario">
+          Carregando...
+        </div>
+
+        <div class="header-sub" id="dadosUsuario">
+          Carregando...
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="header-badge">
+      📚 Minha Biblioteca
+    </div>
+
+  </header>
+
+  <!-- HERO -->
+
+  <div class="hero">
+
+    <h1>
+      Meus <span>Empréstimos</span>
+    </h1>
+
+    <p>
+      Acompanhe seus empréstimos e reservas.
+    </p>
+
+  </div>
+
+  <!-- SEARCH -->
+
+  <div class="toolbar">
+
+    <input
+      id="searchInput"
+      type="text"
+      placeholder="Buscar livro..."
+    >
+
+  </div>
+
+  <!-- FILTROS -->
+
+  <div class="filters">
+
+    <button
+      class="chip active"
+      data-filter="todos">
+      Todos
+    </button>
+
+    <button
+      class="chip"
+      data-filter="reserva">
+      Em análise
+    </button>
+
+    <button
+      class="chip"
+      data-filter="ativo">
+      Minhas Retiradas
+    </button>
+
+    <button
+      class="chip"
+      data-filter="atrasado">
+      Atrasados
+    </button>
+
+    <button
+      class="chip"
+      data-filter="devolvido">
+      Devolvidos
+    </button>
+
+  </div>
+
+  <!-- BOTÃO APAGAR -->
+
+  <div class="actions-bar">
+
+    <button
+      id="btnApagar"
+      class="btn-apagar"
+      style="display:none;">
+      🗑 Apagar
+    </button>
+
+  </div>
+
+  <!-- LISTA -->
+
+  <main>
+
+    <div class="loan-list" id="loan-list"></div>
+
+  </main>
+
+  <script type="module" src="script/meusEmprestimos.js"></script>
+
+</body>
+
+</html>

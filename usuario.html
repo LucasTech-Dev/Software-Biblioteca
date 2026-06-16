@@ -4,20 +4,25 @@
 <head>
 
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>BibliotecaEscolar — Perfil do Usuário</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>
+    BibliotecaEscolar — Perfil do Usuário
+  </title>
 
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
-    rel="stylesheet">
+    rel="stylesheet"
+  >
 
-  
-    
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style/usuario.css">
-  <title>usuario</title>
+  <link
+    rel="stylesheet"
+    href="style/usuario.css"
+  >
 
 </head>
 
@@ -25,14 +30,30 @@
 
   <!-- HEADER -->
   <header>
-    <div class="logo">Biblioteca Escolar</div>
-    <div>Perfil do Usuário</div>
+
+    <div class="logo">
+      Biblioteca Escolar
+    </div>
+
+    <div>
+      Perfil do Usuário
+    </div>
+
   </header>
 
   <!-- HERO -->
   <div class="hero">
-    <h1>Bem-vindo(a), Maria Oliveira</h1>
-    <p>Acompanhe seus empréstimos, histórico, notificações e gerencie sua conta.</p>
+
+    <h1 id="heroNome">
+      Bem-vindo(a)
+    </h1>
+
+    <p>
+      Acompanhe seus empréstimos,
+      histórico, notificações
+      e gerencie sua conta.
+    </p>
+
   </div>
 
   <!-- MAIN -->
@@ -42,31 +63,102 @@
 
       <!-- DADOS PESSOAIS -->
       <div class="card">
-        <h2>Dados do Usuário</h2>
+
+        <h2>
+          Dados do Usuário
+        </h2>
+
         <div class="info">
-          <div><strong>Nome:</strong> <span id="nomeUsuario">Maria Oliveira</span></div>
-          <div><strong>Matrícula:</strong> <span id="matriculaUsuario">20260045</span></div>
-          <div><strong>Turma:</strong> <span id="turmaUsuario">2º Ano A</span></div>
+
+          <div>
+            <strong>Nome:</strong>
+            <span id="nomeUsuario"></span>
+          </div>
+
+          <div>
+            <strong>Matrícula:</strong>
+            <span id="matriculaUsuario"></span>
+          </div>
+
+          <div>
+            <strong>Turma:</strong>
+            <span id="turmaUsuario"></span>
+          </div>
+
         </div>
-        <h3>Alterar Senha</h3>
+
+        <h3>
+          Alterar Senha
+        </h3>
+
         <div class="form-group">
-          <label for="novaSenha">Nova senha</label>
-          <input type="password" id="novaSenha" placeholder="Digite sua nova senha">
+
+          <label for="novaSenha">
+            Nova senha
+          </label>
+
+          <input
+            type="password"
+            id="novaSenha"
+            placeholder="Digite sua nova senha"
+          >
+
         </div>
-        <button class="btn" id="btnAlterarSenha">Alterar Senha</button>
+
+        <button
+          class="btn"
+          id="btnAlterarSenha"
+        >
+          Alterar Senha
+        </button>
+
       </div>
 
       <!-- HISTÓRICO E NOTIFICAÇÕES -->
       <div class="card">
-        <h2>Histórico de Leituras</h2>
-        <div class="list" id="historicoLeituras">
-          <!-- Itens preenchidos via JS -->
+
+        <div class="historico-header">
+
+          <h2>
+            Histórico de Leituras
+          </h2>
+
+          <div class="acoes-historico">
+
+            <button
+              class="btn btn-danger"
+              id="btnApagarHistorico"
+            >
+              🗑 Limpar
+            </button>
+
+            <button
+              class="btn"
+              id="btnRestaurarHistorico"
+            >
+              ↩ Restaurar
+            </button>
+
+          </div>
+
         </div>
 
-        <h2>Notificações</h2>
-        <div class="list" id="notificacoes">
-          <!-- Notificações via JS -->
+        <div
+          class="list"
+          id="historicoLeituras"
+        >
         </div>
+
+        <h2>
+          Notificações
+        </h2>
+
+        <div
+          class="list"
+          id="notificacoes"
+        >
+        </div>
+
       </div>
 
     </div>
@@ -75,15 +167,21 @@
 
   <!-- FOOTER -->
   <footer>
-    <span>BibliotecaEscolar © 2026</span>
-    <span>Área do Usuário</span>
+
+    <span>
+      BibliotecaEscolar © 2026
+    </span>
+
+    <span>
+      Área do Usuário
+    </span>
+
   </footer>
 
-  
-
-
-    <script src="script/usuario.js"></script>
-
+  <script
+    type="module"
+    src="script/usuario.js"
+  ></script>
 
 </body>
 </html>

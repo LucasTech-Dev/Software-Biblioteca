@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Dump Firestore</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+    // CONFIG
+    const firebaseConfig = {
+      apiKey: "AIzaSyCUisepO_NJCm2mZHWQczgVB5AplDJa0LA",
+      authDomain: "biblioteca-riachuelo.firebaseapp.com",
+      projectId: "biblioteca-riachuelo",
+      storageBucket: "biblioteca-riachuelo.firebasestorage.app",
+      messagingSenderId: "375143207365",
+      appId: "1:375143207365:web:89548892164c039785bbac"
+    };
+
+    // APP
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // 🔹 Aqui você coloca os nomes das coleções
+    const colecoes = ["livros", "usuarios", "emprestimos", "categorias", "configuracoes", "reservas", "logs"];
+
+    async function dumpFirestore() {
+      for (const nome of colecoes) {
+        const snapshot = await getDocs(collection(db, nome));
+        const dados = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        console.log(`Coleção: ${nome}`);
+        console.log(JSON.stringify(dados, null, 2));
+      }
+    }
+
+    window.onload = dumpFirestore;
+  </script>
+</head>
+<body>
+  <h1>Dump Firestore</h1>
+  <p>Abra o console do navegador para ver os dados.</p>
+</body>
+</html>
