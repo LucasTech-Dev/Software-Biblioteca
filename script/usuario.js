@@ -7,7 +7,7 @@ import {
   onAuthStateChanged,
   updatePassword
 
-}
+} 
 
 from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
@@ -186,9 +186,8 @@ onAuthStateChanged(auth, async (user) => {
 // ========================================
 // ALTERAR SENHA
 // ========================================
-
-document
-  .getElementById("btnAlterarSenha")
+ 
+document.getElementById("btnAlterarSenha")
 
   .addEventListener("click", async () => {
 
