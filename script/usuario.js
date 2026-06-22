@@ -23,6 +23,7 @@ from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 import { auth } from "../firebase/auth.js";
 import { db } from "../firebase/firestore.js";
 
+window.PageGuard?.hold();
 
 // ========================================
 // ELEMENTOS
@@ -179,6 +180,12 @@ onAuthStateChanged(auth, async (user) => {
     console.error(error);
 
     alert("Erro ao carregar perfil.");
+  }
+
+  finally {
+
+    window.PageGuard?.ready();
+
   }
 });
 

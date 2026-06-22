@@ -22,6 +22,7 @@ from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 import { db } from "../firebase/firestore.js";
 import { auth } from "../firebase/auth.js";
 
+window.PageGuard?.hold();
 
 // ========================================
 // ESTADO
@@ -49,7 +50,17 @@ onAuthStateChanged(auth, async(user) => {
 
   usuarioAtual = user;
 
-  await carregarLivros();
+  try {
+
+    await carregarLivros();
+
+  }
+
+  finally {
+
+    window.PageGuard?.ready();
+
+  }
 
 });
 
@@ -439,7 +450,7 @@ await updateDoc(
 
     alert("Livro reservado com sucesso.");
 
-    carregarLivros();
+    await carregarLivros();
 
   }
 

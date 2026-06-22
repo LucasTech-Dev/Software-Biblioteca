@@ -23,6 +23,8 @@ from "../firebase/services/emprestimosService.js";
 import { ocultarReservasAluno }
 from "../firebase/services/reservasService.js";
 
+window.PageGuard?.hold();
+
 // ========================================
 
 let RESERVAS = [];
@@ -38,6 +40,28 @@ const loanList =
 
 const btnApagar =
   document.getElementById("btnApagar");
+
+let perfilCarregado = false;
+let emprestimosCarregados = false;
+let reservasCarregadas = false;
+let paginaLiberada = false;
+
+function liberarPaginaQuandoPronta() {
+
+  if (
+    paginaLiberada ||
+    !perfilCarregado ||
+    !emprestimosCarregados ||
+    !reservasCarregadas
+  ) {
+    return;
+  }
+
+  paginaLiberada = true;
+
+  window.PageGuard?.ready();
+
+}
 
 // ========================================
 // TEXTOS DO BOTÃO POR FILTRO
@@ -67,85 +91,131 @@ onAuthStateChanged(auth, async (user) => {
   // DADOS DO USUÁRIO
   // ========================================
 
-  const usuarioRef =
-    doc(db, "usuarios", user.uid);
+  try {
 
-  const usuarioSnap =
-    await getDoc(usuarioRef);
+    const usuarioRef =
+      doc(db, "usuarios", user.uid);
 
-  const usuario =
-    usuarioSnap.data();
+    const usuarioSnap =
+      await getDoc(usuarioRef);
 
-  document.getElementById("nomeUsuario").innerText =
-    usuario.nome;
+    const usuario =
+      usuarioSnap.data();
 
-  document.getElementById("dadosUsuario").innerText =
-    `${usuario.turma} · Matrícula ${usuario.matricula}`;
+    document.getElementById("nomeUsuario").innerText =
+      usuario.nome;
+
+    document.getElementById("dadosUsuario").innerText =
+      `${usuario.turma} · Matrícula ${usuario.matricula}`;
 
   // ========================================
   // AVATAR
   // ========================================
 
-  const iniciais = usuario.nome
-    .split(" ")
-    .map(n => n[0])
-    .slice(0, 2)
-    .join("");
+    const iniciais = usuario.nome
+      .split(" ")
+      .map(n => n[0])
+      .slice(0, 2)
+      .join("");
 
-  document.getElementById("avatarUsuario").innerText =
-    iniciais.toUpperCase();
+    document.getElementById("avatarUsuario").innerText =
+      iniciais.toUpperCase();
+
+    perfilCarregado = true;
 
   // ========================================
   // LISTENER — EMPRÉSTIMOS
   // ========================================
 
-  const qEmprestimos = query(
-    collection(db, "emprestimos"),
-    where("usuarioId", "==", user.uid)
-  );
+    const qEmprestimos = query(
+      collection(db, "emprestimos"),
+      where("usuarioId", "==", user.uid)
+    );
 
-  onSnapshot(qEmprestimos, snapshot => {
+    onSnapshot(qEmprestimos, snapshot => {
 
-    EMPRESTIMOS = snapshot.docs
-      .map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }))
-      .filter(item =>
-        item.visivelAluno !== false
-      );
+      EMPRESTIMOS = snapshot.docs
+        .map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }))
+        .filter(item =>
+          item.visivelAluno !== false
+        );
 
-    renderizarLista();
+      emprestimosCarregados = true;
 
-  });
+      renderizarLista();
+
+      liberarPaginaQuandoPronta();
+
+    }, error => {
+
+      console.error(error);
+
+      alert("Erro ao carregar empréstimos.");
+
+      emprestimosCarregados = true;
+
+      liberarPaginaQuandoPronta();
+
+    });
 
   // ========================================
   // LISTENER — RESERVAS
   // ========================================
 
-  const qReservas = query(
-    collection(db, "reservas"),
-    where("usuarioId", "==", user.uid)
-  );
+    const qReservas = query(
+      collection(db, "reservas"),
+      where("usuarioId", "==", user.uid)
+    );
 
-  onSnapshot(qReservas, snapshot => {
+    onSnapshot(qReservas, snapshot => {
 
-    RESERVAS = snapshot.docs
-      .map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }))
-      .filter(item =>
-        item.visivelAluno !== false
-      );
+      RESERVAS = snapshot.docs
+        .map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }))
+        .filter(item =>
+          item.visivelAluno !== false
+        );
 
-    renderizarLista();
+      reservasCarregadas = true;
 
-  });
+      renderizarLista();
+
+      liberarPaginaQuandoPronta();
+
+    }, error => {
+
+      console.error(error);
+
+      alert("Erro ao carregar reservas.");
+
+      reservasCarregadas = true;
+
+      liberarPaginaQuandoPronta();
+
+    });
 
   // ========================================
   // BOTÃO APAGAR — lógica de clique
   // ========================================
+
+    liberarPaginaQuandoPronta();
+
+  }
+
+  catch (error) {
+
+    console.error(error);
+
+    alert("Erro ao carregar seus empréstimos.");
+
+    window.PageGuard?.ready();
+
+  }
 
   btnApagar.addEventListener("click", async () => {
 

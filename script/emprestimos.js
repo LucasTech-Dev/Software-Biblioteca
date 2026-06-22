@@ -19,6 +19,7 @@ import {
 }
 from "../firebase/services/usuariosService.js";
 
+window.PageGuard?.hold();
  
 // ========================================
 
@@ -775,4 +776,16 @@ btnConfirmarDevolucao
     }
   );
 
-carregar();
+carregar()
+  .catch((error) => {
+
+    console.error(error);
+
+    alert("Erro ao carregar empréstimos.");
+
+  })
+  .finally(() => {
+
+    window.PageGuard?.ready();
+
+  });
