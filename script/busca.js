@@ -32,6 +32,8 @@ let BOOKS = [];
 
 let usuarioAtual = null;
 
+const reservasEmAndamento = new Set();
+
 
 // ========================================
 // AUTH
@@ -41,7 +43,7 @@ onAuthStateChanged(auth, async(user) => {
 
   if (!user) {
 
-    alert("Faça login.");
+    window.showAppMessage?.("Faça login.");
 
     window.location.href = "login.html";
 
@@ -110,7 +112,7 @@ async function carregarLivros() {
 
     console.error(error);
 
-    alert("Erro ao carregar livros.");
+    window.showAppMessage?.("Erro ao carregar livros.");
 
   }
 
@@ -236,9 +238,11 @@ function renderBooks(list) {
 
             `<button
               class="btn btn-primary btn-sm"
-              onclick="reservar('${b.id}')">
+              data-reserve-id="${b.id}"
+              onclick="reservar('${b.id}')"
+              ${reservasEmAndamento.has(b.id) ? 'disabled aria-busy="true"' : ''}>
 
-              📅 Reservar
+              ${reservasEmAndamento.has(b.id) ? '⏳ Reservando...' : '📅 Reservar'}
 
             </button>`
 
@@ -342,11 +346,33 @@ function clearFilters() {
 window.clearFilters = clearFilters;
 
 
+
+function setReservaLoading(livroId, loading) {
+
+  document
+    .querySelectorAll(`[data-reserve-id="${livroId}"]`)
+    .forEach((button) => {
+
+      button.disabled = loading;
+      button.setAttribute("aria-busy", loading ? "true" : "false");
+      button.textContent = loading ? "⏳ Reservando..." : "📅 Reservar";
+
+    });
+
+}
+
 // ========================================
 // RESERVA
 // ========================================
 
 async function reservar(livroId) {
+
+  if (reservasEmAndamento.has(livroId)) {
+    return;
+  }
+
+  reservasEmAndamento.add(livroId);
+  setReservaLoading(livroId, true);
 
   try {
 
@@ -367,7 +393,7 @@ async function reservar(livroId) {
 
     if (userSnap.empty) {
 
-      alert("Usuário não encontrado.");
+      window.showAppMessage?.("Usuário não encontrado.");
 
       return;
     }
@@ -448,7 +474,7 @@ await updateDoc(
       }
     );
 
-    alert("Livro reservado com sucesso.");
+    window.showAppMessage?.("Livro reservado com sucesso.");
 
     await carregarLivros();
 
@@ -458,7 +484,21 @@ await updateDoc(
 
     console.error(error);
 
-    alert("Erro ao reservar livro.");
+    window.showAppMessage?.("Erro ao reservar livro.");
+
+  }
+
+  finally {
+
+    reservasEmAndamento.delete(livroId);
+    setReservaLoading(livroId, false);
+
+  }
+
+  finally {
+
+    reservasEmAndamento.delete(livroId);
+    setReservaLoading(livroId, false);
 
   }
 
@@ -473,7 +513,7 @@ window.reservar = reservar;
 
 function verDetalhes(titulo) {
 
-  alert(`Livro: ${titulo}`);
+  window.showAppMessage?.(`Livro: ${titulo}`);
 
 }
 

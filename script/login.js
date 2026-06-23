@@ -166,7 +166,7 @@ async function () {
 
   if (!role) {
 
-    alert(
+    window.showAppMessage?.(
       "Selecione o perfil antes de continuar."
     );
 
@@ -199,7 +199,7 @@ async function () {
 
   if (!id || !senha) {
 
-    alert(
+    window.showAppMessage?.(
       "Preencha todos os campos."
     );
 
@@ -382,7 +382,7 @@ async function () {
     }
 
 
-    alert(mensagem);
+    window.showAppMessage?.(mensagem);
 
 
     btn.textContent =

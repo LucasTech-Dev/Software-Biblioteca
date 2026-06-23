@@ -499,7 +499,7 @@ btnConfirmarModal.addEventListener(
       !dataEntregaInput.value
     ) {
 
-      alert(
+      window.showAppMessage?.(
         "Preencha as datas."
       );
 
@@ -525,7 +525,7 @@ btnConfirmarModal.addEventListener(
 
       });
 
-      alert(
+      window.showAppMessage?.(
         "Empréstimo aprovado."
       );
 
@@ -551,7 +551,7 @@ btnConfirmarModal.addEventListener(
 
       console.error(error);
 
-      alert(
+      window.showAppMessage?.(
         "Erro ao aprovar empréstimo."
       );
 
@@ -597,7 +597,7 @@ btnNegarModal.addEventListener(
         RESERVAS
       );
 
-      alert(
+      window.showAppMessage?.(
         "Reserva negada."
       );
 
@@ -607,7 +607,7 @@ btnNegarModal.addEventListener(
 
       console.error(error);
 
-      alert(
+      window.showAppMessage?.(
         "Erro ao negar reserva."
       );
 
@@ -664,7 +664,7 @@ btnExcluirGeral.addEventListener(
 
       }
 
-      alert(
+      window.showAppMessage?.(
         "Registros apagados com sucesso."
       );
 
@@ -674,7 +674,7 @@ btnExcluirGeral.addEventListener(
 
       console.error(error);
 
-      alert(
+      window.showAppMessage?.(
         "Erro ao ocultar registros."
       );
 
@@ -757,7 +757,7 @@ btnConfirmarDevolucao
           EMPRESTIMOS
         );
 
-        alert(
+        window.showAppMessage?.(
           "Livro devolvido com sucesso."
         );
 
@@ -767,7 +767,7 @@ btnConfirmarDevolucao
 
         console.error(error);
 
-        alert(
+        window.showAppMessage?.(
           "Erro ao registrar devolução."
         );
 
@@ -781,7 +781,7 @@ carregar()
 
     console.error(error);
 
-    alert("Erro ao carregar empréstimos.");
+    window.showAppMessage?.("Erro ao carregar empréstimos.");
 
   })
   .finally(() => {

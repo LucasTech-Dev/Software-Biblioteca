@@ -1,4 +1,6 @@
 
+    window.PageGuard?.hold();
+
     /* ========================= */
     /* DADOS (mock) — Acervo     */
     /* ========================= */
@@ -246,7 +248,7 @@
       const isbn   = document.getElementById('add-isbn').value.trim();
 
       if (!titulo || !autor || !isbn) {
-        alert('Preencha todos os campos!');
+        window.showAppMessage?.('Preencha todos os campos!');
         return;
       }
 
@@ -277,3 +279,5 @@
 
     renderStats();
     renderGrid();
+    renderCatalogo();
+    window.PageGuard?.ready();

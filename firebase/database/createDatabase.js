@@ -19,13 +19,13 @@ botao.addEventListener("click", async () => {
 
     await criarBancoBiblioteca();
 
-    alert("✅ Banco criado com sucesso.");
+    window.showAppMessage?.("✅ Banco criado com sucesso.");
 
   } catch (error) {
 
     console.error(error);
 
-    alert("❌ Erro ao criar banco.");
+    window.showAppMessage?.("❌ Erro ao criar banco.");
   }
 });
 

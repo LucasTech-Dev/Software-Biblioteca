@@ -153,7 +153,7 @@ onAuthStateChanged(auth, async (user) => {
 
       console.error(error);
 
-      alert("Erro ao carregar empréstimos.");
+      window.showAppMessage?.("Erro ao carregar empréstimos.");
 
       emprestimosCarregados = true;
 
@@ -191,7 +191,7 @@ onAuthStateChanged(auth, async (user) => {
 
       console.error(error);
 
-      alert("Erro ao carregar reservas.");
+      window.showAppMessage?.("Erro ao carregar reservas.");
 
       reservasCarregadas = true;
 
@@ -211,7 +211,7 @@ onAuthStateChanged(auth, async (user) => {
 
     console.error(error);
 
-    alert("Erro ao carregar seus empréstimos.");
+    window.showAppMessage?.("Erro ao carregar seus empréstimos.");
 
     window.PageGuard?.ready();
 
@@ -261,7 +261,7 @@ onAuthStateChanged(auth, async (user) => {
 
       }
 
-      alert("Registros apagados da sua visualização.");
+      window.showAppMessage?.("Registros apagados da sua visualização.");
 
     }
 
@@ -269,7 +269,7 @@ onAuthStateChanged(auth, async (user) => {
 
       console.error(error);
 
-      alert("Erro ao apagar registros.");
+      window.showAppMessage?.("Erro ao apagar registros.");
 
     }
 

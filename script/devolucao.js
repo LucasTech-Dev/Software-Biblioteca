@@ -33,7 +33,7 @@
         devolucao.livro.trim() === ""
       ) {
 
-        alert(
+        window.showAppMessage?.(
           "Preencha os campos obrigatórios."
         );
 
@@ -50,7 +50,7 @@
 
       // ALERTA
 
-      alert(
+      window.showAppMessage?.(
         "Devolução registrada com sucesso!"
       );
 

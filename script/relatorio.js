@@ -44,7 +44,7 @@
     });
 
     // Exportações (simuladas)
-    document.getElementById("btnPDF").addEventListener("click",()=>{ alert("Exportar PDF!"); });
-    document.getElementById("btnExcel").addEventListener("click",()=>{ alert("Exportar Excel!"); });
+    document.getElementById("btnPDF").addEventListener("click",()=>{ window.showAppMessage?.("Exportar PDF!"); });
+    document.getElementById("btnExcel").addEventListener("click",()=>{ window.showAppMessage?.("Exportar Excel!"); });
 
   

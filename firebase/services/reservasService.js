@@ -147,7 +147,7 @@ export async function reservarLivro({
 
     });
 
-    alert("Livro reservado.");
+    window.showAppMessage?.("Livro reservado.");
 
   }
 
@@ -155,7 +155,7 @@ export async function reservarLivro({
 
     console.error(error);
 
-    alert("Erro ao reservar.");
+    window.showAppMessage?.("Erro ao reservar.");
 
   }
 

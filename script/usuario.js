@@ -74,7 +74,7 @@ onAuthStateChanged(auth, async (user) => {
     // EXISTE?
     if (!docSnap.exists()) {
 
-      alert("Usuário não encontrado.");
+      window.showAppMessage?.("Usuário não encontrado.");
       return;
     }
 
@@ -179,7 +179,7 @@ onAuthStateChanged(auth, async (user) => {
 
     console.error(error);
 
-    alert("Erro ao carregar perfil.");
+    window.showAppMessage?.("Erro ao carregar perfil.");
   }
 
   finally {
@@ -204,7 +204,7 @@ document.getElementById("btnAlterarSenha")
     // VALIDAÇÃO
     if (novaSenha.length < 6) {
 
-      alert("Senha precisa ter no mínimo 6 caracteres.");
+      window.showAppMessage?.("Senha precisa ter no mínimo 6 caracteres.");
       return;
     }
 
@@ -216,7 +216,7 @@ document.getElementById("btnAlterarSenha")
         novaSenha
       );
 
-      alert("Senha alterada com sucesso!");
+      window.showAppMessage?.("Senha alterada com sucesso!");
 
       document.getElementById("novaSenha").value = "";
 
@@ -226,6 +226,6 @@ document.getElementById("btnAlterarSenha")
 
       console.error(error);
 
-      alert("Erro ao alterar senha.");
+      window.showAppMessage?.("Erro ao alterar senha.");
     }
 }); 

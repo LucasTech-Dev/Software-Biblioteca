@@ -158,7 +158,7 @@ export async function realizarEmprestimo({
         livro.titulo
     });
 
-    alert(
+    window.showAppMessage?.(
       "Empréstimo realizado."
     );
 
@@ -168,7 +168,7 @@ export async function realizarEmprestimo({
 
     console.error(error);
 
-    alert(
+    window.showAppMessage?.(
       "Erro ao emprestar."
     );
   }
