@@ -631,13 +631,7 @@ await updateDoc(
 
   }
 
-  finally {
-
-    reservasEmAndamento.delete(livroId);
-    setReservaLivroLoading(livroId, false);
-
-  }
-
+  
 }
 
 window.reservarLivro = reservarLivro;

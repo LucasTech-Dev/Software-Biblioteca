@@ -495,12 +495,7 @@ await updateDoc(
 
   }
 
-  finally {
-
-    reservasEmAndamento.delete(livroId);
-    setReservaLoading(livroId, false);
-
-  }
+  
 
 }
  
