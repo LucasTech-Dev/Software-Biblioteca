@@ -2,217 +2,160 @@ import {
   doc,
   getDoc,
   updateDoc,
-  arrayUnion
-}
+  arrayUnion,
+  arrayRemove // <-- Adicionado para remover itens de arrays
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+import { auth } from "../auth.js";
+import { db } from "../firestore.js";
 
-import {
-  auth
-}
+class UsuarioService {
 
-from "../auth.js";
+  // ========================================
+  // LEITURA
+  // ========================================
 
-import {
-  db
-}
-
-from "../firestore.js";
-
-
-// ========================================
-// USUÁRIO ATUAL
-// ========================================
-
-export async function obterUsuarioAtual() {
-
-  const user =
-    auth.currentUser;
-
-  if (!user) {
-    return null;
+  async obterUsuarioAtual() {
+    const user = auth.currentUser;
+    if (!user) return null;
+    return this.obterUsuario(user.uid);
   }
 
-  return obterUsuario(user.uid);
+  async obterUsuario(uid) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
 
-}
+    const usuarioRef = doc(db, "usuarios", uid);
+    const usuarioSnap = await getDoc(usuarioRef);
 
+    if (!usuarioSnap.exists()) return null;
 
-// ========================================
-// OBTER USUÁRIO POR UID
-// ========================================
-
-export async function obterUsuario(uid) {
-
-  const usuarioRef =
-    doc(
-      db,
-      "usuarios",
-      uid
-    );
-
-  const usuarioSnap =
-    await getDoc(
-      usuarioRef
-    );
-
-  if (!usuarioSnap.exists()) {
-    return null;
+    return {
+      id: usuarioSnap.id,
+      ...usuarioSnap.data()
+    };
   }
 
-  return {
+  // ========================================
+  // PERFIL
+  // ========================================
 
-    id:
-      usuarioSnap.id,
-
-    ...usuarioSnap.data()
-
-  };
-
-}
-
-
-// ========================================
-// OCULTAR EMPRÉSTIMOS
-// ========================================
-
-export async function ocultarEmprestimos(ids) {
-
-  const user =
-    auth.currentUser;
-
-  if (!user) {
-    throw new Error(
-      "Usuário não autenticado."
-    );
+  async atualizarPerfil(uid, dados) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, dados);
   }
 
-  const usuarioRef =
-    doc(
-      db,
-      "usuarios",
-      user.uid
-    );
+  // ========================================
+  // HISTÓRICO
+  // ========================================
 
-  for (const id of ids) {
-
-    await updateDoc(
-      usuarioRef,
-      {
-
-        emprestimosOcultos:
-          arrayUnion(id)
-
-      }
-    );
-
+  async adicionarHistorico(uid, registro) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, {
+      historico: arrayUnion(registro)
+    });
   }
 
-}
+  // ========================================
+  // RESERVAS
+  // ========================================
 
-
-// ========================================
-// OCULTAR RESERVAS
-// ========================================
-
-export async function ocultarReservas(ids) {
-
-  const user =
-    auth.currentUser;
-
-  if (!user) {
-    throw new Error(
-      "Usuário não autenticado."
-    );
+  async adicionarReserva(uid, reservaId) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, {
+      reservas: arrayUnion(reservaId)
+    });
   }
 
-  const usuarioRef =
-    doc(
-      db,
-      "usuarios",
-      user.uid
-    );
-
-  for (const id of ids) {
-
-    await updateDoc(
-      usuarioRef,
-      {
-
-        reservasOcultas:
-          arrayUnion(id)
-
-      }
-    );
-
+  async removerReserva(uid, reservaId) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, {
+      reservas: arrayRemove(reservaId)
+    });
   }
 
-}
+  // ========================================
+  // EMPRÉSTIMOS
+  // ========================================
 
-
-// ========================================
-// LIMPAR EMPRÉSTIMOS OCULTOS
-// ========================================
-
-export async function limparEmprestimosOcultos() {
-
-  const user =
-    auth.currentUser;
-
-  if (!user) {
-    throw new Error(
-      "Usuário não autenticado."
-    );
+  async adicionarEmprestimo(uid, emprestimoId) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, {
+      emprestimos: arrayUnion(emprestimoId)
+    });
   }
 
-  const usuarioRef =
-    doc(
-      db,
-      "usuarios",
-      user.uid
-    );
+  async removerEmprestimo(uid, emprestimoId) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, {
+      emprestimos: arrayRemove(emprestimoId)
+    });
+  }
 
-  await updateDoc(
-    usuarioRef,
-    {
+  // ========================================
+  // FAVORITOS
+  // ========================================
 
+  async adicionarFavorito(uid, livroId) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, {
+      favoritos: arrayUnion(livroId)
+    });
+  }
+
+  async removerFavorito(uid, livroId) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, {
+      favoritos: arrayRemove(livroId)
+    });
+  }
+
+  // ========================================
+  // UI / OCULTAR ITENS
+  // ========================================
+
+  async ocultarEmprestimos(uid, ids) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    
+    // Passando os IDs usando spread operator para ser uma única chamada no arrayUnion
+    await updateDoc(usuarioRef, {
+      emprestimosOcultos: arrayUnion(...ids)
+    });
+  }
+
+  async ocultarReservas(uid, ids) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    
+    await updateDoc(usuarioRef, {
+      reservasOcultas: arrayUnion(...ids)
+    });
+  }
+
+  async limparEmprestimosOcultos(uid) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, {
       emprestimosOcultos: []
-
-    }
-  );
-
-}
-
-
-// ========================================
-// LIMPAR RESERVAS OCULTAS
-// ========================================
-
-export async function limparReservasOcultas() {
-
-  const user =
-    auth.currentUser;
-
-  if (!user) {
-    throw new Error(
-      "Usuário não autenticado."
-    );
+    });
   }
 
-  const usuarioRef =
-    doc(
-      db,
-      "usuarios",
-      user.uid
-    );
-
-  await updateDoc(
-    usuarioRef,
-    { 
-
+  async limparReservasOcultas(uid) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, {
       reservasOcultas: []
-
-    }
-  ); 
-
+    });
+  }
 }
+
+// Exporta como um Singleton
+export default new UsuarioService();

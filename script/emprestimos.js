@@ -1,23 +1,7 @@
-import {
-  listarTodosEmprestimos,
-  aprovarReserva,
-  marcarComoDevolvido
-}
-from "../firebase/services/emprestimosService.js";
+import UsuarioService from "../firebase/services/usuariosService.js";
 
-
-import {
-   listarReservasPendentes,
-  excluirReserva
-}
-from "../firebase/services/reservasService.js";
-
-import {
-  obterUsuarioAtual,
-  ocultarEmprestimos,
-  ocultarReservas
-}
-from "../firebase/services/usuariosService.js";
+import EmprestimoService from "../firebase/services/EmprestimoService.js";
+import ReservaService from "../firebase/services/ReservaService.js";
 
 window.PageGuard?.hold();
  
@@ -105,13 +89,13 @@ let modoDevolucao = false;
 async function carregar() {
 
   EMPRESTIMOS =
-    await listarTodosEmprestimos();
+    await EmprestimoService.listarTodos();
 
   RESERVAS =
-    await listarReservasPendentes();
+    await ReservaService.listarPendentes();
 
   const usuario =
-    await obterUsuarioAtual();
+    await UsuarioService.obterUsuarioAtual();
 
   EMPRESTIMOS_OCULTOS =
     usuario?.emprestimosOcultos || [];
@@ -508,7 +492,7 @@ btnConfirmarModal.addEventListener(
 
     try {
 
-      await aprovarReserva({
+      await EmprestimoService.aprovarReserva({
 
         reservaId:
           reservaSelecionada.id,
@@ -580,7 +564,7 @@ btnNegarModal.addEventListener(
 
     try {
 
-      await excluirReserva(
+      await ReservaService.cancelar(
         reservaSelecionada.id
       );
 
@@ -639,7 +623,7 @@ btnExcluirGeral.addEventListener(
             .filter(r => !RESERVAS_OCULTAS.includes(r.id))
             .map(r => r.id);
 
-        await ocultarReservas(ids);
+        await UsuarioService.ocultarReservas(usuario.uid, ids);
 
         RESERVAS_OCULTAS =
           [...RESERVAS_OCULTAS, ...ids];
@@ -655,7 +639,7 @@ btnExcluirGeral.addEventListener(
             .filter(e => !EMPRESTIMOS_OCULTOS.includes(e.id))
             .map(e => e.id);
 
-        await ocultarEmprestimos(ids);
+        await UsuarioService.ocultarEmprestimos(usuario.uid, ids);
 
         EMPRESTIMOS_OCULTOS =
           [...EMPRESTIMOS_OCULTOS, ...ids];
@@ -737,7 +721,7 @@ btnConfirmarDevolucao
 
       try {
 
-        await marcarComoDevolvido(
+        await EmprestimoService.marcarComoDevolvido(
           emprestimoSelecionado.id
         );
 

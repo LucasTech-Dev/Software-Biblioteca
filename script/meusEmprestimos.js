@@ -1,27 +1,9 @@
-import { onAuthStateChanged } 
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
+import { collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-import {
-  doc,
-  getDoc,
-  collection,
-  query,
-  where,
-  onSnapshot
-} 
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
-
-import { auth } 
-from "../firebase/auth.js";
-
-import { db } 
-from "../firebase/firestore.js";
-
-import { ocultarEmprestimosAluno }
-from "../firebase/services/emprestimosService.js";
-
-import { ocultarReservasAluno }
-from "../firebase/services/reservasService.js";
+import { auth } from "../firebase/auth.js";
+import { db } from "../firebase/firestore.js";
+import UsuarioService from "../firebase/services/usuariosService.js";
 
 window.PageGuard?.hold();
 
@@ -93,26 +75,19 @@ onAuthStateChanged(auth, async (user) => {
 
   try {
 
-    const usuarioRef =
-      doc(db, "usuarios", user.uid);
-
-    const usuarioSnap =
-      await getDoc(usuarioRef);
-
-    const usuario =
-      usuarioSnap.data();
+const usuario = await UsuarioService.obterUsuario(user.uid);
 
     document.getElementById("nomeUsuario").innerText =
-      usuario.nome;
+      usuario?.nome || "Usuário";
 
     document.getElementById("dadosUsuario").innerText =
-      `${usuario.turma} · Matrícula ${usuario.matricula}`;
+      `${usuario?.turma || ""} · Matrícula ${usuario?.matricula || ""}`.trim();
 
   // ========================================
   // AVATAR
   // ========================================
 
-    const iniciais = usuario.nome
+    const iniciais = (usuario?.nome || "U")
       .split(" ")
       .map(n => n[0])
       .slice(0, 2)
@@ -233,7 +208,7 @@ onAuthStateChanged(auth, async (user) => {
 
         const ids = RESERVAS.map(r => r.id);
 
-        await ocultarReservasAluno(ids);
+        await UsuarioService.ocultarReservas(user.uid, ids);
 
       }
 
@@ -245,9 +220,9 @@ onAuthStateChanged(auth, async (user) => {
         const idsEmprestimos =
           EMPRESTIMOS.map(e => e.id);
 
-        await ocultarReservasAluno(idsReservas);
+        await UsuarioService.ocultarReservas(user.uid, idsReservas);
 
-        await ocultarEmprestimosAluno(idsEmprestimos);
+        await UsuarioService.ocultarEmprestimos(user.uid, idsEmprestimos);
 
       }
 
@@ -257,7 +232,7 @@ onAuthStateChanged(auth, async (user) => {
         // apaga somente os itens visíveis no filtro atual
         const ids = obterItensDoFiltro().map(e => e.id);
 
-        await ocultarEmprestimosAluno(ids);
+        await UsuarioService.ocultarEmprestimos(user.uid, ids);
 
       }
 
