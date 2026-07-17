@@ -1,134 +1,325 @@
 import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDoc,
-  getDocs,
-  increment,
-  query,
-  serverTimestamp,
-  Timestamp,
-  updateDoc,
-  where
+    collection,
+    doc,
+    getDoc,
+    getDocs,
+    addDoc,
+    updateDoc,
+    deleteDoc,
+    query,
+    where,
+    serverTimestamp,
+    Timestamp
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 import { db } from "../firestore.js";
-import UsuarioService from "./usuariosService.js";
+import LivroService from "./LivroService.js";
 import { criarLog } from "./logServices.js";
+import NotificacaoService from "./NotificacaoService.js";
 
 class EmprestimoService {
-  async criarEmprestimo({ usuario, livro, reservaId = null }) {
-    if (!usuario?.uid) {
-      throw new Error("Usuário não informado.");
+    constructor() {
+        this.collectionName = "emprestimos";
     }
 
-    if (!livro) {
-      throw new Error("Livro não informado.");
+    /**
+     * Função auxiliar para garantir consistência nas datas que chegam do front-end.
+     */
+    _normalizarData(data) {
+        if (!data) return null;
+        let d;
+
+        if (data instanceof Date) {
+            d = data;
+        } else if (data?.toDate) {
+            d = data.toDate();
+        } else if (typeof data === "string") {
+            d = new Date(data.includes("T") ? data : data + "T00:00:00");
+        } else if (typeof data === "number") {
+            d = new Date(data);
+        } else {
+            throw new Error("Tipo inválido de data: " + typeof data);
+        }
+
+        if (isNaN(d.getTime())) {
+            throw new Error("Data inválida: " + data);
+        }
+
+        return Timestamp.fromDate(d);
     }
 
-    const prazo = new Date();
-    prazo.setDate(prazo.getDate() + 7);
+    /**
+     * Fluxo completo de criação de empréstimo (direto ou a partir de reserva).
+     */
+    async criarEmprestimo({ usuario, supabaseId, reservaId = null, professorId = null, nomeProfessor = null, dataRetirada = null, dataEntrega = null }) {
+        try {
+            if (!usuario?.uid) throw new Error("Usuário não informado.");
+            if (!supabaseId) throw new Error("SupabaseId do livro não informado.");
 
-    const emprestimoRef = await addDoc(collection(db, "emprestimos"), {
-      usuarioId: usuario.uid,
-      nomeUsuario: usuario.nome || usuario.displayName || "Sem nome",
-      matricula: usuario.matricula || "",
-      turma: usuario.turma || "",
-      livroId: livro.id,
-      tituloLivro: livro.titulo || livro.title || "Sem título",
-      retiradoEm: serverTimestamp(),
-      prazoEntrega: Timestamp.fromDate(prazo),
-      status: "ativo",
-      visivelAluno: true,
-      criadoEm: serverTimestamp()
-    });
+            // 1. Busca os dados completos do livro
+            const livroCompleto = await LivroService.buscarLivroCompleto(supabaseId);
+            if (!livroCompleto) {
+                throw new Error("Livro não encontrado no acervo.");
+            }
 
-    if (reservaId) {
-      await deleteDoc(doc(db, "reservas", reservaId));
+            // Define os prazos
+            const dataInicio = dataRetirada ? this._normalizarData(dataRetirada) : serverTimestamp();
+            
+            // Prazo padrão de 7 dias caso não seja enviado
+            let dataFim;
+            if (dataEntrega) {
+                dataFim = this._normalizarData(dataEntrega);
+            } else {
+                const seteDiasDepois = new Date();
+                seteDiasDepois.setDate(seteDiasDepois.getDate() + 7);
+                dataFim = Timestamp.fromDate(seteDiasDepois);
+            }
+
+            // 2. Cria o documento na coleção "emprestimos"
+            const emprestimoRef = await addDoc(collection(db, this.collectionName), {
+                usuarioId: usuario.uid,
+                nomeUsuario: usuario.nome || usuario.displayName || "Sem nome",
+                matricula: usuario.matricula || "",
+                turma: usuario.turma || "",
+                
+                livroId: livroCompleto.id || null, // ID do acervo físico no Firestore
+                supabaseId: supabaseId,
+                isbn: livroCompleto.isbn || "",
+                tituloLivro: livroCompleto.titulo || "Sem título",
+
+                reservaId: reservaId, // Relacionamento permanente (pode ser null)
+                professorId: professorId,
+                nomeProfessor: nomeProfessor || "Não informado",
+
+                retiradoEm: dataInicio,
+                prazoEntrega: dataFim,
+                devolvidoEm: null,
+
+                status: "EMPRESTADO",
+                visivelAluno: true,
+                criadoEm: serverTimestamp()
+            });
+
+            // 3. Orquestra a baixa no acervo físico via LivroService
+            await LivroService.emprestarExemplar(supabaseId);
+
+            // 4. Registra no Log do sistema
+            await criarLog({
+                usuarioId: usuario.uid,
+                nomeUsuario: usuario.nome || "Sem nome",
+                matricula: usuario.matricula || "",
+                tipo: "EMPRESTIMO",
+                livroId: livroCompleto.id || "",
+                tituloLivro: livroCompleto.titulo || "Sem título"
+            });
+
+            return { id: emprestimoRef.id };
+        } catch (error) {
+            console.error("Erro ao criar empréstimo:", error);
+            throw error;
+        }
     }
 
-    await UsuarioService.adicionarEmprestimo(usuario.uid, emprestimoRef.id);
-    await criarLog({
-      usuarioId: usuario.uid,
-      nomeUsuario: usuario.nome || usuario.displayName || "Sem nome",
-      matricula: usuario.matricula || "",
-      tipo: "EMPRESTIMO",
-      livroId: livro.id,
-      tituloLivro: livro.titulo || livro.title || "Sem título"
-    });
-
-    return { id: emprestimoRef.id };
-  }
-
-  async listarPorUsuario(uid) {
-    if (!uid) return [];
-
-    const q = query(collection(db, "emprestimos"), where("usuarioId", "==", uid));
-    const snapshot = await getDocs(q);
-
-    return snapshot.docs.map((item) => ({
-      id: item.id,
-      ...item.data()
-    }));
-  }
-
-  async listarTodos() {
-    const snapshot = await getDocs(collection(db, "emprestimos"));
-    return snapshot.docs.map((item) => ({
-      id: item.id,
-      ...item.data()
-    }));
-  }
-
-  async aprovarReserva({ reservaId, dataRetirada, dataEntrega }) {
-    if (!reservaId) throw new Error("Reserva não informada.");
-
-    const reservaRef = doc(db, "reservas", reservaId);
-    const reservaSnap = await getDoc(reservaRef);
-
-    if (!reservaSnap.exists()) {
-      throw new Error("Reserva não encontrada.");
+    /**
+     * Busca dados de um empréstimo específico.
+     */
+    async buscarEmprestimo(emprestimoId) {
+        try {
+            const snap = await getDoc(doc(db, this.collectionName, emprestimoId));
+            if (!snap.exists()) return null;
+            return { id: snap.id, ...snap.data() };
+        } catch (error) {
+            console.error(`Erro ao buscar empréstimo ${emprestimoId}:`, error);
+            throw error;
+        }
     }
 
-    const reserva = reservaSnap.data();
-    const dataInicio = dataRetirada instanceof Date ? dataRetirada : new Date(dataRetirada || Date.now());
-    const dataFim = dataEntrega instanceof Date ? dataEntrega : new Date(dataEntrega || Date.now() + 7 * 24 * 60 * 60 * 1000);
+    async listarUsuario(uid) {
+        return this.listarEmprestimosAluno(uid);
+    }
 
-    await this.criarEmprestimo({
-      usuario: {
-        uid: reserva.usuarioId,
-        nome: reserva.nomeUsuario || "Sem nome",
-        matricula: reserva.matricula || "",
-        turma: reserva.turma || ""
-      },
-      livro: {
-        id: reserva.livroId,
-        titulo: reserva.tituloLivro || "Sem título"
-      },
-      reservaId
-    });
+    /**
+     * Lista TODOS os empréstimos (ativos ou finalizados) vinculados a um aluno específico.
+     */
+    async listarEmprestimosAluno(uid) {
+        try {
+            if (!uid) return [];
+            const q = query(
+                collection(db, this.collectionName),
+                where("usuarioId", "==", uid)
+            );
+            const snapshot = await getDocs(q);
+            
+            // Mapeia e ordena do mais recente para o mais antigo
+            return snapshot.docs
+                .map(doc => ({ id: doc.id, ...doc.data() }))
+                .sort((a, b) => {
+                    const dataA = a.criadoEm?.seconds || 0;
+                    const dataB = b.criadoEm?.seconds || 0;
+                    return dataB - dataA;
+                });
+        } catch (error) {
+            console.error(`Erro ao listar empréstimos do aluno ${uid}:`, error);
+            throw error;
+        }
+    }
 
-    await updateDoc(reservaRef, {
-      status: "aprovada",
-      prazoEntrega: Timestamp.fromDate(dataFim),
-      retiradoEm: Timestamp.fromDate(dataInicio)
-    });
+    /**
+     * NOVO: Lista o Histórico Real do Usuário (apenas os livros com status DEVOLVIDO).
+     * Ideal para alimentar a Área do Usuário de forma dinâmica.
+     */
+    async listarHistoricoUsuario(usuarioId) {
+        try {
+            if (!usuarioId) return [];
+            const q = query(
+                collection(db, this.collectionName),
+                where("usuarioId", "==", usuarioId),
+                where("status", "==", "DEVOLVIDO")
+            );
+            const snapshot = await getDocs(q);
+            const lista = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            
+            // Ordena localmente pela data de devolução decrescente (mais recentes primeiro)
+            return lista.sort((a, b) => {
+                const dataA = a.devolvidoEm?.seconds || 0;
+                const dataB = b.devolvidoEm?.seconds || 0;
+                return dataB - dataA;
+            });
+        } catch (error) {
+            console.error("Erro ao listar histórico do usuário no EmprestimoService:", error);
+            return [];
+        }
+    }
 
-    return true;
-  }
+    /**
+     * Lista empréstimos para o painel do professor (todos).
+     */
+    async listarEmprestimosProfessor() {
+        try {
+            return await this.listarTodos();
+        } catch (error) {
+            console.error("Erro ao listar empréstimos para o professor:", error);
+            throw error;
+        }
+    }
 
-  async marcarComoDevolvido(emprestimoId) {
-    if (!emprestimoId) throw new Error("Empréstimo não informado.");
-    await updateDoc(doc(db, "emprestimos", emprestimoId), { status: "devolvido" });
-    return true;
-  }
+    async listarAtivos() {
+        const todos = await this.listarTodos();
+        return todos.filter(emprestimo => emprestimo.status === "EMPRESTADO");
+    }
 
-  async excluir(emprestimoId) {
-    if (!emprestimoId) throw new Error("Empréstimo não informado.");
-    await deleteDoc(doc(db, "emprestimos", emprestimoId));
-    return true;
-  }
+    async listarAtrasados() {
+        const ativos = await this.listarAtivos();
+        return ativos.filter(emprestimo => {
+            if (!emprestimo.prazoEntrega) return false;
+            const prazo = emprestimo.prazoEntrega?.toDate ? emprestimo.prazoEntrega.toDate() : new Date(emprestimo.prazoEntrega);
+            return new Date() > prazo;
+        });
+    }
+
+    async listarDevolvidos() {
+        const todos = await this.listarTodos();
+        return todos.filter(emprestimo => emprestimo.status === "DEVOLVIDO");
+    }
+
+    /**
+     * Retorna todos os empréstimos do banco de dados (geral).
+     */
+    async listarTodos() {
+        try {
+            const snapshot = await getDocs(collection(db, this.collectionName));
+            return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        } catch (error) {
+            console.error("Erro ao listar todos os empréstimos:", error);
+            throw error;
+        }
+    }
+
+    async aprovarReserva(payload) {
+        const ReservaService = (await import("./ReservaService.js")).default;
+        return ReservaService.aprovar(payload);
+    }
+
+    async marcarComoDevolvido(emprestimoId) {
+        return this.registrarDevolucao(emprestimoId);
+    }
+
+    /**
+     * Registra a devolução de um exemplar.
+     */
+    async registrarDevolucao(emprestimoId) {
+        try {
+            if (!emprestimoId) throw new Error("Empréstimo não informado.");
+
+            // 1. Busca os detalhes do empréstimo ativo
+            const emprestimo = await this.buscarEmprestimo(emprestimoId);
+            if (!emprestimo) throw new Error("Empréstimo não encontrado.");
+            if (emprestimo.status === "DEVOLVIDO") throw new Error("Este livro já foi devolvido.");
+
+            // 2. Atualiza o status do empréstimo no Firestore
+            await updateDoc(doc(db, this.collectionName, emprestimoId), {
+                status: "DEVOLVIDO",
+                devolvidoEm: serverTimestamp()
+            });
+
+            // 3. Orquestra o retorno do exemplar para o acervo via LivroService
+            await LivroService.devolverExemplar(emprestimo.supabaseId);
+
+            // 4. Registra no Log do sistema
+            await criarLog({
+                usuarioId: emprestimo.usuarioId,
+                nomeUsuario: emprestimo.nomeUsuario || "Sem nome",
+                matricula: emprestimo.matricula || "",
+                tipo: "DEVOLUCAO",
+                livroId: emprestimo.livroId || "",
+                tituloLivro: emprestimo.tituloLivro || "Sem título"
+            });
+
+            await NotificacaoService.criar({
+                usuarioId: emprestimo.usuarioId,
+                titulo: "Devolução registrada",
+                mensagem: `A devolução de "${emprestimo.tituloLivro || "o livro"}" foi registrada com sucesso.`,
+                tipo: "devolucao"
+            });
+
+            return true;
+        } catch (error) {
+            console.error("Erro ao registrar devolução:", error);
+            throw error;
+        }
+    }
+
+    /**
+     * Marca um empréstimo como ATRASADO.
+     */
+    async marcarAtrasado(emprestimoId) {
+        try {
+            if (!emprestimoId) throw new Error("Empréstimo não informado.");
+
+            await updateDoc(doc(db, this.collectionName, emprestimoId), {
+                status: "ATRASADO"
+            });
+
+            return true;
+        } catch (error) {
+            console.error("Erro ao marcar empréstimo como atrasado:", error);
+            throw error;
+        }
+    }
+
+    /**
+     * Remove um empréstimo fisicamente (hard delete) - Apenas administrativo.
+     */
+    async excluir(emprestimoId) {
+        try {
+            if (!emprestimoId) throw new Error("Empréstimo não informado.");
+            await deleteDoc(doc(db, this.collectionName, emprestimoId));
+            return true;
+        } catch (error) {
+            console.error("Erro ao excluir empréstimo:", error);
+            throw error;
+        }
+    }
 }
 
 export default new EmprestimoService();

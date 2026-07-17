@@ -3,17 +3,14 @@ import {
   getDoc,
   updateDoc,
   arrayUnion,
-  arrayRemove // <-- Adicionado para remover itens de arrays
+  arrayRemove
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+import { updatePassword } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
 import { auth } from "../auth.js";
 import { db } from "../firestore.js";
 
 class UsuarioService {
-
-  // ========================================
-  // LEITURA
-  // ========================================
 
   async obterUsuarioAtual() {
     const user = auth.currentUser;
@@ -35,9 +32,9 @@ class UsuarioService {
     };
   }
 
-  // ========================================
-  // PERFIL
-  // ========================================
+  async editarPerfil(uid, dados) {
+    return this.atualizarPerfil(uid, dados);
+  }
 
   async atualizarPerfil(uid, dados) {
     if (!uid) throw new Error("UID do usuário não fornecido.");
@@ -45,9 +42,17 @@ class UsuarioService {
     await updateDoc(usuarioRef, dados);
   }
 
-  // ========================================
-  // HISTÓRICO
-  // ========================================
+  async alterarSenha(novaSenha) {
+    if (!auth.currentUser) {
+      throw new Error("Usuário não autenticado.");
+    }
+
+    if (!novaSenha || novaSenha.length < 6) {
+      throw new Error("A senha deve ter no mínimo 6 caracteres.");
+    }
+
+    await updatePassword(auth.currentUser, novaSenha);
+  }
 
   async adicionarHistorico(uid, registro) {
     if (!uid) throw new Error("UID do usuário não fornecido.");
@@ -56,10 +61,6 @@ class UsuarioService {
       historico: arrayUnion(registro)
     });
   }
-
-  // ========================================
-  // RESERVAS
-  // ========================================
 
   async adicionarReserva(uid, reservaId) {
     if (!uid) throw new Error("UID do usuário não fornecido.");
@@ -77,10 +78,6 @@ class UsuarioService {
     });
   }
 
-  // ========================================
-  // EMPRÉSTIMOS
-  // ========================================
-
   async adicionarEmprestimo(uid, emprestimoId) {
     if (!uid) throw new Error("UID do usuário não fornecido.");
     const usuarioRef = doc(db, "usuarios", uid);
@@ -96,10 +93,6 @@ class UsuarioService {
       emprestimos: arrayRemove(emprestimoId)
     });
   }
-
-  // ========================================
-  // FAVORITOS
-  // ========================================
 
   async adicionarFavorito(uid, livroId) {
     if (!uid) throw new Error("UID do usuário não fornecido.");
@@ -117,15 +110,9 @@ class UsuarioService {
     });
   }
 
-  // ========================================
-  // UI / OCULTAR ITENS
-  // ========================================
-
   async ocultarEmprestimos(uid, ids) {
     if (!uid) throw new Error("UID do usuário não fornecido.");
     const usuarioRef = doc(db, "usuarios", uid);
-    
-    // Passando os IDs usando spread operator para ser uma única chamada no arrayUnion
     await updateDoc(usuarioRef, {
       emprestimosOcultos: arrayUnion(...ids)
     });
@@ -134,7 +121,6 @@ class UsuarioService {
   async ocultarReservas(uid, ids) {
     if (!uid) throw new Error("UID do usuário não fornecido.");
     const usuarioRef = doc(db, "usuarios", uid);
-    
     await updateDoc(usuarioRef, {
       reservasOcultas: arrayUnion(...ids)
     });
@@ -157,5 +143,4 @@ class UsuarioService {
   }
 }
 
-// Exporta como um Singleton
 export default new UsuarioService();

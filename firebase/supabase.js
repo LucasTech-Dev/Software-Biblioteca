@@ -1,4 +1,5 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js";
+// Trocamos a CDN esm.sh pela jsdelivr
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
 
 const SUPABASE_URL = "https://akfwjvlwhvdabwgjbobi.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_JuyfXKDPMxjjhO5c9CUvLg_lnvEAe89";

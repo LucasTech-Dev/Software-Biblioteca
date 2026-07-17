@@ -342,15 +342,8 @@ async function reservar(livroId) {
     const livro = BOOKS.find(b => b.id === livroId);
     if (!livro) return;
 
-    await ReservaService.criarReserva({
-      usuario: {
-        uid: usuarioAtual.uid,
-        nome: usuarioAtual.displayName || usuarioAtual.email || "Usuário",
-        matricula: "",
-        turma: ""
-      },
-      livro,
-      firestoreId: livro.firestoreId || null
+    await ReservaService.solicitarReserva({
+      supabaseId: livro.id
     });
 
     window.showAppMessage?.("Livro reservado com sucesso.");

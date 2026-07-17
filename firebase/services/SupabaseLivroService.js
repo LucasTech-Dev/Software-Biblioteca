@@ -6,7 +6,6 @@ class SupabaseLivroService {
      * Busca todos os livros do catálogo.
      */
     async buscarTodos() {
-
         const { data, error } = await supabase
             .from("livros")
             .select("*")
@@ -24,7 +23,6 @@ class SupabaseLivroService {
      * Busca um livro pelo ID do Supabase.
      */
     async buscarPorId(id) {
-
         const { data, error } = await supabase
             .from("livros")
             .select("*")
@@ -43,7 +41,6 @@ class SupabaseLivroService {
      * Busca um livro pelo ISBN.
      */
     async buscarPorISBN(isbn) {
-
         const { data, error } = await supabase
             .from("livros")
             .select("*")
@@ -62,7 +59,6 @@ class SupabaseLivroService {
      * Pesquisa livros pelo título.
      */
     async buscarPorTitulo(texto) {
-
         const { data, error } = await supabase
             .from("livros")
             .select("*")
@@ -81,7 +77,6 @@ class SupabaseLivroService {
      * Busca livros por categoria.
      */
     async buscarPorCategoria(categoria) {
-
         const { data, error } = await supabase
             .from("livros")
             .select("*")
@@ -97,10 +92,8 @@ class SupabaseLivroService {
 
     /**
      * Busca vários livros pelos IDs do Supabase.
-     * Será muito utilizada pelo LivroService.
      */
     async buscarPorIds(ids) {
-
         if (!ids || ids.length === 0) {
             return [];
         }
@@ -118,6 +111,23 @@ class SupabaseLivroService {
         return data;
     }
 
+    /**
+     * Registra um novo livro global no catálogo do Supabase.
+     */
+    async criarLivro(livro) {
+        const { data, error } = await supabase
+            .from("livros")
+            .insert([livro])
+            .select()
+            .single();
+
+        if (error) {
+            console.error("Erro ao criar livro no Supabase:", error);
+            throw error;
+        }
+
+        return data;
+    }
 }
 
 export default new SupabaseLivroService();
