@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BibliotecaEscolar — Perfil do Usuário</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../style/usuario.css">
+  <script src="../script/pageGuard.js"></script>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">
+      Biblioteca Escolar
+    </div>
+    <div>
+      Perfil do Usuário
+    </div>
+  </header>
+
+  <div class="hero">
+    <h1 id="heroNome">Bem-vindo(a)</h1>
+    <p>
+      Acompanhe seus empréstimos, histórico, notificações e gerencie sua conta.
+    </p>
+  </div>
+
+  <main>
+    <div class="grid">
+
+      <div class="card">
+        <h2>Dados do Usuário</h2>
+        <div class="info">
+          <div>
+            <strong>Nome:</strong>
+            <span id="nomeUsuario"></span>
+          </div>
+          <div>
+            <strong>Matrícula:</strong>
+            <span id="matriculaUsuario"></span>
+          </div>
+          <div>
+            <strong>Turma:</strong>
+            <span id="turmaUsuario"></span>
+          </div>
+        </div>
+
+        <h3>Alterar Senha</h3>
+        <div class="form-group">
+          <label for="novaSenha">Nova senha</label>
+          <input type="password" id="novaSenha" placeholder="Digite sua nova senha">
+        </div>
+        <button class="btn" id="btnAtualizarPerfil" type="button">
+          ↻ Atualizar Dados
+        </button>
+        <button class="btn" id="btnAlterarSenha">
+          Alterar Senha
+        </button>
+      </div>
+
+      <div class="card">
+        <h2>Histórico de Leituras</h2>
+        <div class="list" id="historicoLeituras"></div>
+
+        <h2>Notificações</h2>
+        <div class="list" id="notificacoes"></div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer>
+    <span>BibliotecaEscolar © 2026</span>
+    <span>Área do Usuário</span>
+  </footer>
+
+  <script type="module" src="../script/usuario.js"></script>
+</body>
+</html>

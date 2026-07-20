@@ -29,7 +29,7 @@ onAuthStateChanged(auth, async(user) => {
 
     window.showAppMessage?.("Faça login.");
 
-    window.location.href = "login.html";
+    window.location.href = "pages/login.html";
 
     return;
   }

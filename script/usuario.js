@@ -103,7 +103,7 @@ function renderNotificacoes(notificacoes) {
 // ========================================
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-    window.location.href = "login.html";
+    window.location.href = "pages/login.html";
     return;
   }
 

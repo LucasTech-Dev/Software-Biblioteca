@@ -95,7 +95,7 @@ async function carregarDadosAluno(uid) {
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
-    window.location.href = "login.html";
+    window.location.href = "pages/login.html";
     return;
   }
 
@@ -137,8 +137,9 @@ onAuthStateChanged(auth, async (user) => {
   // BOTÃO APAGAR — lógica de clique
   // ========================================
   btnApagar.addEventListener("click", async () => {
-    const confirmar = await window.confirm?.(
-      `Deseja realmente ${btnApagar.textContent.toLowerCase()}?`
+    const confirmar = await window.showAppConfirm(
+      `Deseja realmente ${btnApagar.textContent.toLowerCase()}?`,
+      { confirmText: "Apagar" }
     );
 
     if (!confirmar) {

@@ -1,0 +1,33 @@
+# Dependências e builds
+node_modules/
+dist/
+build/
+coverage/
+
+# Variáveis de ambiente e credenciais locais
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Logs, cache e arquivos temporários
+*.log
+*.cache
+.cache/
+tmp/
+temp/
+*.tmp
+
+# Dumps, backups e dados locais de desenvolvimento
+*.dump
+*.sql.gz
+*.bak
+*.backup
+*.local
+
+# IDE e sistema operacional
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

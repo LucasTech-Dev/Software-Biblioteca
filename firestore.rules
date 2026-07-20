@@ -22,7 +22,7 @@ service cloud.firestore {
       allow read: if isAuthenticated() && (isProfessor() || isOwner(userId));
       allow create: if isAuthenticated() && isOwner(userId);
       allow update: if isAuthenticated() && (
-        isProfessor() || isOwner(userId)
+        isProfessor() || (isOwner(userId) && request.resource.data.perfil == resource.data.perfil)
       );
       allow delete: if false;
     }
@@ -53,7 +53,9 @@ service cloud.firestore {
     match /notificacoes/{document} {
       allow read: if isAuthenticated() && isOwner(resource.data.usuarioId);
       allow create: if isAuthenticated() && isProfessor();
-      allow update: if isAuthenticated() && isOwner(resource.data.usuarioId);
+      allow update: if isAuthenticated()
+        && isOwner(resource.data.usuarioId)
+        && request.resource.data.usuarioId == resource.data.usuarioId;
       allow delete: if isAuthenticated() && isOwner(resource.data.usuarioId);
     }
 

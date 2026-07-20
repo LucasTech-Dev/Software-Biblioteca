@@ -219,6 +219,26 @@
       box-shadow: 0 18px 34px rgba(30, 58, 138, .28);
     }
 
+    .app-confirm-actions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .app-confirm-actions button {
+      min-height: 44px;
+      border-radius: 999px;
+      padding: 10px 20px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .app-confirm-cancel {
+      border: 1px solid rgba(22, 50, 79, .18);
+      background: #fff;
+      color: #16324f;
+    }
+
     @keyframes appAlertIn {
       from { opacity: 0; transform: translateY(12px) scale(.98); }
       to { opacity: 1; transform: translateY(0) scale(1); }
@@ -301,6 +321,45 @@
   window.showAppMessage = showAlertModal;
   window.alert = showAlertModal;
 
+  function showAppConfirm(message, options = {}) {
+    if (!document.body) {
+      return Promise.resolve(false);
+    }
+
+    const modal = document.createElement("div");
+    modal.className = "app-alert-modal is-open";
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.innerHTML = `
+      <div class="app-alert-modal__card" role="document">
+        <div class="app-alert-modal__icon" aria-hidden="true">⚠️</div>
+        <h2 class="app-alert-modal__title">${options.title || "Confirmar ação"}</h2>
+        <p class="app-alert-modal__message"></p>
+        <div class="app-confirm-actions">
+          <button class="app-confirm-cancel" type="button">Cancelar</button>
+          <button class="app-alert-modal__button app-confirm-accept" type="button">${options.confirmText || "Confirmar"}</button>
+        </div>
+      </div>
+    `;
+    modal.querySelector(".app-alert-modal__message").textContent = String(message || "");
+    document.body.appendChild(modal);
+
+    return new Promise((resolve) => {
+      const finish = (accepted) => {
+        modal.remove();
+        resolve(accepted);
+      };
+      modal.querySelector(".app-confirm-cancel").addEventListener("click", () => finish(false));
+      modal.querySelector(".app-confirm-accept").addEventListener("click", () => finish(true));
+      modal.addEventListener("click", (event) => {
+        if (event.target === modal) finish(false);
+      });
+      modal.querySelector(".app-confirm-cancel").focus();
+    });
+  }
+
+  window.showAppConfirm = showAppConfirm;
+
   function ensureLoader() {
     if (document.querySelector(".app-page-loader")) {
       return;
@@ -352,6 +411,28 @@
 
     ready();
     return task;
+  }
+
+  function enablePullToRefresh(callback) {
+    let startY = 0;
+    let armed = false;
+
+    document.addEventListener("touchstart", (event) => {
+      if (window.scrollY === 0 && event.touches.length === 1) {
+        startY = event.touches[0].clientY;
+      }
+    }, { passive: true });
+
+    document.addEventListener("touchmove", (event) => {
+      armed = window.scrollY === 0 && event.touches[0].clientY - startY > 90;
+    }, { passive: true });
+
+    document.addEventListener("touchend", () => {
+      if (armed && typeof callback === "function") {
+        armed = false;
+        Promise.resolve(callback()).catch((error) => console.error("Erro ao atualizar dados:", error));
+      }
+    });
   }
 
   function buttonFromEvent(event) {
@@ -623,6 +704,21 @@
     }
   });
 
+  window.addEventListener("error", (event) => {
+    console.error("Erro inesperado na aplicação:", event.error || event.message);
+    if (!document.documentElement.hasAttribute(loadingAttr)) {
+      showAlertModal("Ocorreu um erro inesperado. Tente novamente.");
+    }
+  });
+
+  window.addEventListener("unhandledrejection", (event) => {
+    console.error("Operação não concluída:", event.reason);
+    event.preventDefault();
+    if (!document.documentElement.hasAttribute(loadingAttr)) {
+      showAlertModal("Não foi possível concluir a operação. Tente novamente.");
+    }
+  });
+
   watchedFunctions.forEach(guardFunction);
 
   window.PageGuard = {
@@ -630,6 +726,7 @@
     ready,
     guardFunction,
     releaseClick,
-    track
+    track,
+    enablePullToRefresh
   };
 })();

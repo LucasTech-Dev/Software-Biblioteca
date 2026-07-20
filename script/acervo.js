@@ -55,6 +55,13 @@ async function carregarLivros() {
     renderGrid();
   } catch (error) {
     console.error("Erro ao carregar livros:", error);
+    document.getElementById('books-grid').innerHTML = `
+      <div class="empty-state" role="alert">
+        <div class="empty-state-icon">⚠️</div>
+        <div class="empty-state-title">Não foi possível carregar o acervo</div>
+        <p class="empty-state-desc">Verifique sua conexão e tente novamente.</p>
+        <button class="btn-secondary" type="button" onclick="window.recarregarAcervo()">Tentar novamente</button>
+      </div>`;
     window.showAppMessage?.("Erro ao atualizar o acervo.");
   } finally {
     carregandoAcervo = false;
@@ -221,6 +228,9 @@ document.getElementById('filter-categoria')?.addEventListener('change', (e) => {
 document.getElementById('btnAtualizarAcervo')?.addEventListener('click', () => {
   carregarLivros();
 });
+
+window.recarregarAcervo = carregarLivros;
+window.PageGuard?.enablePullToRefresh(carregarLivros);
 
 /* ========================= */
 /* MODAL DETALHES (ESTILO NOVO)*/

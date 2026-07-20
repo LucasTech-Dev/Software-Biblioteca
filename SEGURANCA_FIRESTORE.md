@@ -2,8 +2,13 @@
 
 ## Prioridades
 1. Publicar as regras em [firestore.rules](firestore.rules).
-2. Validar com o Firebase Emulator ou console.
-3. Testar cada papel (aluno/professor) antes de produção.
+2. Publicar os índices em [firestore.indexes.json](firestore.indexes.json).
+3. Validar com o Firebase Emulator ou console.
+4. Testar cada papel (aluno/professor) antes de produção.
+
+## Pendência obrigatória antes da publicação
+
+O formulário atual permite que uma pessoa escolha o perfil `professor` no cadastro. As regras impedem que um perfil já criado seja alterado pelo próprio usuário, mas não podem decidir quem está autorizado a criar o primeiro perfil de professor. Antes da publicação pública, defina um fluxo institucional de aprovação/provisionamento de professores (por exemplo, convite administrativo ou função backend). Não é seguro abrir o cadastro de professor sem essa decisão.
 
 ## Regras a revisar
 - [ ] Alunos não podem alterar empréstimos.

@@ -62,6 +62,12 @@ async function carregar() {
     renderTabela(EMPRESTIMOS);
   } catch (error) {
     console.error(error);
+    tbody.innerHTML = `
+      <tr><td colspan="6" style="text-align:center;padding:28px;">
+        ⚠️ Não foi possível carregar os empréstimos.<br>
+        <button class="btn btn-secondary" type="button" id="btnTentarNovamente">Tentar novamente</button>
+      </td></tr>`;
+    document.getElementById("btnTentarNovamente")?.addEventListener("click", carregar);
     window.showAppMessage?.("Erro ao atualizar empréstimos.");
   } finally {
     carregandoEmprestimos = false;
@@ -203,6 +209,8 @@ document.getElementById("btnAtualizarEmprestimos")?.addEventListener("click", ()
   carregar();
 });
 
+window.PageGuard?.enablePullToRefresh(carregar);
+
 document.getElementById("searchInput").addEventListener("input", (e) => {
   const texto = e.target.value.toLowerCase();
   let baseDados = filtroAtivo === "esperando" ? RESERVAS : EMPRESTIMOS;
@@ -322,7 +330,7 @@ btnNegarModal.addEventListener("click", async () => {
     return;
   }
 
-  const confirmar = await window.confirm?.("Deseja realmente negar esta reserva?");
+  const confirmar = await window.showAppConfirm("Deseja realmente negar esta reserva?", { confirmText: "Negar reserva" });
   if (!confirmar) {
     return;
   }
@@ -348,7 +356,7 @@ btnNegarModal.addEventListener("click", async () => {
 
 
 btnExcluirGeral.addEventListener("click", async () => {
-  const confirmar = await window.confirm?.(`Deseja realmente ${btnExcluirGeral.textContent.toLowerCase()}?`);
+  const confirmar = await window.showAppConfirm(`Deseja realmente ${btnExcluirGeral.textContent.toLowerCase()}?`, { confirmText: "Apagar" });
   if (!confirmar) {
     return;
   }
