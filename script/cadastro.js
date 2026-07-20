@@ -235,7 +235,7 @@ window.handleCadastro = async function() {
     setTimeout(() => {
 
       window.location.href =
-        "login.html";
+        "pages/login.html";
 
     }, 1500);
 

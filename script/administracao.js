@@ -15,7 +15,7 @@
     const tbodyUsuarios = document.getElementById("tabelaUsuarios");
     usuarios.forEach(u=>{
       const tr = document.createElement("tr");
-      tr.innerHTML = `<td>${u.nome}</td><td>${u.tipo}</td><td><button class="btn" onclick="alert('Editar permissões de ${u.nome}')">Editar</button></td>`;
+      tr.innerHTML = `<td>${u.nome}</td><td>${u.tipo}</td><td><button class="btn" onclick="window.showAppMessage?.('Editar permissões de ${u.nome}')">Editar</button></td>`;
       tbodyUsuarios.appendChild(tr);
     });
 
@@ -36,13 +36,13 @@
       const dias = document.getElementById("diasEmprestimo").value;
       const max = document.getElementById("maxLivros").value;
       localStorage.setItem("regrasBiblioteca", JSON.stringify({diasEmprestimo:dias,maxLivros:max}));
-      alert("Regras salvas com sucesso!");
+      window.showAppMessage?.("Regras salvas com sucesso!");
       logs.push({hora:new Date().toLocaleString(), acao:`Regras alteradas: ${dias} dias, ${max} livros`});
       renderLogs();
     });
 
     document.getElementById("btnBackup").addEventListener("click", ()=>{
-      alert("Backup realizado com sucesso!");
+      window.showAppMessage?.("Backup realizado com sucesso!");
       logs.push({hora:new Date().toLocaleString(), acao:"Backup automático executado"});
       renderLogs();
     });

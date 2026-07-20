@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../style/devolucao.css">
+  <script src="../script/pageGuard.js"></script>
+
+  <title>Registrar Devolução</title>
+
+  <!-- GOOGLE FONTS -->
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet"
+  >
+
+  
+
+</head>
+
+<body>
+
+  <!-- HEADER -->
+
+  <header>
+
+    <div class="logo">
+
+      <span class="logo-mark">
+        Instituto Estadual Riachuelo
+      </span>
+
+      <span class="logo-tag">
+        Biblioteca Online
+      </span>
+
+    </div>
+
+    <span>Módulo Devolução</span>
+
+  </header>
+
+  <!-- HERO -->
+
+  <div class="hero">
+
+    <h1>
+
+      Registrar
+      <span>Devolução</span>
+
+    </h1>
+
+    <p>
+      Confirme a devolução dos livros emprestados
+      e atualize o sistema automaticamente.
+    </p>
+
+  </div>
+
+  <!-- MAIN -->
+
+  <main>
+
+    <div class="card">
+
+      <h2 class="card-title">
+        Dados da Devolução
+      </h2>
+
+      <div class="form-grid">
+
+        <div class="input-group">
+
+          <label>Nome do Aluno</label>
+
+          <input
+            type="text"
+            id="aluno"
+          >
+
+        </div>
+
+        <div class="input-group">
+
+          <label>Matrícula</label>
+
+          <input
+            type="text"
+            id="matricula"
+          >
+
+        </div>
+
+        <div class="input-group full">
+
+          <label>Livro</label>
+
+          <input
+            type="text"
+            id="livro"
+          >
+
+        </div>
+
+        <div class="input-group">
+
+          <label>Data de Retirada</label>
+
+          <input
+            type="date"
+            id="retirada"
+          >
+
+        </div>
+
+        <div class="input-group">
+
+          <label>Data de Devolução</label>
+
+          <input
+            type="date"
+            id="devolucao"
+          >
+
+        </div>
+
+        <div class="input-group">
+
+          <label>Status</label>
+
+          <select id="status">
+
+            <option>Devolvido</option>
+            <option>Atrasado</option>
+            <option>Danificado</option>
+
+          </select>
+
+        </div>
+
+        <div class="input-group">
+
+          <label>Multa</label>
+
+          <input
+            type="text"
+            placeholder="R$ 0,00"
+          >
+
+        </div>
+
+        <div class="input-group full">
+
+          <label>Observações</label>
+
+          <textarea></textarea>
+
+        </div>
+
+      </div>
+
+      <!-- STATUS -->
+
+      <div class="status-box">
+
+        ✅ Após registrar, o sistema retornará
+        automaticamente para empréstimos.
+
+      </div>
+
+      <!-- BUTTONS -->
+
+      <div class="actions">
+
+        <button
+          type="button"
+          class="btn btn-primary"
+          id="registrarBtn">
+
+          Registrar Devolução
+
+        </button>
+
+        <button
+          class="btn btn-secondary"
+          onclick="window.location.href='./emprestimos.html'">
+
+          Voltar
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- FOOTER -->
+
+  <footer>
+
+    <span>
+      BibliotecaEscolar — Sistema de Gestão © 2026
+    </span>
+
+    <span>
+      Tela de Registro de Devolução
+    </span>
+
+  </footer>
+
+  <!-- SCRIPT -->
+
+  <script src="../script/devolucao.js"></script>
+
+</body>
+
+</html>

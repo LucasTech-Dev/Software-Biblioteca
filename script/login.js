@@ -27,6 +27,16 @@ const lbl =
 const inp =
   document.getElementById("inp-id");
 
+const inpSenha = document.getElementById("inp-senha");
+const togglePassword = document.getElementById("toggle-password");
+
+togglePassword?.addEventListener("click", () => {
+  const senhaVisivel = inpSenha.type === "text";
+  inpSenha.type = senhaVisivel ? "password" : "text";
+  togglePassword.textContent = senhaVisivel ? "Mostrar" : "Ocultar";
+  togglePassword.setAttribute("aria-label", senhaVisivel ? "Mostrar senha" : "Ocultar senha");
+});
+
 
 
 // ========================================
@@ -166,7 +176,7 @@ async function () {
 
   if (!role) {
 
-    alert(
+    window.showAppMessage?.(
       "Selecione o perfil antes de continuar."
     );
 
@@ -199,7 +209,7 @@ async function () {
 
   if (!id || !senha) {
 
-    alert(
+    window.showAppMessage?.(
       "Preencha todos os campos."
     );
 
@@ -382,7 +392,7 @@ async function () {
     }
 
 
-    alert(mensagem);
+    window.showAppMessage?.(mensagem);
 
 
     btn.textContent =

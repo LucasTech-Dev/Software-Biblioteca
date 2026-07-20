@@ -1,297 +1,272 @@
-/* ========================= */
-/* DADOS (mock) — Acervo     */
-/* ========================= */
+import LivroService from "../firebase/services/LivroService.js";
+import SupabaseLivroService from "../firebase/services/SupabaseLivroService.js";
 
-const LIVROS = [
-  { id: 1, titulo: 'Dom Casmurro', autor: 'Machado de Assis', categoria: 'Literatura', isbn: '9788535902775', ano: 1899, editora: 'Garnier', exemplares: 3, disponiveis: 2, status: 'disponivel', emoji: '📖', cor: '#E8EDFF', desc: 'Um dos maiores clássicos da literatura brasileira, que narra a história de Bentinho e Capitu em uma das tramas mais debatidas da língua portuguesa.' },
-  { id: 2, titulo: 'O Cortiço', autor: 'Aluísio Azevedo', categoria: 'Literatura', isbn: '9788535903123', ano: 1890, editora: 'Garnier', exemplares: 2, disponiveis: 0, status: 'emprestado', emoji: '🏚️', cor: '#FEF9C3', desc: 'Obra naturalista que retrata a vida coletiva e as relações sociais em um cortiço carioca do século XIX.' },
-  { id: 3, titulo: 'Iracema', autor: 'José de Alencar', categoria: 'Literatura', isbn: '9788535904014', ano: 1865, editora: 'Mecenas', exemplares: 4, disponiveis: 0, status: 'reservado', emoji: '🌿', cor: '#DCFCE7', desc: 'Romance indianista que narra o amor entre a indígena Iracema e o colonizador Martim, símbolo da formação do povo brasileiro.' },
-  { id: 4, titulo: 'Origem das Espécies', autor: 'Charles Darwin', categoria: 'Ciências', isbn: '9788535905554', ano: 1859, editora: 'Hemus', exemplares: 2, disponiveis: 1, status: 'disponivel', emoji: '🔬', cor: '#F0FDF4', desc: 'A obra fundamental da biologia moderna que apresenta a teoria da evolução das espécies por seleção natural.' },
-  { id: 5, titulo: 'Sapiens', autor: 'Yuval Noah Harari', categoria: 'História', isbn: '9788537812795', ano: 2011, editora: 'Companhia das Letras', exemplares: 3, disponiveis: 3, status: 'disponivel', emoji: '🦴', cor: '#FFF7ED', desc: 'Uma narrativa fascinante da história da humanidade, desde os primeiros humanos até a era moderna.' },
-  { id: 6, titulo: 'A República', autor: 'Platão', categoria: 'Filosofia', isbn: '9788535902119', ano: -380, editora: 'Martin Claret', exemplares: 2, disponiveis: 0, status: 'emprestado', emoji: '🏛️', cor: '#F5F3FF', desc: 'Diálogo filosófico em que Sócrates debate sobre justiça, ordem política e o Estado ideal.' },
-  { id: 7, titulo: 'Matemática Elementar', autor: 'Gelson Iezzi', categoria: 'Matemática', isbn: '9788535061002', ano: 2004, editora: 'Atual', exemplares: 8, disponiveis: 5, status: 'disponivel', emoji: '📐', cor: '#EFF6FF', desc: 'Coleção de referência para o ensino médio abrangendo álgebra, geometria, trigonometria e análise combinatória.' },
-  { id: 8, titulo: 'O Pequeno Príncipe', autor: 'Antoine de Saint-Exupéry', categoria: 'Literatura', isbn: '9788532516313', ano: 1943, editora: 'Agir', exemplares: 5, disponiveis: 4, status: 'disponivel', emoji: '🌹', cor: '#FFF1F2', desc: 'Conto poético que narra a história de um pequeno príncipe que viaja pelo universo, refletindo sobre amizade e a essência das coisas.' }
-];
+window.PageGuard?.hold();
 
-/* ========================= */
-/* ESTADO — Acervo           */
-/* ========================= */
+let livroLocalizado = null;
 
-let filtroTexto  = '';
-let filtroCateg  = '';
-let filtroStatus = '';
-let viewMode     = 'grid';
-let paginaAtual  = 1;
-const POR_PAGINA = 8;
+window.onload = () => {
+  window.PageGuard?.ready();
+};
 
-/* ========================= */
-/* NAVEGAÇÃO ENTRE PÁGINAS   */
-/* ========================= */
+/* ============================================== */
+/* FLUXO PRINCIPAL: ADICIONAR / VERIFICAR LIVRO   */
+/* ============================================== */
+window.adicionarLivro = async () => {
+  const titulo = document.getElementById('add-titulo')?.value.trim();
+  const isbn = document.getElementById('add-isbn')?.value.trim();
 
-function navegarPara(paginaId) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(paginaId).classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-  if (paginaId === 'page-adicionar') renderCatalogo();
-}
-
-/* ========================= */
-/* RENDER — Acervo           */
-/* ========================= */
-
-function livrosFiltrados() {
-  return LIVROS.filter(l => {
-    const textoOk  = !filtroTexto  || l.titulo.toLowerCase().includes(filtroTexto.toLowerCase()) || l.autor.toLowerCase().includes(filtroTexto.toLowerCase());
-    const categOk  = !filtroCateg  || l.categoria === filtroCateg;
-    const statusOk = !filtroStatus || l.status === filtroStatus;
-    return textoOk && categOk && statusOk;
-  });
-}
-
-function renderStats() {
-  document.getElementById('stat-total').textContent = LIVROS.length;
-  document.getElementById('stat-disp').textContent  = LIVROS.filter(l => l.status === 'disponivel').length;
-  document.getElementById('stat-emp').textContent   = LIVROS.filter(l => l.status === 'emprestado').length;
-  document.getElementById('stat-res').textContent   = LIVROS.filter(l => l.status === 'reservado').length;
-}
-
-function labelStatus(s) {
-  return { disponivel: 'Disponível', emprestado: 'Emprestado', reservado: 'Reservado' }[s] || s;
-}
-
-function renderGrid() {
-  const grid   = document.getElementById('books-grid');
-  const todos  = livrosFiltrados();
-  const inicio = (paginaAtual - 1) * POR_PAGINA;
-  const pagina = todos.slice(inicio, inicio + POR_PAGINA);
-
-  grid.className = 'books-grid' + (viewMode === 'list' ? ' list-view' : '');
-
-  if (pagina.length === 0) {
-    grid.innerHTML = `<div class="empty-state"><div class="empty-state-icon">📭</div><div class="empty-state-title">Nenhum livro encontrado</div><p class="empty-state-desc">Tente ajustar os filtros ou o termo de busca.</p></div>`;
-    renderPaginacao(0);
+  if (!titulo && !isbn) {
+    window.showAppMessage?.('Por favor, informe ao menos o Título ou o ISBN para prosseguir!');
     return;
   }
 
-  grid.innerHTML = pagina.map((l, i) => {
-    if (viewMode === 'list') {
-      return `
-        <div class="book-card" style="animation-delay:${(i*0.05)+0.04}s" onclick="openModal(${l.id})">
-          <div class="book-cover" style="background:${l.cor}">${l.emoji}<div class="book-cover-overlay"></div><span class="book-status-dot ${l.status}"></span></div>
-          <div class="book-info">
-            <div class="book-title-block">
-              <div class="book-category">${l.categoria}</div>
-              <div class="book-title">${l.titulo}</div>
-              <div class="book-author">${l.autor}</div>
-            </div>
-            <div class="book-footer">
-              <span class="book-copies"><strong>${l.disponiveis}</strong>/${l.exemplares} exempl.</span>
-              <span class="status-badge ${l.status}">${labelStatus(l.status)}</span>
-            </div>
-          </div>
-        </div>`;
+  try {
+    window.showAppMessage?.('Consultando banco de dados global...');
+    let resultado = null;
+
+    // 1. Tentar buscar por ISBN (prioridade por ser chave única)
+    if (isbn) {
+      try {
+        resultado = await SupabaseLivroService.buscarPorISBN(isbn);
+      } catch (e) {
+        resultado = null;
+      }
     }
-    return `
-      <div class="book-card" style="animation-delay:${(i*0.04)+0.04}s" onclick="openModal(${l.id})">
-        <div class="book-cover" style="background:${l.cor}">${l.emoji}<div class="book-cover-overlay"></div><span class="book-status-dot ${l.status}"></span></div>
-        <div class="book-info">
-          <div class="book-category">${l.categoria}</div>
-          <div class="book-title">${l.titulo}</div>
-          <div class="book-author">${l.autor}</div>
-          <div class="book-footer">
-            <span class="book-copies"><strong>${l.disponiveis}</strong>/${l.exemplares} exempl.</span>
-            <span class="status-badge ${l.status}">${labelStatus(l.status)}</span>
-          </div>
-        </div>
-      </div>`;
-  }).join('');
 
-  renderPaginacao(todos.length);
-}
+    // 2. Se não achou por ISBN e temos título, tentar por título aproximado
+    if (!resultado && titulo) {
+      try {
+        const resultadosTitulo = await SupabaseLivroService.buscarPorTitulo(titulo);
+        if (resultadosTitulo && resultadosTitulo.length > 0) {
+          // Pega o primeiro resultado exato ou mais próximo relevante
+          resultado = resultadosTitulo[0];
+        }
+      } catch (e) {
+        resultado = null;
+      }
+    }
 
-function renderPaginacao(total) {
-  const pag   = document.getElementById('pagination');
-  const pages = Math.ceil(total / POR_PAGINA);
-  if (pages <= 1) { pag.innerHTML = ''; return; }
+    if (resultado) {
+      // CASO 1: Livro encontrado no Supabase -> Abrir modal de quantidades direto
+      livroLocalizado = resultado;
+      abrirModalQuantidade(resultado);
+    } else {
+      // CASO 2: Livro não localizado -> Abrir modal de criação no Supabase + Quantidades
+      abrirModalCriarNoSupabase(titulo, isbn);
+    }
 
-  let html = `<button class="page-btn" onclick="goPage(${paginaAtual-1})" ${paginaAtual===1?'disabled':''}>‹</button>`;
-  for (let i = 1; i <= pages; i++) {
-    html += `<button class="page-btn ${i===paginaAtual?'active':''}" onclick="goPage(${i})">${i}</button>`;
+  } catch (error) {
+    console.error("Erro no fluxo de verificação:", error);
+    window.showAppMessage?.('Erro ao processar a verificação do livro.');
   }
-  html += `<button class="page-btn" onclick="goPage(${paginaAtual+1})" ${paginaAtual===pages?'disabled':''}>›</button>`;
-  pag.innerHTML = html;
-}
+};
 
-function goPage(n) { paginaAtual = n; renderGrid(); window.scrollTo({top:0,behavior:'smooth'}); }
+/* ============================================== */
+/* MODAL 1: LIVRO ENCONTRADO (QUANTIDADE)         */
+/* ============================================== */
+function abrirModalQuantidade(livro) {
+  const modalTitle = document.getElementById('modal-title');
+  const modalBody = document.getElementById('modal-body');
 
-function setView(mode) {
-  viewMode = mode;
-  document.getElementById('btn-grid').classList.toggle('active', mode === 'grid');
-  document.getElementById('btn-list').classList.toggle('active', mode === 'list');
-  renderGrid();
-}
+  modalTitle.textContent = "Adicionar Exemplares ao Acervo";
 
-function setStatus(btn, status) {
-  filtroStatus = status;
-  paginaAtual  = 1;
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-  renderGrid();
-}
+  const autorDisplay = Array.isArray(livro.autores) ? livro.autores.join(', ') : (livro.autores || 'Autor desconhecido');
+  const capaUrl = livro.capa || `https://covers.openlibrary.org/b/isbn/${livro.isbn}-L.jpg?default=false`;
+  const cor = livro.cor || '#E8EDFF';
+  const emoji = livro.emoji || '📖';
 
-/* ========================= */
-/* MODAL                     */
-/* ========================= */
-
-function openModal(id) {
-  const l = LIVROS.find(x => x.id === id);
-  if (!l) return;
-
-  const btnLabel = { disponivel: 'Reservar', emprestado: 'Fila de espera', reservado: 'Fila de espera' }[l.status];
-  const capaUrl  = `https://covers.openlibrary.org/b/isbn/${l.isbn}-M.jpg?default=false`;
-
-  document.getElementById('modal-body').innerHTML = `
-    <div class="modal-book-header">
-      <div class="modal-cover" style="background:${l.cor}">
-        <img src="${capaUrl}" alt="${l.titulo}" onerror="this.style.display='none'; this.parentElement.textContent='${l.emoji}'" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">
+  modalBody.innerHTML = `
+    <div style="display: flex; gap: 16px; margin-bottom: 20px; align-items: center;">
+      <div style="background: ${cor}; width: 70px; height: 100px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 24px; position: relative; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+        <img src="${capaUrl}" alt="${livro.titulo}" onerror="this.style.display='none'; this.parentElement.textContent='${emoji}'" style="width: 100%; height: 100%; object-fit: cover;">
       </div>
-      <div class="modal-book-meta">
-        <div class="modal-category">${l.categoria}</div>
-        <div class="modal-book-title">${l.titulo}</div>
-        <div class="modal-book-author">${l.autor}</div>
-        <span class="status-badge ${l.status}">${labelStatus(l.status)}</span>
+      <div>
+        <h4 style="margin: 0 0 4px 0; color: #111; font-size: 16px;">${livro.titulo}</h4>
+        <p style="margin: 0 0 4px 0; color: #666; font-size: 14px;">✍️ ${autorDisplay}</p>
+        <span style="font-size: 12px; background: #E0E7FF; color: #1E3A8A; padding: 2px 6px; border-radius: 4px; font-weight: bold;">ISBN: ${livro.isbn || '-'}</span>
       </div>
     </div>
-    <div class="modal-info-grid">
-      <div class="modal-info-item"><label>ISBN</label><span>${l.isbn}</span></div>
-      <div class="modal-info-item"><label>Ano</label><span>${l.ano < 0 ? Math.abs(l.ano)+' a.C.' : l.ano}</span></div>
-      <div class="modal-info-item"><label>Editora</label><span>${l.editora}</span></div>
-      <div class="modal-info-item"><label>Exemplares</label><span>${l.disponiveis} disponíveis de ${l.exemplares}</span></div>
+
+    <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+      <label for="modal-qtde" style="font-weight: 500; font-size: 14px; color: #333;">Quantidade de Exemplares:</label>
+      <input type="number" id="modal-qtde" value="1" min="1" style="padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; outline: none; width: 100%;" />
     </div>
-    <div class="modal-desc-title">Sinopse</div>
-    <p class="modal-desc">${l.desc}</p>
-    <div class="modal-actions">
-      <button class="btn-reserve">${btnLabel}</button>
-      <button class="btn-outline" onclick="closeModal()">Fechar</button>
+
+    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+      <button onclick="closeModal()" style="padding: 10px 16px; border: 1px solid #ddd; background: white; border-radius: 8px; cursor: pointer; font-weight: 500;">Cancelar</button>
+      <button onclick="confirmarAdicionarExemplares()" style="padding: 10px 20px; background: #1E3A8A; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Confirmar e Adicionar</button>
     </div>
   `;
 
   document.getElementById('modal-overlay').classList.add('open');
 }
 
-function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
-function closeModalOnOverlay(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
+window.confirmarAdicionarExemplares = async () => {
+  const qtdeInput = document.getElementById('modal-qtde');
+  const quantidade = parseInt(qtdeInput?.value, 10);
 
-/* ========================= */
-/* ADICIONAR LIVRO           */
-/* ========================= */
-
-let livrosCadastrados = [];
-
-try {
-  livrosCadastrados = JSON.parse(localStorage.getItem('bib_livros')) || [];
-} catch (e) {
-  livrosCadastrados = [];
-}
-
-function salvarStorage() {
-  try {
-    localStorage.setItem('bib_livros', JSON.stringify(livrosCadastrados));
-  } catch (e) {
-    console.warn('Não foi possível salvar no localStorage:', e);
-  }
-}
-
-function renderCatalogo() {
-  const grid = document.getElementById('catalogo-grid');
-  if (!grid) return;
-
-  if (livrosCadastrados.length === 0) {
-    grid.innerHTML = `
-      <div class="catalogo-empty">
-        <div class="catalogo-empty-icon">📭</div>
-        <div class="catalogo-empty-title">Nenhum livro cadastrado ainda</div>
-        <p class="catalogo-empty-desc">Use o formulário acima para adicionar o primeiro título.</p>
-      </div>`;
+  if (isNaN(quantidade) || quantidade <= 0) {
+    window.showAppMessage?.('Por favor, informe uma quantidade válida!');
     return;
   }
 
-  grid.innerHTML = livrosCadastrados.map((livro, i) => `
-    <div class="livro-card" style="animation-delay:${(i*0.05)+0.04}s">
-      <button class="livro-remove" onclick="removerLivro(${i})" title="Remover">✕</button>
-      <img
-        class="livro-capa"
-        src="https://covers.openlibrary.org/b/isbn/${livro.isbn}-L.jpg?default=false"
-        alt="${livro.titulo}"
-        onerror="this.src='https://placehold.co/300x200/EEF2FF/1E3A8A?text=SEM+CAPA'"
-      >
-      <div class="livro-info">
-        <div class="livro-titulo">${livro.titulo}</div>
-        <div class="livro-autor">✍️ ${livro.autor}</div>
-        <div class="livro-isbn">📖 ISBN: ${livro.isbn}</div>
+  try {
+    window.showAppMessage?.('Adicionando exemplares ao acervo local...');
+
+    await LivroService.adicionarAoAcervo({
+      supabaseId: livroLocalizado.id,
+      quantidade: quantidade
+    });
+
+    window.showAppMessage?.('Exemplares adicionados com sucesso ao acervo!');
+    closeModal();
+    limparInputsPrincipais();
+  } catch (error) {
+    console.error(error);
+    window.showAppMessage?.(`Erro ao adicionar: ${error.message}`);
+  }
+};
+
+/* ============================================== */
+/* MODAL 2: CRIAR NO SUPABASE + QUANTIDADES       */
+/* ============================================== */
+function abrirModalCriarNoSupabase(titulo, isbn) {
+  const modalTitle = document.getElementById('modal-title');
+  const modalBody = document.getElementById('modal-body');
+
+  modalTitle.textContent = "Cadastrar Novo Livro no Sistema";
+
+  modalBody.innerHTML = `
+    <p style="color: #ef4444; font-size: 13px; font-weight: 500; margin-bottom: 15px; line-height: 1.4;">
+      ⚠️ Este livro não foi localizado no banco global. Preencha os campos abaixo para registrá-lo globalmente e adicioná-lo ao acervo local.
+    </p>
+
+    <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <label style="font-size: 12px; font-weight: bold; color: #555;">Título do Livro *</label>
+        <input type="text" id="new-titulo" value="${titulo || ''}" style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;" required />
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <label style="font-size: 12px; font-weight: bold; color: #555;">Autor(es) * (Separados por vírgula)</label>
+        <input type="text" id="new-autores" placeholder="Ex: Antoine de Saint-Exupéry" style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;" required />
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <label style="font-size: 12px; font-weight: bold; color: #555;">ISBN *</label>
+        <input type="text" id="new-isbn" value="${isbn || ''}" style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;" required />
+      </div>
+
+      <div style="display: flex; gap: 10px;">
+        <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
+          <label style="font-size: 12px; font-weight: bold; color: #555;">Categoria</label>
+          <select id="new-categoria" style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;">
+            <option value="Literatura">Literatura</option>
+            <option value="Ciências">Ciências</option>
+            <option value="História">História</option>
+            <option value="Matemática">Matemática</option>
+            <option value="Filosofia">Filosofia</option>
+            <option value="Artes">Artes</option>
+          </select>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 4px; width: 120px;">
+          <label style="font-size: 12px; font-weight: bold; color: #555;">Quant. Inicial *</label>
+          <input type="number" id="new-qtde" value="1" min="1" style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px;" required />
+        </div>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 4px;">
+        <label style="font-size: 12px; font-weight: bold; color: #555;">Sinopse / Descrição</label>
+        <textarea id="new-desc" placeholder="Breve descrição da obra..." rows="3" style="padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; font-family: inherit; resize: vertical;"></textarea>
       </div>
     </div>
-  `).join('');
+
+    <div style="display: flex; gap: 10px; justify-content: flex-end;">
+      <button onclick="closeModal()" style="padding: 10px 16px; border: 1px solid #ddd; background: white; border-radius: 8px; cursor: pointer; font-weight: 500;">Cancelar</button>
+      <button onclick="confirmarSalvarECadastrar()" style="padding: 10px 20px; background: #10B981; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold;">Salvar e Adicionar</button>
+    </div>
+  `;
+
+  document.getElementById('modal-overlay').classList.add('open');
 }
 
-function adicionarLivro() {
-  const titulo = document.getElementById('add-titulo').value.trim();
-  const autor  = document.getElementById('add-autor').value.trim();
-  const isbn   = document.getElementById('add-isbn').value.trim();
+window.confirmarSalvarECadastrar = async () => {
+  const titulo = document.getElementById('new-titulo')?.value.trim();
+  const autoresInput = document.getElementById('new-autores')?.value.trim();
+  const isbn = document.getElementById('new-isbn')?.value.trim();
+  const categoria = document.getElementById('new-categoria')?.value;
+  const quantidade = parseInt(document.getElementById('new-qtde')?.value, 10);
+  const desc = document.getElementById('new-desc')?.value.trim();
 
-  if (!titulo || !autor || !isbn) {
-    alert('Preencha todos os campos!');
+  if (!titulo || !autoresInput || !isbn || isNaN(quantidade) || quantidade <= 0) {
+    window.showAppMessage?.('Por favor, preencha todos os campos obrigatórios (*)!');
     return;
   }
 
-  livrosCadastrados.push({ titulo, autor, isbn });
-  salvarStorage();
-  renderCatalogo();
+  // Converter a string de autores separados por vírgula em um array estruturado
+  const autoresArray = autoresInput.split(',').map(a => a.trim()).filter(a => a !== '');
 
-  document.getElementById('add-titulo').value = '';
-  document.getElementById('add-autor').value  = '';
-  document.getElementById('add-isbn').value   = '';
-}
+  // Cores estéticas aleatórias para o background padrão de capa
+  const coresCapa = ['#E8EDFF', '#FEE2E2', '#FEF3C7', '#D1FAE5', '#E0F2FE', '#F3E8FF'];
+  const corAleatoria = coresCapa[Math.floor(Math.random() * coresCapa.length)];
 
-function removerLivro(index) {
-  if (confirm('Deseja realmente remover este livro?')) {
-    livrosCadastrados.splice(index, 1);
-    salvarStorage();
-    renderCatalogo();
+  const novoLivroSupabase = {
+    titulo: titulo,
+    autores: autoresArray,
+    isbn: isbn,
+    categoria: categoria,
+    desc: desc || "Nenhuma sinopse cadastrada para este exemplar.",
+    cor: corAleatoria,
+    emoji: "📖",
+    capa: `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false`
+  };
+
+  try {
+    window.showAppMessage?.('Criando livro no catálogo do Supabase...');
+    
+    // 1. Registrar o livro no banco de dados global do Supabase
+    const livroCriado = await SupabaseLivroService.criarLivro(novoLivroSupabase);
+
+    window.showAppMessage?.('Livro cadastrado globalmente! Vinculando acervo local...');
+
+    // 2. Adicionar os exemplares físicos vinculados ao ID do novo registro do Supabase
+    await LivroService.adicionarAoAcervo({
+      supabaseId: livroCriado.id,
+      quantidade: quantidade
+    });
+
+    window.showAppMessage?.('Livro adicionado com sucesso!');
+    closeModal();
+    limparInputsPrincipais();
+
+  } catch (error) {
+    console.error("Erro no cadastro e associação do livro:", error);
+    window.showAppMessage?.(`Erro ao salvar os exemplares no acervo: ${error.message}`);
   }
+};
+
+/* ============================================== */
+/* AUXILIARES DE INTERFAZ                         */
+/* ============================================== */
+function limparInputsPrincipais() {
+  const t = document.getElementById('add-titulo');
+  const i = document.getElementById('add-isbn');
+  if (t) t.value = '';
+  if (i) i.value = '';
+  livroLocalizado = null;
 }
 
-/* ========================= */
-/* INIT — aguarda o DOM      */
-/* ========================= */
+window.closeModal = () => {
+  document.getElementById('modal-overlay').classList.remove('open');
+};
 
-document.addEventListener('DOMContentLoaded', function () {
+window.closeModalOnOverlay = (e) => {
+  if (e.target === document.getElementById('modal-overlay')) {
+    closeModal();
+  }
+};
 
-  // Busca por texto
-  document.getElementById('search-input').addEventListener('input', function (e) {
-    filtroTexto = e.target.value;
-    paginaAtual = 1;
-    renderGrid();
-  });
-
-  // Filtro por categoria
-  document.getElementById('filter-categoria').addEventListener('change', function (e) {
-    filtroCateg = e.target.value;
-    paginaAtual = 1;
-    renderGrid();
-  });
-
-  // ISBN com Enter
-  document.getElementById('add-isbn').addEventListener('keydown', function (e) {
-    if (e.key === 'Enter') adicionarLivro();
-  });
-
-  // Fechar modal com Escape
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeModal();
-  });
-
-  // Renderização inicial
-  renderStats();
-  renderGrid();
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
 });

@@ -2,217 +2,145 @@ import {
   doc,
   getDoc,
   updateDoc,
-  arrayUnion
-}
+  arrayUnion,
+  arrayRemove
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+import { updatePassword } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+import { auth } from "../auth.js";
+import { db } from "../firestore.js";
 
-import {
-  auth
-}
+class UsuarioService {
 
-from "../auth.js";
-
-import {
-  db
-}
-
-from "../firestore.js";
-
-
-// ========================================
-// USUÁRIO ATUAL
-// ========================================
-
-export async function obterUsuarioAtual() {
-
-  const user =
-    auth.currentUser;
-
-  if (!user) {
-    return null;
+  async obterUsuarioAtual() {
+    const user = auth.currentUser;
+    if (!user) return null;
+    return this.obterUsuario(user.uid);
   }
 
-  return obterUsuario(user.uid);
+  async obterUsuario(uid) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
 
-}
+    const usuarioRef = doc(db, "usuarios", uid);
+    const usuarioSnap = await getDoc(usuarioRef);
 
+    if (!usuarioSnap.exists()) return null;
 
-// ========================================
-// OBTER USUÁRIO POR UID
-// ========================================
-
-export async function obterUsuario(uid) {
-
-  const usuarioRef =
-    doc(
-      db,
-      "usuarios",
-      uid
-    );
-
-  const usuarioSnap =
-    await getDoc(
-      usuarioRef
-    );
-
-  if (!usuarioSnap.exists()) {
-    return null;
+    return {
+      id: usuarioSnap.id,
+      ...usuarioSnap.data()
+    };
   }
 
-  return {
-
-    id:
-      usuarioSnap.id,
-
-    ...usuarioSnap.data()
-
-  };
-
-}
-
-
-// ========================================
-// OCULTAR EMPRÉSTIMOS
-// ========================================
-
-export async function ocultarEmprestimos(ids) {
-
-  const user =
-    auth.currentUser;
-
-  if (!user) {
-    throw new Error(
-      "Usuário não autenticado."
-    );
+  async editarPerfil(uid, dados) {
+    return this.atualizarPerfil(uid, dados);
   }
 
-  const usuarioRef =
-    doc(
-      db,
-      "usuarios",
-      user.uid
-    );
-
-  for (const id of ids) {
-
-    await updateDoc(
-      usuarioRef,
-      {
-
-        emprestimosOcultos:
-          arrayUnion(id)
-
-      }
-    );
-
+  async atualizarPerfil(uid, dados) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, dados);
   }
 
-}
+  async alterarSenha(novaSenha) {
+    if (!auth.currentUser) {
+      throw new Error("Usuário não autenticado.");
+    }
 
+    if (!novaSenha || novaSenha.length < 6) {
+      throw new Error("A senha deve ter no mínimo 6 caracteres.");
+    }
 
-// ========================================
-// OCULTAR RESERVAS
-// ========================================
-
-export async function ocultarReservas(ids) {
-
-  const user =
-    auth.currentUser;
-
-  if (!user) {
-    throw new Error(
-      "Usuário não autenticado."
-    );
+    await updatePassword(auth.currentUser, novaSenha);
   }
 
-  const usuarioRef =
-    doc(
-      db,
-      "usuarios",
-      user.uid
-    );
-
-  for (const id of ids) {
-
-    await updateDoc(
-      usuarioRef,
-      {
-
-        reservasOcultas:
-          arrayUnion(id)
-
-      }
-    );
-
+  async adicionarHistorico(uid, registro) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, {
+      historico: arrayUnion(registro)
+    });
   }
 
-}
-
-
-// ========================================
-// LIMPAR EMPRÉSTIMOS OCULTOS
-// ========================================
-
-export async function limparEmprestimosOcultos() {
-
-  const user =
-    auth.currentUser;
-
-  if (!user) {
-    throw new Error(
-      "Usuário não autenticado."
-    );
+  async adicionarReserva(uid, reservaId) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, {
+      reservas: arrayUnion(reservaId)
+    });
   }
 
-  const usuarioRef =
-    doc(
-      db,
-      "usuarios",
-      user.uid
-    );
+  async removerReserva(uid, reservaId) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, {
+      reservas: arrayRemove(reservaId)
+    });
+  }
 
-  await updateDoc(
-    usuarioRef,
-    {
+  async adicionarEmprestimo(uid, emprestimoId) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, {
+      emprestimos: arrayUnion(emprestimoId)
+    });
+  }
 
+  async removerEmprestimo(uid, emprestimoId) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, {
+      emprestimos: arrayRemove(emprestimoId)
+    });
+  }
+
+  async adicionarFavorito(uid, livroId) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, {
+      favoritos: arrayUnion(livroId)
+    });
+  }
+
+  async removerFavorito(uid, livroId) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, {
+      favoritos: arrayRemove(livroId)
+    });
+  }
+
+  async ocultarEmprestimos(uid, ids) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, {
+      emprestimosOcultos: arrayUnion(...ids)
+    });
+  }
+
+  async ocultarReservas(uid, ids) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, {
+      reservasOcultas: arrayUnion(...ids)
+    });
+  }
+
+  async limparEmprestimosOcultos(uid) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, {
       emprestimosOcultos: []
-
-    }
-  );
-
-}
-
-
-// ========================================
-// LIMPAR RESERVAS OCULTAS
-// ========================================
-
-export async function limparReservasOcultas() {
-
-  const user =
-    auth.currentUser;
-
-  if (!user) {
-    throw new Error(
-      "Usuário não autenticado."
-    );
+    });
   }
 
-  const usuarioRef =
-    doc(
-      db,
-      "usuarios",
-      user.uid
-    );
-
-  await updateDoc(
-    usuarioRef,
-    { 
-
+  async limparReservasOcultas(uid) {
+    if (!uid) throw new Error("UID do usuário não fornecido.");
+    const usuarioRef = doc(db, "usuarios", uid);
+    await updateDoc(usuarioRef, {
       reservasOcultas: []
-
-    }
-  ); 
-
+    });
+  }
 }
+
+export default new UsuarioService();

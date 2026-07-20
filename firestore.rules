@@ -1,0 +1,67 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isProfessor() {
+      return isAuthenticated() && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == 'professor';
+    }
+
+    function isAluno() {
+      return isAuthenticated() && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == 'aluno';
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    match /usuarios/{userId} {
+      allow read: if isAuthenticated() && (isProfessor() || isOwner(userId));
+      allow create: if isAuthenticated() && isOwner(userId);
+      allow update: if isAuthenticated() && (
+        isProfessor() || (isOwner(userId) && request.resource.data.perfil == resource.data.perfil)
+      );
+      allow delete: if false;
+    }
+
+    match /acervo/{document} {
+      allow read: if isAuthenticated();
+      allow create, update, delete: if isProfessor();
+    }
+
+    match /reservas/{document} {
+      allow read: if isAuthenticated() && (isProfessor() || isOwner(resource.data.usuarioId));
+      allow create: if isAuthenticated() && isAluno();
+      allow update: if isAuthenticated() && (
+        isProfessor() || isOwner(resource.data.usuarioId)
+      );
+      allow delete: if false;
+    }
+
+    match /emprestimos/{document} {
+      allow read: if isAuthenticated() && (isProfessor() || isOwner(resource.data.usuarioId));
+      allow create: if isProfessor();
+      allow update: if isAuthenticated() && (
+        isProfessor() || isOwner(resource.data.usuarioId)
+      );
+      allow delete: if false;
+    }
+
+    match /notificacoes/{document} {
+      allow read: if isAuthenticated() && isOwner(resource.data.usuarioId);
+      allow create: if isAuthenticated() && isProfessor();
+      allow update: if isAuthenticated()
+        && isOwner(resource.data.usuarioId)
+        && request.resource.data.usuarioId == resource.data.usuarioId;
+      allow delete: if isAuthenticated() && isOwner(resource.data.usuarioId);
+    }
+
+    match /logs/{document} {
+      allow read: if isProfessor();
+      allow write: if isProfessor();
+    }
+  }
+}

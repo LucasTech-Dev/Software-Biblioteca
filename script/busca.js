@@ -1,27 +1,12 @@
 import {
-  collection,
-  getDocs,
-  addDoc,
-  query,
-  where,
-  serverTimestamp,
-  doc,
-  updateDoc,
-  increment,
-  arrayUnion
-}
-
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
-
-import {
   onAuthStateChanged
-}
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 
-from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
-
-import { db } from "../firebase/firestore.js";
 import { auth } from "../firebase/auth.js";
+import LivroService from "../firebase/services/LivroService.js";
+import ReservaService from "../firebase/services/ReservaService.js";
 
+window.PageGuard?.hold();
 
 // ========================================
 // ESTADO
@@ -30,6 +15,8 @@ import { auth } from "../firebase/auth.js";
 let BOOKS = [];
 
 let usuarioAtual = null;
+
+const reservasEmAndamento = new Set();
 
 
 // ========================================
@@ -40,16 +27,26 @@ onAuthStateChanged(auth, async(user) => {
 
   if (!user) {
 
-    alert("Faça login.");
+    window.showAppMessage?.("Faça login.");
 
-    window.location.href = "login.html";
+    window.location.href = "pages/login.html";
 
     return;
   }
 
   usuarioAtual = user;
 
-  await carregarLivros();
+  try {
+
+    await carregarLivros();
+
+  }
+
+  finally {
+
+    window.PageGuard?.ready();
+
+  }
 
 });
 
@@ -61,46 +58,26 @@ onAuthStateChanged(auth, async(user) => {
 async function carregarLivros() {
 
   try {
+    const livros = await LivroService.listarAcervo();
 
-    const snap =
-      await getDocs(collection(db, "livros"));
-
-    BOOKS = [];
-
-    snap.forEach((docSnap) => {
-
-      const dados = docSnap.data();
-
-      BOOKS.push({
-
-        id: docSnap.id,
-
-        title: dados.titulo,
-        author: dados.autor,
-        category: dados.categoria,
-        year: dados.ano,
-        isbn: dados.isbn,
-
-        status: dados.status,
-
-        copies: dados.disponiveis,
-
-        emoji: dados.emoji || "📚"
-
-      });
-
-    });
+    BOOKS = livros.map((livro) => ({
+      id: livro.id,
+      title: livro.titulo,
+      author: Array.isArray(livro.autores) ? livro.autores.join(", ") : (livro.autores || "Autor desconhecido"),
+      category: livro.categoria || livro.categorias?.[0] || "Geral",
+      year: livro.publicacao || "",
+      isbn: livro.isbn,
+      status: livro.status || "disponivel",
+      copies: livro.quantidadeDisponivel ?? 1,
+      emoji: livro.emoji || "📚"
+    }));
 
     renderBooks(BOOKS);
-
   }
 
   catch (error) {
-
     console.error(error);
-
-    alert("Erro ao carregar livros.");
-
+    window.showAppMessage?.("Erro ao carregar livros.");
   }
 
 }
@@ -225,9 +202,11 @@ function renderBooks(list) {
 
             `<button
               class="btn btn-primary btn-sm"
-              onclick="reservar('${b.id}')">
+              data-reserve-id="${b.id}"
+              onclick="reservar('${b.id}')"
+              ${reservasEmAndamento.has(b.id) ? 'disabled aria-busy="true"' : ''}>
 
-              📅 Reservar
+              ${reservasEmAndamento.has(b.id) ? '⏳ Reservando...' : '📅 Reservar'}
 
             </button>`
 
@@ -331,124 +310,54 @@ function clearFilters() {
 window.clearFilters = clearFilters;
 
 
+
+function setReservaLoading(livroId, loading) {
+
+  document
+    .querySelectorAll(`[data-reserve-id="${livroId}"]`)
+    .forEach((button) => {
+
+      button.disabled = loading;
+      button.setAttribute("aria-busy", loading ? "true" : "false");
+      button.textContent = loading ? "⏳ Reservando..." : "📅 Reservar";
+
+    });
+
+}
+
 // ========================================
 // RESERVA
 // ========================================
 
 async function reservar(livroId) {
 
+  if (reservasEmAndamento.has(livroId)) {
+    return;
+  }
+
+  reservasEmAndamento.add(livroId);
+  setReservaLoading(livroId, true);
+
   try {
-
-    const livro =
-      BOOKS.find(b => b.id === livroId);
-
+    const livro = BOOKS.find(b => b.id === livroId);
     if (!livro) return;
 
-    // usuário
+    await ReservaService.solicitarReserva({
+      supabaseId: livro.id
+    });
 
-    const qUser = query(
-      collection(db, "usuarios"),
-      where("uid", "==", usuarioAtual.uid)
-    );
-
-    const userSnap =
-      await getDocs(qUser);
-
-    if (userSnap.empty) {
-
-      alert("Usuário não encontrado.");
-
-      return;
-    }
-
-    const usuario =
-      userSnap.docs[0].data();
-
-    // reserva
-
-    await addDoc(
-      collection(db, "reservas"),
-      {
-
-        usuarioId: usuarioAtual.uid,
-
-        matricula: usuario.matricula,
-
-        nome: usuario.nome,
-
-        turma: usuario.turma,
-
-        livroId: livroId,
-
-        tituloLivro: livro.title,
-
-        autorLivro: livro.author,
-
-        status: "esperando",
-
-        dataReserva:
-          new Date().toISOString(),
-
-        criadoEm: serverTimestamp()
- 
-      }
-    );
-
-
-    // ========================================
-// CRIAR MOVIMENTAÇÃO EM EMPRÉSTIMOS
-// ========================================
-
-
-
-// ========================================
-// HISTÓRICO DO USUÁRIO
-// ========================================
-
-await updateDoc(
-  doc(db, "usuarios", usuarioAtual.uid),
-  {
-
-    historico: arrayUnion({
-
-      nome: livro.title,
-
-      retirada: "-",
-
-      devolucao: "-",
-
-      status: "Reservado"
-
-    })
-
-  }
-);
-
-    // atualizar livro
-
-    await updateDoc(
-      doc(db, "livros", livroId),
-      {
-
-        status: "reservado",
-
-        disponiveis: increment(-1)
-
-      }
-    );
-
-    alert("Livro reservado com sucesso.");
-
-    carregarLivros();
-
+    window.showAppMessage?.("Livro reservado com sucesso.");
+    await carregarLivros();
   }
 
   catch (error) {
-
     console.error(error);
+    window.showAppMessage?.("Erro ao reservar livro.");
+  }
 
-    alert("Erro ao reservar livro.");
-
+  finally {
+    reservasEmAndamento.delete(livroId);
+    setReservaLoading(livroId, false);
   }
 
 }
@@ -462,7 +371,7 @@ window.reservar = reservar;
 
 function verDetalhes(titulo) {
 
-  alert(`Livro: ${titulo}`);
+  window.showAppMessage?.(`Livro: ${titulo}`);
 
 }
 
