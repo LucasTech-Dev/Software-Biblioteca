@@ -314,13 +314,13 @@ async function () {
     if (role === "professor") {
 
       window.location.href =
-        "pages/telaProfessor.html";
+        "telaProfessor.html";
     }
 
     else if (role === "aluno") {
 
       window.location.href =
-        "pages/indexTelaAluno.html";
+        "indexTelaAluno.html";
     }
 
   }
