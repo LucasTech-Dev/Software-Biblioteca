@@ -110,6 +110,27 @@ main { max-width: 1200px; margin: 0 auto; padding: 36px 48px; }
 }
 .btn-primary:hover { background: var(--accent-light); }
 
+.btn-secondary {
+  padding: 10px 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+.btn-secondary:hover {
+  background: var(--warm);
+  border-color: var(--accent-light);
+  color: var(--accent-light);
+}
+
 .btn-add-book {
   align-self: flex-end;
   padding: 10px 24px;
