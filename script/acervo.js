@@ -95,10 +95,17 @@ function livrosFiltrados() {
 /* RENDER STATS              */
 /* ========================= */
 function renderStats() {
-  document.getElementById('stat-total').textContent = LIVROS.length;
-  document.getElementById('stat-disp').textContent = LIVROS.filter(l => l.status === 'disponivel').length;
-  document.getElementById('stat-emp').textContent = LIVROS.filter(l => l.status === 'emprestado').length;
-  document.getElementById('stat-res').textContent = LIVROS.filter(l => l.status === 'reservado').length;
+  const statTotal = document.getElementById('stat-total');
+  const statDisp = document.getElementById('stat-disp');
+  const statEmp = document.getElementById('stat-emp');
+  const statRes = document.getElementById('stat-res');
+
+  if (!statTotal || !statDisp || !statEmp || !statRes) return;
+
+  statTotal.textContent = LIVROS.length;
+  statDisp.textContent = LIVROS.filter(l => l.status === 'disponivel').length;
+  statEmp.textContent = LIVROS.filter(l => l.status === 'emprestado').length;
+  statRes.textContent = LIVROS.filter(l => l.status === 'reservado').length;
 }
 
 function labelStatus(s) {
