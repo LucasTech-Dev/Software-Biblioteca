@@ -1,6 +1,7 @@
 import UsuarioService from "../firebase/services/UsuarioService.js";
 import EmprestimoService from "../firebase/services/EmprestimoService.js";
 import ReservaService from "../firebase/services/ReservaService.js";
+import ResumoService from "../firebase/services/ResumoService.js"; // Novo import adicionado
 
 window.PageGuard?.hold();
  
@@ -34,8 +35,17 @@ const devolucaoPrazo = document.getElementById("devolucaoPrazo");
 const btnCancelarDevolucao = document.getElementById("btnCancelarDevolucao");
 const btnConfirmarDevolucao = document.getElementById("btnConfirmarDevolucao");
 
+// Elementos do Modal de Resumo (Professor)
+const modalResumoProfessor = document.getElementById("modalResumoProfessor");
+const profResumoAluno = document.getElementById("profResumoAluno");
+const profResumoLivro = document.getElementById("profResumoLivro");
+const profResumoTexto = document.getElementById("profResumoTexto");
+const btnFecharResumoProf = document.getElementById("btnFecharResumoProf");
+const btnAprovarResumoProf = document.getElementById("btnAprovarResumoProf");
+
 let reservaSelecionada = null;
 let emprestimoSelecionado = null;
+let resumoSelecionadoProf = null;
 let modoDevolucao = false;
 let carregandoEmprestimos = false;
 
@@ -115,8 +125,6 @@ function renderTabela(lista) {
       return false;
     }
 
-    // TODO: Esta lógica de datas e status será removida do frontend 
-    // e transferida para o EmprestimoService na Etapa 2.
     const hoje = new Date();
     const prazo = emp.prazoEntrega.toDate();
 
@@ -165,11 +173,16 @@ function renderTabela(lista) {
 
     const tr = document.createElement("tr");
 
-    if (modoDevolucao && statusNormal !== "devolvido") {
+    // Lógica para modo devolução ajustada
+    if (modoDevolucao) {
       tr.style.cursor = "pointer";
-      tr.addEventListener("click", () => {
-        abrirModalDevolucao(emp);
-      });
+      if (statusNormal === "devolvido") {
+        // Já devolvido = Abre verificação do resumo
+        tr.addEventListener("click", () => abrirModalVerResumoProfessor(emp));
+      } else {
+        // Pendente = Abre modal de devolver livro normal
+        tr.addEventListener("click", () => abrirModalDevolucao(emp));
+      }
     }
 
     if (filtroAtivo === "esperando") {
@@ -301,7 +314,6 @@ btnConfirmarModal.addEventListener("click", async () => {
   }
 
   try {
-    // Alteração 2: Enviando o ID do professor que aprovou e as datas.
     const professor = await UsuarioService.obterUsuarioAtual();
     await EmprestimoService.aprovarReserva({
       reservaId: reservaSelecionada.id,
@@ -313,7 +325,6 @@ btnConfirmarModal.addEventListener("click", async () => {
     window.showAppMessage?.("Empréstimo aprovado.");
     modal.classList.remove("show");
 
-    // Alteração 6: Carregando e renderizando.
     await carregar();
     filtroAtivo = "esperando";
     renderTabela(filtroAtivo === "esperando" ? RESERVAS : EMPRESTIMOS);
@@ -336,13 +347,11 @@ btnNegarModal.addEventListener("click", async () => {
   }
 
   try {
-    // Alteração 3: Chamando o método recusarReserva do Service passando o professor.
     const professor = await UsuarioService.obterUsuarioAtual();
     await ReservaService.recusarReserva(reservaSelecionada.id, professor.uid);
 
     modal.classList.remove("show");
 
-    // Alteração 6: Carregando e renderizando.
     await carregar();
     filtroAtivo = "esperando";
     renderTabela(filtroAtivo === "esperando" ? RESERVAS : EMPRESTIMOS);
@@ -362,7 +371,7 @@ btnExcluirGeral.addEventListener("click", async () => {
   }
 
   try {
-    const usuario = await UsuarioService.obterUsuarioAtual(); // Garantindo acesso ao user no escopo correto
+    const usuario = await UsuarioService.obterUsuarioAtual(); 
     if (filtroAtivo === "esperando") {
       const ids = RESERVAS.filter(r => !RESERVAS_OCULTAS.includes(r.id)).map(r => r.id);
       await UsuarioService.ocultarReservas(usuario.uid, ids);
@@ -403,12 +412,10 @@ btnConfirmarDevolucao.addEventListener("click", async () => {
   }
 
   try {
-    // Alteração 5: Usando o método registrarDevolucao do novo Service
     await EmprestimoService.registrarDevolucao(emprestimoSelecionado.id);
     
     modalDevolucao.classList.remove("show");
 
-    // Alteração 6: Carregando e renderizando.
     await carregar();
     filtroAtivo = "devolucao";
     modoDevolucao = true;
@@ -420,6 +427,57 @@ btnConfirmarDevolucao.addEventListener("click", async () => {
     window.showAppMessage?.("Erro ao registrar devolução.");
   }
 });
+
+// ========================================
+// AVALIAR RESUMO (PROFESSOR)
+// ========================================
+
+async function abrirModalVerResumoProfessor(emprestimo) {
+  const resumo = await ResumoService.obterResumoPorEmprestimo(emprestimo.id);
+
+  if (!resumo) {
+    window.showAppMessage?.("Este aluno ainda não enviou um resumo para este livro.");
+    return;
+  }
+
+  resumoSelecionadoProf = resumo;
+  profResumoAluno.textContent = resumo.alunoNome || emprestimo.nomeUsuario;
+  profResumoLivro.textContent = resumo.tituloLivro || emprestimo.tituloLivro;
+  profResumoTexto.textContent = resumo.resumo;
+
+  if (resumo.status === "aprovado") {
+    btnAprovarResumoProf.disabled = true;
+    btnAprovarResumoProf.textContent = "Resumo já Aprovado ✔️";
+  } else {
+    btnAprovarResumoProf.disabled = false;
+    btnAprovarResumoProf.textContent = "Aprovar (+1 🪙)";
+  }
+
+  modalResumoProfessor.classList.add("show");
+}
+
+btnFecharResumoProf?.addEventListener("click", () => {
+  modalResumoProfessor.classList.remove("show");
+});
+
+btnAprovarResumoProf?.addEventListener("click", async () => {
+  if (!resumoSelecionadoProf) return;
+
+  try {
+    await ResumoService.aprovarResumo(resumoSelecionadoProf.id, resumoSelecionadoProf.alunoId);
+    window.showAppMessage?.("Resumo aprovado e 1 moeda concedida ao aluno!");
+    modalResumoProfessor.classList.remove("show");
+    
+    await carregar(); // Atualiza os dados se necessário
+  } catch (error) {
+    console.error(error);
+    window.showAppMessage?.("Erro ao aprovar o resumo.");
+  }
+});
+
+// ========================================
+// INICIALIZAÇÃO
+// ========================================
 
 carregar()
   .catch((error) => {

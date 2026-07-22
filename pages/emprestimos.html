@@ -241,6 +241,25 @@
 
   </div>
 
+
+<div id="modalResumoProfessor" class="modal">
+  <div class="modal-content">
+    <h2>Resumo do Aluno</h2>
+
+    <p><strong>Aluno:</strong> <span id="profResumoAluno"></span></p>
+    <p><strong>Livro:</strong> <span id="profResumoLivro"></span></p>
+
+    <div style="background: #F4F7FB; border: 1px solid #E2E8F0; padding: 12px; border-radius: 8px; margin: 12px 0; max-height: 180px; overflow-y: auto;">
+      <p id="profResumoTexto" style="white-space: pre-wrap; font-size: 14px; color: #334155; margin: 0;"></p>
+    </div>
+
+    <div class="modal-actions">
+      <button id="btnFecharResumoProf" class="btn btn-secondary">Fechar</button>
+      <button id="btnAprovarResumoProf" class="btn btn-primary">Aprovar (+1 🪙)</button>
+    </div>
+  </div>
+</div>
+
   <script type="module" src="../script/emprestimos.js"></script>
 
 </body>

@@ -133,6 +133,25 @@
 
   </main>
 
+  <div id="modalResumoAluno" class="modal">
+  <div class="modal-content">
+    <h2>Enviar Resumo do Livro</h2>
+    <p>Escreva um resumo de <strong id="resumoLivroTitulo"></strong> para ganhar 1 moeda!</p>
+    
+    <textarea 
+      id="txtResumoAluno" 
+      rows="5" 
+      placeholder="Escreva em breves palavras o que achou da leitura..." 
+      style="width: 100%; border-radius: 8px; padding: 10px; margin: 12px 0; border: 1px solid #cbd5e1; font-family: inherit; resize: vertical;"
+    ></textarea>
+
+    <div class="modal-actions">
+      <button id="btnCancelarResumo" class="btn btn-secondary">Cancelar</button>
+      <button id="btnEnviarResumo" class="btn btn-primary">Enviar Resumo</button>
+    </div>
+  </div>
+</div>
+
   <script type="module" src="../script/meusEmprestimos.js"></script>
 
 </body>

@@ -3,10 +3,18 @@ import { auth } from "../firebase/auth.js";
 import UsuarioService from "../firebase/services/UsuarioService.js";
 import EmprestimoService from "../firebase/services/EmprestimoService.js";
 import ReservaService from "../firebase/services/ReservaService.js";
+import ResumoService from "../firebase/services/ResumoService.js";
 
 window.PageGuard?.hold();
 
 // ========================================
+let emprestimoSelecionadoResumo = null;
+const modalResumoAluno = document.getElementById("modalResumoAluno");
+const resumoLivroTitulo = document.getElementById("resumoLivroTitulo");
+const txtResumoAluno = document.getElementById("txtResumoAluno");
+const btnCancelarResumo = document.getElementById("btnCancelarResumo");
+const btnEnviarResumo = document.getElementById("btnEnviarResumo");
+
 
 let RESERVAS = [];
 let EMPRESTIMOS = [];
@@ -175,7 +183,10 @@ onAuthStateChanged(auth, async (user) => {
 
 function formatar(timestamp) {
   if (!timestamp) return "-";
-  return timestamp.toDate().toLocaleDateString("pt-BR");
+  if (typeof timestamp.toDate === "function") {
+    return timestamp.toDate().toLocaleDateString("pt-BR");
+  }
+  return new Date(timestamp).toLocaleDateString("pt-BR");
 }
 
 // ========================================
@@ -294,12 +305,14 @@ function renderizarLista() {
 
   const itens = origem.filter(item => {
     return termoBusca === ""
-      || item.titulo
+      || (item.titulo || item.tituloLivro)
           ?.toLowerCase()
           .includes(termoBusca);
   });
 
   atualizarBotaoApagar();
+
+  lista.innerHTML = ""; // Limpa a lista antes de renderizar
 
   if (!itens.length) {
     lista.innerHTML = `
@@ -313,11 +326,13 @@ function renderizarLista() {
     return;
   }
 
-  lista.innerHTML = itens.map(item => {
+  // Utiliza forEach ao invés de map para podermos anexar o evento de clique na div
+  itens.forEach(item => {
+    const isDevolvido = item.status === "DEVOLVIDO";
     const statusTexto = obterStatus(item);
 
     const badgeClass =
-      item.status === "DEVOLVIDO"
+      isDevolvido
         ? "badge-returned"
         : item.status === "PENDENTE"
           ? "badge-pending"
@@ -326,7 +341,7 @@ function renderizarLista() {
             : "badge-active";
 
     const bookClass =
-      item.status === "DEVOLVIDO"
+      isDevolvido
         ? "book-green"
         : item.status === "PENDENTE"
           ? "book-amber"
@@ -334,14 +349,20 @@ function renderizarLista() {
             ? "book-red"
             : "book-blue";
 
-    return `
-    <div class="loan-item">
+    const div = document.createElement("div");
+    div.className = "loan-item";
+
+    if (isDevolvido) {
+      div.style.cursor = "pointer";
+    }
+
+    div.innerHTML = `
       <div class="book-icon ${bookClass}">
         📖
       </div>
       <div class="loan-info">
         <div class="loan-title">
-          ${item.titulo}
+          ${item.titulo || item.tituloLivro}
         </div>
         <div class="loan-author">
           ${item.autor || "Autor não informado"}
@@ -353,12 +374,14 @@ function renderizarLista() {
               ${statusTexto}
             </strong>
           </div>
+          ${item.dataSolicitacao ? `
           <div class="date-block">
             Criado em
             <strong>
               ${formatar(item.dataSolicitacao)}
             </strong>
           </div>
+          ` : ""}
           ${item.prazoEntrega ? `
           <div class="date-block">
             Devolução
@@ -368,15 +391,22 @@ function renderizarLista() {
           </div>
           ` : ""}
         </div>
+        ${isDevolvido ? `<small style="color: #2563eb; margin-top: 4px; display: block;">✍️ Clique para deixar seu resumo e ganhar 1 moeda!</small>` : ""}
       </div>
       <div class="loan-right">
         <span class="badge ${badgeClass}">
           ${statusTexto}
         </span>
       </div>
-    </div>
-  `;
-  }).join("");
+    `;
+
+    // Anexa o evento de clique no card, abrindo o modal de resumo
+    if (isDevolvido) {
+      div.addEventListener("click", () => abrirModalEnviarResumoAluno(item));
+    }
+
+    lista.appendChild(div);
+  });
 }
 
 // ========================================
@@ -412,3 +442,57 @@ document
 
     renderizarLista();
   });
+
+// ========================================
+// LÓGICA DO MODAL DE RESUMO
+// ========================================
+
+async function abrirModalEnviarResumoAluno(emprestimo) {
+  emprestimoSelecionadoResumo = emprestimo;
+
+  const resumoExistente = await ResumoService.obterResumoPorEmprestimo(emprestimo.id);
+
+  if (resumoExistente) {
+    if (resumoExistente.status === "aguardando") {
+      window.showAppMessage?.("Seu resumo já foi enviado e está aguardando a aprovação do professor! ⏳");
+    } else if (resumoExistente.status === "aprovado") {
+      window.showAppMessage?.("Seu resumo já foi aprovado e a moeda foi creditada! 🎉");
+    }
+    return;
+  }
+
+  resumoLivroTitulo.textContent = emprestimo.titulo || emprestimo.tituloLivro;
+  txtResumoAluno.value = "";
+  modalResumoAluno.classList.add("show");
+}
+
+btnCancelarResumo?.addEventListener("click", () => {
+  modalResumoAluno.classList.remove("show");
+});
+
+btnEnviarResumo?.addEventListener("click", async () => {
+  const texto = txtResumoAluno.value.trim();
+  if (!texto) {
+    window.showAppMessage?.("Escreva o resumo antes de enviar.");
+    return;
+  }
+
+  const user = auth.currentUser;
+  const nomeExibicao = document.getElementById("nomeUsuario")?.innerText || user.displayName || "Aluno";
+
+  try {
+    await ResumoService.enviarResumo({
+      emprestimoId: emprestimoSelecionadoResumo.id,
+      alunoId: user.uid,
+      alunoNome: nomeExibicao,
+      tituloLivro: emprestimoSelecionadoResumo.titulo || emprestimoSelecionadoResumo.tituloLivro,
+      resumo: texto
+    });
+
+    window.showAppMessage?.("Resumo enviado com sucesso!");
+    modalResumoAluno.classList.remove("show");
+  } catch (error) {
+    console.error(error);
+    window.showAppMessage?.("Erro ao enviar o resumo.");
+  }
+});

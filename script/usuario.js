@@ -15,6 +15,7 @@ window.PageGuard?.hold();
 const nomeUsuario = document.getElementById("nomeUsuario");
 const matriculaUsuario = document.getElementById("matriculaUsuario");
 const turmaUsuario = document.getElementById("turmaUsuario");
+const moedasUsuario = document.getElementById("moedasUsuario");
 const historicoDiv = document.getElementById("historicoLeituras");
 const notificacoesDiv = document.getElementById("notificacoes");
 const heroTitulo = document.querySelector(".hero h1");
@@ -116,11 +117,15 @@ onAuthStateChanged(auth, async (user) => {
       return;
     }
 
-    // Preenche o perfil na tela
+    // Preenche o perfil e moedas na tela
     heroTitulo.innerText = `Bem-vindo(a), ${dados.nome}`;
     nomeUsuario.innerText = dados.nome || "Não definido";
     matriculaUsuario.innerText = dados.matricula || "Não definida";
     turmaUsuario.innerText = dados.turma || "Não definida";
+    
+    if (moedasUsuario) {
+      moedasUsuario.innerText = `${dados.moedas || 0} 🪙`;
+    }
 
     // 2. Carrega histórico real do banco de dados (Status: DEVOLVIDO)
     const historico = await EmprestimoService.listarHistoricoUsuario(user.uid);
@@ -139,7 +144,7 @@ onAuthStateChanged(auth, async (user) => {
 });
 
 // ========================================
-// ALTERAR SENHA
+// ATUALIZAR PERFIL / ALTERAR SENHA
 // ========================================
 document.getElementById("btnAtualizarPerfil")?.addEventListener("click", async () => {
   const user = auth.currentUser;
@@ -150,7 +155,7 @@ document.getElementById("btnAtualizarPerfil")?.addEventListener("click", async (
     btn.textContent = '⏳ Atualizando...';
   }
 
-  try {
+  try { 
     const dados = await UsuarioService.obterUsuario(user.uid);
     if (!dados) {
       window.showAppMessage?.("Usuário não encontrado.");
@@ -161,6 +166,10 @@ document.getElementById("btnAtualizarPerfil")?.addEventListener("click", async (
     nomeUsuario.innerText = dados.nome || "Não definido";
     matriculaUsuario.innerText = dados.matricula || "Não definida";
     turmaUsuario.innerText = dados.turma || "Não definida";
+    
+    if (moedasUsuario) {
+      moedasUsuario.innerText = `${dados.moedas || 0} 🪙`;
+    }
 
     const historico = await EmprestimoService.listarHistoricoUsuario(user.uid);
     renderHistorico(historico);
@@ -180,7 +189,7 @@ document.getElementById("btnAtualizarPerfil")?.addEventListener("click", async (
   }
 });
 
-document.getElementById("btnAlterarSenha").addEventListener("click", async () => {
+document.getElementById("btnAlterarSenha")?.addEventListener("click", async () => {
   const novaSenha = document.getElementById("novaSenha").value;
 
   if (novaSenha.length < 6) {
