@@ -325,7 +325,7 @@ class EmprestimoService {
      */
     async excluir(emprestimoId) {
         try {
-            if (!emprestimoId) throw new Error("Empréstimo não informado.");
+             if (!emprestimoId) throw new Error("Empréstimo não informado.");
             await deleteDoc(doc(db, this.collectionName, emprestimoId));
             return true;
         } catch (error) {

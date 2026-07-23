@@ -1,7 +1,7 @@
 /*
 ====================================================
 LivroService
- 
+  
 Responsável pela integração e orquestração entre:
 - Supabase (Catálogo Geral)
 - Firestore (Acervo Físico/Local)

@@ -42,7 +42,7 @@ class ResumoService {
     return { id: docData.id, ...docData.data() };
   }
 
-  /**
+  /** 
    * Aprova o resumo e envia +1 moeda para a conta do aluno no Firestore
    */
   static async aprovarResumo(resumoId, alunoId) {

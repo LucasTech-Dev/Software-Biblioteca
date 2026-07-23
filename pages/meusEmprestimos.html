@@ -20,8 +20,6 @@
 
 <body>
 
-  <!-- HEADER -->
-
   <header>
 
     <div class="header-left">
@@ -50,8 +48,6 @@
 
   </header>
 
-  <!-- HERO -->
-
   <div class="hero">
 
     <h1>
@@ -64,8 +60,6 @@
 
   </div>
 
-  <!-- SEARCH -->
-
   <div class="toolbar">
 
     <input
@@ -75,8 +69,6 @@
     >
 
   </div>
-
-  <!-- FILTROS -->
 
   <div class="filters">
 
@@ -112,20 +104,16 @@
 
   </div>
 
-  <!-- BOTÃO APAGAR -->
-
   <div class="actions-bar">
 
     <button
       id="btnApagar"
       class="btn-apagar"
       style="display:none;">
-      🗑 Apagar
+      🗑️ Apagar
     </button>
 
   </div>
-
-  <!-- LISTA -->
 
   <main>
 
@@ -134,23 +122,23 @@
   </main>
 
   <div id="modalResumoAluno" class="modal">
-  <div class="modal-content">
-    <h2>Enviar Resumo do Livro</h2>
-    <p>Escreva um resumo de <strong id="resumoLivroTitulo"></strong> para ganhar 1 moeda!</p>
-    
-    <textarea 
-      id="txtResumoAluno" 
-      rows="5" 
-      placeholder="Escreva em breves palavras o que achou da leitura..." 
-      style="width: 100%; border-radius: 8px; padding: 10px; margin: 12px 0; border: 1px solid #cbd5e1; font-family: inherit; resize: vertical;"
-    ></textarea>
+    <div class="modal-content">
+      <h2>Enviar Resumo do Livro</h2>
+      <p>Escreva um resumo de <strong id="resumoLivroTitulo"></strong> para ganhar 1 moeda!</p>
+       
+      <textarea 
+        id="txtResumoAluno" 
+        rows="5" 
+        class="modal-textarea"
+        placeholder="Escreva em breves palavras o que achou da leitura..." 
+      ></textarea>
 
-    <div class="modal-actions">
-      <button id="btnCancelarResumo" class="btn btn-secondary">Cancelar</button>
-      <button id="btnEnviarResumo" class="btn btn-primary">Enviar Resumo</button>
+      <div class="modal-actions">
+        <button id="btnCancelarResumo" class="btn btn-secondary">Cancelar</button>
+        <button id="btnEnviarResumo" class="btn btn-primary">Enviar Resumo</button>
+      </div>
     </div>
   </div>
-</div>
 
   <script type="module" src="../script/meusEmprestimos.js"></script>
 

@@ -75,7 +75,6 @@ async function carregarDadosAluno(uid) {
       EmprestimoService.listarEmprestimosAluno(uid)
     ]);
 
-    // Filtra localmente o que está visível para o aluno
     RESERVAS = (reservasDoBanco || []).filter(item => item.visivelAluno !== false);
     EMPRESTIMOS = (emprestimosDoBanco || []).filter(item => item.visivelAluno !== false);
 
@@ -107,9 +106,6 @@ onAuthStateChanged(auth, async (user) => {
     return;
   }
 
-  // ========================================
-  // DADOS DO USUÁRIO
-  // ========================================
   try {
     const usuario = await UsuarioService.obterUsuario(user.uid);
 
@@ -119,9 +115,6 @@ onAuthStateChanged(auth, async (user) => {
     document.getElementById("dadosUsuario").innerText =
       `${usuario?.turma || ""} · Matrícula ${usuario?.matricula || ""}`.trim();
 
-    // ========================================
-    // AVATAR
-    // ========================================
     const iniciais = (usuario?.nome || "U")
       .split(" ")
       .map(n => n[0])
@@ -133,7 +126,6 @@ onAuthStateChanged(auth, async (user) => {
 
     perfilCarregado = true;
 
-    // Dispara o carregamento unificado via Services
     await carregarDadosAluno(user.uid);
   } catch (error) {
     console.error("Erro ao inicializar perfil do usuário:", error);
@@ -141,9 +133,6 @@ onAuthStateChanged(auth, async (user) => {
     window.PageGuard?.ready();
   }
 
-  // ========================================
-  // BOTÃO APAGAR — lógica de clique
-  // ========================================
   btnApagar.addEventListener("click", async () => {
     const confirmar = await window.showAppConfirm(
       `Deseja realmente ${btnApagar.textContent.toLowerCase()}?`,
@@ -169,8 +158,6 @@ onAuthStateChanged(auth, async (user) => {
       }
 
       window.showAppMessage?.("Registros apagados da sua visualização.");
-
-      // Recarrega os dados a partir dos services após ocultar
       await carregarDadosAluno(user.uid);
     } catch (error) {
       console.error("Erro ao ocultar registros:", error);
@@ -214,15 +201,10 @@ function obterStatus(item) {
 }
 
 // ========================================
-// Retorna os itens do filtro atual
-// ========================================
 
 function obterItensDoFiltro() {
   if (filtroAtivo === "todos") {
-    return [
-      ...RESERVAS,
-      ...EMPRESTIMOS
-    ];
+    return [...RESERVAS, ...EMPRESTIMOS];
   }
 
   if (filtroAtivo === "reserva") {
@@ -230,27 +212,18 @@ function obterItensDoFiltro() {
   }
 
   if (filtroAtivo === "ativo") {
-    return EMPRESTIMOS.filter(item =>
-      item.status === "EMPRESTADO"
-    );
+    return EMPRESTIMOS.filter(item => item.status === "EMPRESTADO");
   }
 
   if (filtroAtivo === "atrasado") {
     return EMPRESTIMOS.filter(item => {
-      if (item.status !== "EMPRESTADO") {
-        return false;
-      }
-      if (!item.prazoEntrega) {
-        return false;
-      }
+      if (item.status !== "EMPRESTADO" || !item.prazoEntrega) return false;
       return new Date() > item.prazoEntrega.toDate();
     });
   }
 
   if (filtroAtivo === "devolvido") {
-    return EMPRESTIMOS.filter(item =>
-      item.status === "DEVOLVIDO"
-    );
+    return EMPRESTIMOS.filter(item => item.status === "DEVOLVIDO");
   }
 
   return [];
@@ -259,15 +232,9 @@ function obterItensDoFiltro() {
 // ========================================
 
 function atualizarBotaoApagar() {
-  btnApagar.textContent =
-    textosBotao[filtroAtivo] || "🗑️ Apagar";
-
+  btnApagar.textContent = textosBotao[filtroAtivo] || "🗑️ Apagar";
   const itens = obterItensDoFiltro();
-
-  btnApagar.style.display =
-    itens.length > 0
-      ? "inline-flex"
-      : "none";
+  btnApagar.style.display = itens.length > 0 ? "inline-flex" : "none";
 }
 
 // ========================================
@@ -277,30 +244,18 @@ function renderizarLista() {
   let origem = [];
 
   if (filtroAtivo === "todos") {
-    origem = [
-      ...RESERVAS,
-      ...EMPRESTIMOS
-    ];
+    origem = [...RESERVAS, ...EMPRESTIMOS];
   } else if (filtroAtivo === "reserva") {
     origem = RESERVAS;
   } else if (filtroAtivo === "ativo") {
-    origem = EMPRESTIMOS.filter(item =>
-      item.status === "EMPRESTADO"
-    );
+    origem = EMPRESTIMOS.filter(item => item.status === "EMPRESTADO");
   } else if (filtroAtivo === "atrasado") {
     origem = EMPRESTIMOS.filter(item => {
-      if (item.status !== "EMPRESTADO") {
-        return false;
-      }
-      if (!item.prazoEntrega) {
-        return false;
-      }
+      if (item.status !== "EMPRESTADO" || !item.prazoEntrega) return false;
       return new Date() > item.prazoEntrega.toDate();
     });
   } else if (filtroAtivo === "devolvido") {
-    origem = EMPRESTIMOS.filter(item =>
-      item.status === "DEVOLVIDO"
-    );
+    origem = EMPRESTIMOS.filter(item => item.status === "DEVOLVIDO");
   }
 
   const itens = origem.filter(item => {
@@ -311,25 +266,31 @@ function renderizarLista() {
   });
 
   atualizarBotaoApagar();
-
-  lista.innerHTML = ""; // Limpa a lista antes de renderizar
+  lista.innerHTML = "";
 
   if (!itens.length) {
     lista.innerHTML = `
       <div class="empty">
-        <span class="empty-icon">
-          📚
-        </span>
+        <span class="empty-icon">📚</span>
         Nenhum item encontrado.
       </div>
     `;
     return;
   }
 
-  // Utiliza forEach ao invés de map para podermos anexar o evento de clique na div
   itens.forEach(item => {
     const isDevolvido = item.status === "DEVOLVIDO";
     const statusTexto = obterStatus(item);
+
+    // Normalização sem acentos do título para bater de forma segura
+    const tituloNormalizado = (item.titulo || item.tituloLivro || "")
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+
+    // Apenas o livro "A Formação das Almas" quando devolvido pode receber resumo
+    const isLivroEspecial = tituloNormalizado.includes("formacao das almas");
+    const podeResumir = isDevolvido && isLivroEspecial;
 
     const badgeClass =
       isDevolvido
@@ -352,7 +313,7 @@ function renderizarLista() {
     const div = document.createElement("div");
     div.className = "loan-item";
 
-    if (isDevolvido) {
+    if (podeResumir) {
       div.style.cursor = "pointer";
     }
 
@@ -370,28 +331,22 @@ function renderizarLista() {
         <div class="loan-dates">
           <div class="date-block">
             Status
-            <strong>
-              ${statusTexto}
-            </strong>
+            <strong>${statusTexto}</strong>
           </div>
           ${item.dataSolicitacao ? `
           <div class="date-block">
             Criado em
-            <strong>
-              ${formatar(item.dataSolicitacao)}
-            </strong>
+            <strong>${formatar(item.dataSolicitacao)}</strong>
           </div>
           ` : ""}
           ${item.prazoEntrega ? `
           <div class="date-block">
             Devolução
-            <strong>
-              ${formatar(item.prazoEntrega)}
-            </strong>
+            <strong>${formatar(item.prazoEntrega)}</strong>
           </div>
           ` : ""}
         </div>
-        ${isDevolvido ? `<small style="color: #2563eb; margin-top: 4px; display: block;">✍️ Clique para deixar seu resumo e ganhar 1 moeda!</small>` : ""}
+        ${podeResumir ? `<small style="color: #2563eb; margin-top: 6px; font-weight: 500; display: block;">✍️ Clique para deixar seu resumo e ganhar 1 moeda!</small>` : ""}
       </div>
       <div class="loan-right">
         <span class="badge ${badgeClass}">
@@ -400,8 +355,7 @@ function renderizarLista() {
       </div>
     `;
 
-    // Anexa o evento de clique no card, abrindo o modal de resumo
-    if (isDevolvido) {
+    if (podeResumir) {
       div.addEventListener("click", () => abrirModalEnviarResumoAluno(item));
     }
 
@@ -410,38 +364,22 @@ function renderizarLista() {
 }
 
 // ========================================
-// FILTROS
+// FILTROS & BUSCA
 // ========================================
 
-document
-  .querySelectorAll(".chip")
-  .forEach(btn => {
-    btn.addEventListener("click", () => {
-      document
-        .querySelectorAll(".chip")
-        .forEach(c =>
-          c.classList.remove("active")
-        );
-
-      btn.classList.add("active");
-      filtroAtivo = btn.dataset.filter;
-      renderizarLista();
-    });
-  });
-
-// ========================================
-// BUSCA
-// ========================================
-
-document
-  .getElementById("searchInput")
-  .addEventListener("input", e => {
-    termoBusca = e.target.value
-      .toLowerCase()
-      .trim();
-
+document.querySelectorAll(".chip").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
+    btn.classList.add("active");
+    filtroAtivo = btn.dataset.filter;
     renderizarLista();
   });
+});
+
+document.getElementById("searchInput").addEventListener("input", e => {
+  termoBusca = e.target.value.toLowerCase().trim();
+  renderizarLista();
+});
 
 // ========================================
 // LÓGICA DO MODAL DE RESUMO
@@ -466,6 +404,13 @@ async function abrirModalEnviarResumoAluno(emprestimo) {
   modalResumoAluno.classList.add("show");
 }
 
+// Fechar ao clicar fora do conteúdo
+modalResumoAluno?.addEventListener("click", (e) => {
+  if (e.target === modalResumoAluno) {
+    modalResumoAluno.classList.remove("show");
+  }
+});
+
 btnCancelarResumo?.addEventListener("click", () => {
   modalResumoAluno.classList.remove("show");
 });
@@ -487,7 +432,7 @@ btnEnviarResumo?.addEventListener("click", async () => {
       alunoNome: nomeExibicao,
       tituloLivro: emprestimoSelecionadoResumo.titulo || emprestimoSelecionadoResumo.tituloLivro,
       resumo: texto
-    });
+    }); 
 
     window.showAppMessage?.("Resumo enviado com sucesso!");
     modalResumoAluno.classList.remove("show");

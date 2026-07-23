@@ -309,7 +309,7 @@ class ReservaService {
 
             await NotificacaoService.criar({
                 usuarioId: reserva.usuarioId,
-                titulo: "Reserva cancelada",
+                 titulo: "Reserva cancelada",
                 mensagem: `Sua reserva de "${reserva.titulo}" foi cancelada.`,
                 tipo: "reserva_cancelada"
             });

@@ -474,7 +474,7 @@ btnAprovarResumoProf?.addEventListener("click", async () => {
     window.showAppMessage?.("Erro ao aprovar o resumo.");
   }
 });
-
+ 
 // ========================================
 // INICIALIZAÇÃO
 // ========================================
