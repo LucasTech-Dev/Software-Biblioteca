@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
+ 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BibliotecaEscolar — Painel do Administrador</title>
   <script src="../script/pageGuard.js"></script>
 
-  <!-- Google Fonts -->
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
     rel="stylesheet">
@@ -456,50 +455,45 @@
 
 <body>
 
-  <!-- HEADER -->
   <header>
     <div class="logo">Biblioteca Escolar</div>
     <div class="header-sub">Painel do Administrador</div>
   </header>
 
-  <!-- HERO -->
   <div class="hero">
     <h1>Painel do Bibliotecário</h1>
     <p>Gerencie configurações, backups, permissões e monitore logs do sistema em um único lugar.</p>
   </div>
 
-  <!-- MAIN -->
   <main>
     <div class="grid">
 
-      <!-- Configuração de prazos e regras -->
       <div class="card">
         <h2>Configuração de Prazos e Regras</h2>
         <div class="form-row">
           <div class="form-group">
             <label for="diasEmprestimo">Dias de empréstimo padrão</label>
-            <input type="number" id="diasEmprestimo" value="7" min="1" max="60">
+            <input type="number" id="diasEmprestimo" value="" min="1" max="60">
           </div>
           <div class="form-group">
             <label for="maxLivros">Máximo de livros por aluno</label>
-            <input type="number" id="maxLivros" value="3" min="1" max="20">
+            <input type="number" id="maxLivros" value="" min="1" max="20">
           </div>
         </div>
         <button class="btn" id="btnSalvarRegras">Salvar Regras</button>
       </div>
 
-      <!-- Backup automático -->
       <div class="card">
         <h2>Backup Automático</h2>
         <div class="backup-status">
           <div class="backup-dot"></div>
           <div class="backup-info">
             <p class="lbl">Último backup</p>
-            <p class="val" id="ultimoBackup">Hoje às 03:00</p>
+            <p class="val" id="ultimoBackup">Nenhum backup recente</p>
           </div>
           <div class="backup-info backup-info--right">
             <p class="lbl">Tamanho</p>
-            <p class="val">4,2 MB</p>
+            <p class="val" id="tamanhoBackup">--</p>
           </div>
         </div>
         <div class="backup-actions">
@@ -508,7 +502,6 @@
         </div>
       </div>
 
-      <!-- Controle de permissões -->
       <div class="card card--full">
         <h2>Controle de Permissões de Acesso</h2>
         <div class="table-wrap">
@@ -523,13 +516,12 @@
               </tr>
             </thead>
             <tbody id="tabelaUsuarios">
-              <!-- preenchido via JS -->
+              <tr><td colspan="5" style="text-align:center;">Carregando usuários...</td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- Log de atividades -->
       <div class="card card--full">
         <div class="card-header">
           <h2>Log de Atividades do Sistema</h2>
@@ -546,7 +538,7 @@
               </tr>
             </thead>
             <tbody id="tabelaLogs">
-              <!-- preenchido via JS -->
+              <tr><td colspan="4" style="text-align:center;">Carregando logs...</td></tr>
             </tbody>
           </table>
         </div>
@@ -555,167 +547,13 @@
     </div>
   </main>
 
-  <!-- FOOTER -->
   <footer>
     <span>BibliotecaEscolar © 2026</span>
-   
   </footer>
 
-  <!-- Toast de feedback -->
   <div class="toast" id="toast"></div>
 
-  <script>
-    // ---------- Dados iniciais ----------
-
-    const usuarios = [
-      { nome: "Ana Paula",      email: "anapaula@escola.edu",  tipo: "admin", ativo: true  },
-      { nome: "Carlos Mendes",  email: "cmendes@escola.edu",   tipo: "prof",  ativo: true  },
-      { nome: "Beatriz Lima",   email: "blima@escola.edu",     tipo: "prof",  ativo: false },
-      { nome: "Diego Ferreira", email: "diego.f@escola.edu",   tipo: "aluno", ativo: true  },
-      { nome: "Júlia Santos",   email: "jsantos@escola.edu",   tipo: "aluno", ativo: true  },
-    ];
-
-    const logsIniciais = [
-      { ts: "26/05/2026 09:14", tipo: "cfg",  acao: "Prazo de empréstimo alterado para 7 dias",  usr: "Ana Paula"     },
-      { ts: "26/05/2026 08:30", tipo: "back", acao: "Backup automático concluído com sucesso",   usr: "Sistema"       },
-      { ts: "25/05/2026 17:45", tipo: "add",  acao: "Novo livro cadastrado: O Pequeno Príncipe", usr: "Carlos Mendes" },
-      { ts: "25/05/2026 14:22", tipo: "acc",  acao: "Login efetuado com sucesso",                usr: "Beatriz Lima"  },
-      { ts: "25/05/2026 11:05", tipo: "del",  acao: "Registro de empréstimo #204 removido",      usr: "Ana Paula"     },
-      { ts: "24/05/2026 16:30", tipo: "add",  acao: "Usuário Júlia Santos cadastrado",           usr: "Ana Paula"     },
-    ];
-
-    let logs = [...logsIniciais];
-
-    // ---------- Mapeamentos ----------
-
-    const tipoLabel = { admin: "Admin", prof: "Professor", aluno: "Aluno" };
-    const tipoClass = { admin: "role-admin", prof: "role-prof", aluno: "role-aluno" };
-
-    const logLabel = { cfg: "Config", back: "Backup", add: "Adição", del: "Remoção", acc: "Acesso" };
-    const logClass = { cfg: "log-cfg", back: "log-back", add: "log-add", del: "log-del", acc: "log-acc" };
-
-    // ---------- Render: Usuários ----------
-
-    function renderUsuarios() {
-      const tbody = document.getElementById("tabelaUsuarios");
-      tbody.innerHTML = usuarios.map((u, i) => `
-        <tr>
-          <td style="font-weight:500;color:#1a2740;">${u.nome}</td>
-          <td style="color:#5a80aa;">${u.email}</td>
-          <td><span class="role-tag ${tipoClass[u.tipo]}">${tipoLabel[u.tipo]}</span></td>
-          <td>
-            <span class="${u.ativo ? 'status-ativo' : 'status-inativo'}">
-              ${u.ativo ? '● Ativo' : '○ Inativo'}
-            </span>
-          </td>
-          <td class="table-actions">
-            <button class="btn-sm btn-sm--edit" onclick="editarPermissao(${i})">✎ Editar</button>
-            <button class="btn-sm ${u.ativo ? 'btn-sm--toggle-off' : 'btn-sm--toggle-on'}"
-                    onclick="toggleStatus(${i})">
-              ${u.ativo ? '○ Desativar' : '● Ativar'}
-            </button>
-          </td>
-        </tr>
-      `).join('');
-    }
-
-    // ---------- Render: Logs ----------
-
-    function renderLogs() {
-      const tbody = document.getElementById("tabelaLogs");
-
-      if (!logs.length) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="4" style="text-align:center;color:#8aabcc;padding:24px;font-style:italic;">
-              Nenhum log registrado.
-            </td>
-          </tr>`;
-        return;
-      }
-
-      tbody.innerHTML = logs.map(l => `
-        <tr>
-          <td style="color:#5a80aa;font-size:12px;">${l.ts}</td>
-          <td><span class="log-tag ${logClass[l.tipo]}">${logLabel[l.tipo]}</span></td>
-          <td>${l.acao}</td>
-          <td style="color:#5a80aa;font-size:12px;">${l.usr}</td>
-        </tr>
-      `).join('');
-    }
-
-    // ---------- Ações ----------
-
-    function salvarRegras() {
-      const dias = document.getElementById("diasEmprestimo").value;
-      const max  = document.getElementById("maxLivros").value;
-      adicionarLog("cfg", `Regras atualizadas: ${dias} dias de empréstimo / máx. ${max} livros`, "Admin");
-      mostrarToast(`✓ Regras salvas: ${dias} dias · máx. ${max} livros por aluno`);
-    }
-
-    function fazerBackup() {
-      const hora = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
-      document.getElementById("ultimoBackup").textContent = `Hoje às ${hora}`;
-      adicionarLog("back", "Backup manual realizado com sucesso", "Admin");
-      mostrarToast("Backup concluído com sucesso!");
-    }
-
-    function baixarBackup() {
-      mostrarToast("↓ Download do backup iniciado...");
-    }
-
-    function editarPermissao(i) {
-      mostrarToast(`✎ Editando permissões de ${usuarios[i].nome}...`);
-    }
-
-    function toggleStatus(i) {
-      usuarios[i].ativo = !usuarios[i].ativo;
-      const estado = usuarios[i].ativo ? "ativado" : "desativado";
-      adicionarLog("cfg", `Usuário ${usuarios[i].nome} foi ${estado}`, "Admin");
-      renderUsuarios();
-      mostrarToast(`${usuarios[i].nome} foi ${estado}.`);
-    }
-
-    function limparLogs() {
-      logs = [];
-      renderLogs();
-      mostrarToast("Logs do sistema limpos.");
-    }
-
-    // ---------- Utilitários ----------
-
-    function adicionarLog(tipo, acao, usr) {
-      logs.unshift({ ts: agora(), tipo, acao, usr });
-      renderLogs();
-    }
-
-    function agora() {
-      return new Date().toLocaleString("pt-BR", {
-        day: "2-digit", month: "2-digit", year: "numeric",
-        hour: "2-digit", minute: "2-digit"
-      });
-    }
-
-    function mostrarToast(msg) {
-      const toast = document.getElementById("toast");
-      toast.textContent = msg;
-      toast.style.display = "flex";
-      clearTimeout(toast._timer);
-      toast._timer = setTimeout(() => { toast.style.display = "none"; }, 3000);
-    }
-
-    // ---------- Event Listeners ----------
-
-    document.getElementById("btnSalvarRegras").addEventListener("click", salvarRegras);
-    document.getElementById("btnBackup").addEventListener("click", fazerBackup);
-    document.getElementById("btnBaixar").addEventListener("click", baixarBackup);
-    document.getElementById("btnLimparLogs").addEventListener("click", limparLogs);
-
-    // ---------- Init ----------
-
-    renderUsuarios();
-    renderLogs();
-  </script>
+  <script type="module" src="../script/administracao.js"></script>
 
 </body>
 </html>

@@ -7,7 +7,7 @@ class LivroMapper {
     mapear(livroSupabase, livroAcervo = null) {
 
         return {
-
+ 
             //-------------------------
             // Identificação
             //-------------------------

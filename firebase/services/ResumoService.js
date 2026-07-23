@@ -1,4 +1,4 @@
-import { db } from "../firestore.js"; // Ajuste o caminho se necessário para importar o 'db'
+import { db } from "../firestore.js";
 import { 
   collection, 
   doc, 
@@ -8,11 +8,13 @@ import {
   query, 
   where, 
   increment, 
-  serverTimestamp 
+  serverTimestamp  
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 class ResumoService {
-  // Salva o resumo enviado pelo aluno
+  /**
+   * Salva o resumo enviado pelo aluno
+   */
   static async enviarResumo({ emprestimoId, alunoId, alunoNome, tituloLivro, resumo }) {
     const resumosRef = collection(db, "resumos");
     return await addDoc(resumosRef, {
@@ -26,7 +28,9 @@ class ResumoService {
     });
   }
 
-  // Busca o resumo atrelado ao empréstimo
+  /**
+   * Busca o resumo atrelado ao empréstimo
+   */
   static async obterResumoPorEmprestimo(emprestimoId) {
     const resumosRef = collection(db, "resumos");
     const q = query(resumosRef, where("emprestimoId", "==", emprestimoId));
@@ -38,7 +42,9 @@ class ResumoService {
     return { id: docData.id, ...docData.data() };
   }
 
-  // Aprova o resumo e envia +1 moeda para a conta do aluno no Firestore
+  /**
+   * Aprova o resumo e envia +1 moeda para a conta do aluno no Firestore
+   */
   static async aprovarResumo(resumoId, alunoId) {
     const resumoRef = doc(db, "resumos", resumoId);
     const usuarioRef = doc(db, "usuarios", alunoId);

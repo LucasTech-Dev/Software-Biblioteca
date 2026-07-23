@@ -14,6 +14,7 @@ import {
 
 import { db } from "../firestore.js";
 import LivroService from "./LivroService.js";
+import ConfiguracaoService from "./ConfiguracaoService.js"; // <--- Novo Service importado
 import { criarLog } from "./logServices.js";
 import NotificacaoService from "./NotificacaoService.js";
 
@@ -56,23 +57,35 @@ class EmprestimoService {
             if (!usuario?.uid) throw new Error("Usuário não informado.");
             if (!supabaseId) throw new Error("SupabaseId do livro não informado.");
 
-            // 1. Busca os dados completos do livro
-            const livroCompleto = await LivroService.buscarLivroCompleto(supabaseId);
+            // 1. Busca os dados completos do livro e as regras do sistema
+            const [livroCompleto, regras] = await Promise.all([
+                LivroService.buscarLivroCompleto(supabaseId),
+                ConfiguracaoService.obterRegras()
+            ]);
+            
             if (!livroCompleto) {
                 throw new Error("Livro não encontrado no acervo.");
+            }
+
+            // 1.5. Verifica o limite de livros do aluno (Regra do Painel de Admin)
+            const historicoAluno = await this.listarEmprestimosAluno(usuario.uid);
+            const qtdEmprestados = historicoAluno.filter(emp => emp.status === "EMPRESTADO").length;
+            
+            if (qtdEmprestados >= regras.maxLivrosPorAluno) {
+                throw new Error(`Limite de empréstimos atingido! O máximo permitido é de ${regras.maxLivrosPorAluno} livros simultâneos.`);
             }
 
             // Define os prazos
             const dataInicio = dataRetirada ? this._normalizarData(dataRetirada) : serverTimestamp();
             
-            // Prazo padrão de 7 dias caso não seja enviado
+            // Prazo dinâmico baseado nas configurações caso não seja enviado (Regra do Painel de Admin)
             let dataFim;
             if (dataEntrega) {
                 dataFim = this._normalizarData(dataEntrega);
             } else {
-                const seteDiasDepois = new Date();
-                seteDiasDepois.setDate(seteDiasDepois.getDate() + 7);
-                dataFim = Timestamp.fromDate(seteDiasDepois);
+                const dataCalculada = new Date();
+                dataCalculada.setDate(dataCalculada.getDate() + regras.diasEmprestimo);
+                dataFim = Timestamp.fromDate(dataCalculada);
             }
 
             // 2. Cria o documento na coleção "emprestimos"

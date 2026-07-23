@@ -6,7 +6,7 @@ import {
     addDoc,
     updateDoc,
     query,
-    where,
+    where, 
     serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
@@ -29,7 +29,7 @@ class ReservaService {
                 throw new Error("SupabaseId do livro não informado.");
             }
 
-            // O Service agora busca o usuário de forma autônoma
+            // O Service busca o usuário de forma autônoma
             const usuario = await UsuarioService.obterUsuarioAtual();
 
             if (!usuario) {
@@ -42,8 +42,6 @@ class ReservaService {
             if (!livroCompleto) {
                 throw new Error("Livro não encontrado.");
             }
-
-            // Removido o bloqueio que impedia reservar caso não houvesse exemplares
 
             // 2. Cria o documento na coleção "reservas"
             const reservaRef = await addDoc(collection(db, this.collectionName), {
@@ -64,7 +62,7 @@ class ReservaService {
                 observacao: observacao
             });
 
-            // 3. Bloqueia um exemplar no acervo (mesmo que fique negativo gerando fila)
+            // 3. Bloqueia um exemplar no acervo
             await LivroService.reservarExemplar(supabaseId);
 
             // 4. Atualiza os dados do usuário (adiciona a reserva no array do usuário)
