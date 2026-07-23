@@ -134,10 +134,8 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   btnApagar.addEventListener("click", async () => {
-    const confirmar = await window.showAppConfirm(
-      `Deseja realmente ${btnApagar.textContent.toLowerCase()}?`,
-      { confirmText: "Apagar" }
-    );
+    // Usando confirm nativo para evitar falha (Crash) silenciosa na página
+    const confirmar = window.confirm(`Deseja realmente ${btnApagar.textContent.toLowerCase()}?`);
 
     if (!confirmar) {
       return;
@@ -157,23 +155,35 @@ onAuthStateChanged(auth, async (user) => {
         await UsuarioService.ocultarEmprestimos(user.uid, ids);
       }
 
-      window.showAppMessage?.("Registros apagados da sua visualização.");
+      alert("Registros apagados da sua visualização.");
       await carregarDadosAluno(user.uid);
     } catch (error) {
       console.error("Erro ao ocultar registros:", error);
-      window.showAppMessage?.("Erro ao apagar registros.");
+      alert("Erro ao apagar registros.");
     }
   });
 });
 
 // ========================================
 
-function formatar(timestamp) {
-  if (!timestamp) return "-";
-  if (typeof timestamp.toDate === "function") {
-    return timestamp.toDate().toLocaleDateString("pt-BR");
+// Nova função segura para lidar com diferentes formatos de data e evitar "Invalid Date"
+function parseDateSeguro(valor) {
+  if (!valor) return null;
+  if (typeof valor.toDate === "function") {
+    return valor.toDate();
   }
-  return new Date(timestamp).toLocaleDateString("pt-BR");
+  
+  const data = new Date(valor);
+  if (isNaN(data.getTime())) {
+    return null;
+  }
+  
+  return data;
+}
+
+function formatar(timestamp) {
+  const data = parseDateSeguro(timestamp);
+  return data ? data.toLocaleDateString("pt-BR") : "-";
 }
 
 // ========================================
@@ -184,11 +194,11 @@ function obterStatus(item) {
   }
 
   if (item.status === "EMPRESTADO") {
-    if (
-      item.prazoEntrega &&
-      new Date() > item.prazoEntrega.toDate()
-    ) {
-      return "Atrasado";
+    if (item.prazoEntrega) {
+      const dataPrazo = parseDateSeguro(item.prazoEntrega);
+      if (dataPrazo && new Date() > dataPrazo) {
+        return "Atrasado";
+      }
     }
     return "Emprestado";
   }
@@ -218,7 +228,8 @@ function obterItensDoFiltro() {
   if (filtroAtivo === "atrasado") {
     return EMPRESTIMOS.filter(item => {
       if (item.status !== "EMPRESTADO" || !item.prazoEntrega) return false;
-      return new Date() > item.prazoEntrega.toDate();
+      const dataPrazo = parseDateSeguro(item.prazoEntrega);
+      return dataPrazo ? new Date() > dataPrazo : false;
     });
   }
 
@@ -252,7 +263,8 @@ function renderizarLista() {
   } else if (filtroAtivo === "atrasado") {
     origem = EMPRESTIMOS.filter(item => {
       if (item.status !== "EMPRESTADO" || !item.prazoEntrega) return false;
-      return new Date() > item.prazoEntrega.toDate();
+      const dataPrazo = parseDateSeguro(item.prazoEntrega);
+      return dataPrazo ? new Date() > dataPrazo : false;
     });
   } else if (filtroAtivo === "devolvido") {
     origem = EMPRESTIMOS.filter(item => item.status === "DEVOLVIDO");
@@ -288,9 +300,8 @@ function renderizarLista() {
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "");
 
-    // Apenas o livro "A Formação das Almas" quando devolvido pode receber resumo
-    const isLivroEspecial = tituloNormalizado.includes("formacao das almas");
-    const podeResumir = isDevolvido && isLivroEspecial;
+    // CÓDIGO CORRIGIDO: Permite enviar o resumo para qualquer livro que já tenha sido devolvido.
+    const podeResumir = isDevolvido;
 
     const badgeClass =
       isDevolvido
