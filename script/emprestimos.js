@@ -1,7 +1,7 @@
 import UsuarioService from "../firebase/services/UsuarioService.js";
 import EmprestimoService from "../firebase/services/EmprestimoService.js";
 import ReservaService from "../firebase/services/ReservaService.js";
-import ResumoService from "../firebase/services/ResumoService.js"; // Novo import adicionado
+import ResumoService from "../firebase/services/ResumoService.js";
 
 window.PageGuard?.hold();
  
@@ -20,6 +20,7 @@ const btnExcluirGeral = document.getElementById("btnExcluirGeral");
 
 const modal = document.getElementById("modalAprovacao");
 const modalAluno = document.getElementById("modalAluno");
+const modalTurma = document.getElementById("modalTurma");
 const modalLivro = document.getElementById("modalLivro");
 const dataRetiradaInput = document.getElementById("dataRetirada");
 const dataEntregaInput = document.getElementById("dataEntrega");
@@ -104,7 +105,6 @@ function renderTabela(lista) {
       return false;
     }
 
-    // no modo devolução mostra ativos E devolvidos
     if (filtroAtivo === "devolucao") {
       return true;
     }
@@ -173,14 +173,11 @@ function renderTabela(lista) {
 
     const tr = document.createElement("tr");
 
-    // Lógica para modo devolução ajustada
     if (modoDevolucao) {
       tr.style.cursor = "pointer";
       if (statusNormal === "devolvido") {
-        // Já devolvido = Abre verificação do resumo
         tr.addEventListener("click", () => abrirModalVerResumoProfessor(emp));
       } else {
-        // Pendente = Abre modal de devolver livro normal
         tr.addEventListener("click", () => abrirModalDevolucao(emp));
       }
     }
@@ -192,10 +189,15 @@ function renderTabela(lista) {
       });
     }
 
+    // Mapeamento com busca dinâmica de propriedades
+    const nomeAluno = emp.nomeUsuario || emp.usuarioNome || emp.nome || emp.aluno || "-";
+    const turmaAluno = emp.turma || emp.alunoTurma || "-";
+    const tituloLivro = emp.tituloLivro || emp.livroTitulo || emp.titulo || emp.livro || "-";
+
     tr.innerHTML = `
-      <td>${emp.nomeUsuario || emp.nome || "-"}</td>
-      <td>${emp.turma || "-"}</td>
-      <td>${emp.tituloLivro || "-"}</td>
+      <td>${nomeAluno}</td>
+      <td>${turmaAluno}</td>
+      <td>${tituloLivro}</td>
       <td>${emp.retiradoEm ? formatar(emp.retiradoEm) : "-"}</td>
       <td>${emp.prazoEntrega ? formatar(emp.prazoEntrega) : "-"}</td>
       <td>
@@ -224,16 +226,17 @@ document.getElementById("btnAtualizarEmprestimos")?.addEventListener("click", ()
 
 window.PageGuard?.enablePullToRefresh(carregar);
 
-document.getElementById("searchInput").addEventListener("input", (e) => {
+document.getElementById("searchInput")?.addEventListener("input", (e) => {
   const texto = e.target.value.toLowerCase();
   let baseDados = filtroAtivo === "esperando" ? RESERVAS : EMPRESTIMOS;
 
-  const filtrados = baseDados.filter(item =>
-    item.nomeUsuario?.toLowerCase().includes(texto) ||
-    item.nome?.toLowerCase().includes(texto) ||
-    item.tituloLivro?.toLowerCase().includes(texto) ||
-    item.turma?.toLowerCase().includes(texto)
-  );
+  const filtrados = baseDados.filter(item => {
+    const aluno = (item.nomeUsuario || item.usuarioNome || item.nome || item.aluno || "").toLowerCase();
+    const turma = (item.turma || item.alunoTurma || "").toLowerCase();
+    const livro = (item.tituloLivro || item.livroTitulo || item.titulo || item.livro || "").toLowerCase();
+    
+    return aluno.includes(texto) || turma.includes(texto) || livro.includes(texto);
+  });
 
   renderTabela(filtrados);
 });
@@ -290,8 +293,15 @@ document.querySelectorAll("[data-filter]").forEach(btn => {
 
 function abrirAprovacao(reserva) {
   reservaSelecionada = reserva;
-  modalAluno.textContent = reserva.nomeUsuario;
-  modalLivro.textContent = reserva.tituloLivro;
+  
+  // Extração segura dos campos com múltiplos fallbacks
+  const nomeAluno = reserva.nomeUsuario || reserva.usuarioNome || reserva.nome || reserva.aluno || "Não informado";
+  const turmaAluno = reserva.turma || reserva.alunoTurma || "Não informada";
+  const tituloLivro = reserva.tituloLivro || reserva.livroTitulo || reserva.titulo || reserva.livro || "Não informado";
+
+  modalAluno.textContent = nomeAluno;
+  modalTurma.textContent = turmaAluno;
+  modalLivro.textContent = tituloLivro;
 
   const hoje = new Date().toISOString().split("T")[0];
   dataRetiradaInput.value = hoje;
@@ -335,7 +345,6 @@ btnConfirmarModal.addEventListener("click", async () => {
   }
 });
 
-
 btnNegarModal.addEventListener("click", async () => {
   if (!reservaSelecionada) {
     return;
@@ -362,7 +371,6 @@ btnNegarModal.addEventListener("click", async () => {
     window.showAppMessage?.("Erro ao negar reserva.");
   }
 });
-
 
 btnExcluirGeral.addEventListener("click", async () => {
   const confirmar = await window.showAppConfirm(`Deseja realmente ${btnExcluirGeral.textContent.toLowerCase()}?`, { confirmText: "Apagar" });
@@ -396,8 +404,8 @@ btnExcluirGeral.addEventListener("click", async () => {
 
 function abrirModalDevolucao(emprestimo) {
   emprestimoSelecionado = emprestimo;
-  devolucaoAluno.textContent = emprestimo.nomeUsuario;
-  devolucaoLivro.textContent = emprestimo.tituloLivro;
+  devolucaoAluno.textContent = emprestimo.nomeUsuario || emprestimo.usuarioNome || emprestimo.nome || "Não informado";
+  devolucaoLivro.textContent = emprestimo.tituloLivro || emprestimo.livroTitulo || emprestimo.titulo || emprestimo.livro || "Não informado";
   devolucaoPrazo.textContent = formatar(emprestimo.prazoEntrega);
   modalDevolucao.classList.add("show");
 }
@@ -441,8 +449,8 @@ async function abrirModalVerResumoProfessor(emprestimo) {
   }
 
   resumoSelecionadoProf = resumo;
-  profResumoAluno.textContent = resumo.alunoNome || emprestimo.nomeUsuario;
-  profResumoLivro.textContent = resumo.tituloLivro || emprestimo.tituloLivro;
+  profResumoAluno.textContent = resumo.alunoNome || emprestimo.nomeUsuario || emprestimo.usuarioNome || "Não informado";
+  profResumoLivro.textContent = resumo.tituloLivro || emprestimo.tituloLivro || emprestimo.livroTitulo || "Não informado";
   profResumoTexto.textContent = resumo.resumo;
 
   if (resumo.status === "aprovado") {
@@ -468,7 +476,7 @@ btnAprovarResumoProf?.addEventListener("click", async () => {
     window.showAppMessage?.("Resumo aprovado e 1 moeda concedida ao aluno!");
     modalResumoProfessor.classList.remove("show");
     
-    await carregar(); // Atualiza os dados se necessário
+    await carregar();
   } catch (error) {
     console.error(error);
     window.showAppMessage?.("Erro ao aprovar o resumo.");
