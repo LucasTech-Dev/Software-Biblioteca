@@ -204,7 +204,7 @@ function renderPaginacao(total) {
   html += `<button class="page-btn nav-btn" onclick="goPage(${paginaAtual + 1})" ${paginaAtual === pages ? 'disabled' : ''}>›</button>`;
 
   pag.innerHTML = html;
-}
+} 
 
 function goPage(n) {
   paginaAtual = n;

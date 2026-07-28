@@ -1,10 +1,44 @@
 class LivroMapper {
 
     /**
+     * Verifica se uma string é apenas um ISBN (sequência de números e traços)
+     */
+    _ehApenasISBN(texto) {
+        if (!texto) return false;
+        // Remove traços e espaços para checar se sobraram apenas dígitos
+        const limpo = String(texto).replace(/[\s-]/g, '');
+        // Se tiver entre 10 e 13 dígitos numéricos e nada mais, é um ISBN
+        return /^\d{10,13}$/.test(limpo);
+    }
+
+    /**
+     * Garante que o título retornado seja válido e não o próprio ISBN
+     */
+    _obterTituloValido(livroSupabase, livroAcervo) {
+        const candidatos = [
+            livroSupabase?.titulo,
+            livroSupabase?.title,
+            livroSupabase?.nome,
+            livroAcervo?.titulo
+        ];
+
+        // Encontra o primeiro candidato que não seja nulo e NÃO seja apenas um ISBN
+        for (const cand of candidatos) {
+            if (cand && !this._ehApenasISBN(cand)) {
+                return cand;
+            }
+        }
+
+        return "Título não informado";
+    }
+
+    /**
      * Junta um livro do Supabase com seu respectivo registro
      * do acervo (Firestore).
      */
     mapear(livroSupabase, livroAcervo = null) {
+
+        const tituloTratado = this._obterTituloValido(livroSupabase, livroAcervo);
 
         return {
  
@@ -22,9 +56,9 @@ class LivroMapper {
             // Catálogo
             //-------------------------
 
-            isbn: livroSupabase.isbn,
+            isbn: livroSupabase.isbn || (this._ehApenasISBN(livroSupabase.titulo) ? livroSupabase.titulo : ""),
 
-            titulo: livroSupabase.titulo,
+            titulo: tituloTratado,
 
             subtitulo: livroSupabase.subtitulo ?? "",
 

@@ -1,7 +1,7 @@
 import { supabase } from "../supabase.js";
 
 class SupabaseLivroService {
-
+ 
     /**
      * Busca todos os livros do catálogo.
      */

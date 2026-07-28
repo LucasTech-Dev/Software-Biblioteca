@@ -286,4 +286,4 @@ async function reservar(livroId) {
     setReservaLoading(livroId, false);
   }
 }
-window.reservar = reservar;
+window.reservar = reservar; 

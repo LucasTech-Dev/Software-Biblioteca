@@ -14,15 +14,30 @@ de dados (Supabase/Firestore) diretamente.
 import SupabaseLivroService from "./SupabaseLivroService.js";
 import FirestoreAcervoService from "./FirestoreAcervoService.js";
 import LivroMapper from "./LivroMapper.js";
+ 
+/**
+ * Valida se o título do livro existe, não está em branco
+ * e não é apenas o número do ISBN.
+ */
+function ehTituloValido(titulo) {
+    if (!titulo || typeof titulo !== "string") return false;
+    
+    // Remove traços e espaços para checar se sobrou apenas um ISBN
+    const limpo = titulo.replace(/[\s-]/g, '');
+    const ehApenasISBN = /^\d{10,13}$/.test(limpo);
+
+    return titulo.trim() !== '' && !ehApenasISBN;
+}
 
 class LivroService {
 
     /**
-     * Retorna todo o catálogo do Supabase.
+     * Retorna todo o catálogo do Supabase (ignora livros sem título válido).
      */
     async buscarCatalogo() {
         try {
-            return await SupabaseLivroService.buscarTodos();
+            const catalogo = await SupabaseLivroService.buscarTodos();
+            return (catalogo || []).filter(l => ehTituloValido(l.titulo));
         } catch (error) {
             console.error("Erro ao buscar catálogo do Supabase:", error);
             throw error;
@@ -103,6 +118,7 @@ class LivroService {
 
     /**
      * Lista todo o acervo já unificado.
+     * Filtra automaticamente livros que possuem ISBN no lugar do título.
      */
     async listarAcervo() {
         try {
@@ -112,6 +128,9 @@ class LivroService {
                 return [];
             }
 
+            // Filtra o catálogo para manter apenas livros com título válido
+            const catalogoFiltrado = livrosCatalogo.filter(livro => ehTituloValido(livro.titulo));
+
             const livrosAcervo = await FirestoreAcervoService.listar().catch(() => []);
             const indiceAcervo = new Map(
                 livrosAcervo
@@ -119,7 +138,7 @@ class LivroService {
                     .map(livro => [livro.supabaseId, livro])
             );
 
-            return (livrosCatalogo || []).map(livro => {
+            return catalogoFiltrado.map(livro => {
                 const acervo = indiceAcervo.get(livro.id);
                 return {
                     ...LivroMapper.mapear(livro, acervo),
