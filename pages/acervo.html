@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 
-<head>
+<head> 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,35 +25,17 @@
 
   <div class="page active" id="page-acervo">
 
-    <nav class="breadcrumb">
-      <a href="telaProfessor.html">Início</a>
-      <span class="breadcrumb-sep">›</span>
-      <span class="breadcrumb-current">Acervo</span>
-    </nav>
-
     <div class="hero">
       <h1>Acervo<br><span>Literário</span></h1>
       <p class="hero-desc">
-        Explore o catálogo completo da biblioteca. Pesquise por título, autor ou categoria e verifique a disponibilidade em tempo real.
+        Explore o catálogo completo da biblioteca. Pesquise por título, autor ou categoria.
       </p>
     </div>
 
     <div class="stats" id="stats-bar">
       <div class="stat">
-        <span class="stat-num" id="stat-total">0</span>
-        <span class="stat-label">Títulos</span>
-      </div>
-      <div class="stat">
-        <span class="stat-num" id="stat-disp">0</span>
-        <span class="stat-label">Disponíveis</span>
-      </div>
-      <div class="stat">
-        <span class="stat-num" id="stat-emp">0</span>
-        <span class="stat-label">Emprestados</span>
-      </div>
-      <div class="stat">
-        <span class="stat-num" id="stat-res">0</span>
-        <span class="stat-label">Reservados</span>
+        <!-- <span class="stat-num" id="stat-total">0</span> -->
+        <!-- <span class="stat-label">Títulos</span> -->
       </div>
     </div>
 
@@ -81,19 +63,19 @@
             <button class="view-btn active" id="btn-grid" onclick="setView('grid')" title="Grade">⊞</button>
             <button class="view-btn" id="btn-list" onclick="setView('list')" title="Lista">☰</button>
           </div>
-          <button id="btnAtualizarAcervo" class="btn-secondary" type="button">↻ Atualizar</button>
+
+          <button id="btnVoltar" class="btn-secondary" type="button" onclick="window.location.href='indexTelaAluno.html'">
+            ⬅️ Voltar
+          </button>
+
+          <button id="btnAtualizarAcervo" class="btn-secondary" type="button">
+            🔄 Atualizar
+          </button>
+
           <button onclick="window.location.href='addLivros.html'" class="btn-primary">
             ＋ Importar Livro
           </button>
         </div>
-      </div>
-
-      <div class="quick-filters">
-        <span class="quick-label">Status:</span>
-        <button class="chip active" data-status="" onclick="setStatus(this, '')">Todos</button>
-        <button class="chip" data-status="disponivel" onclick="setStatus(this, 'disponivel')">Disponíveis</button>
-        <button class="chip" data-status="emprestado" onclick="setStatus(this, 'emprestado')">Emprestados</button>
-        <button class="chip" data-status="reservado" onclick="setStatus(this, 'reservado')">Reservados</button>
       </div>
 
       <div class="books-grid" id="books-grid"></div>

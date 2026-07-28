@@ -17,7 +17,6 @@ let usuarioAtual = null;
 
 let filtroTexto = '';
 let filtroCateg = '';
-let filtroStatus = '';
 
 let viewMode = 'grid';
 let paginaAtual = 1;
@@ -67,7 +66,7 @@ async function carregarLivros() {
     carregandoAcervo = false;
     if (btn) {
       btn.disabled = false;
-      btn.textContent = '↻ Atualizar';
+      btn.textContent = '🔄 Atualizar';
     }
   }
 }
@@ -85,9 +84,8 @@ function livrosFiltrados() {
       autorStr.toLowerCase().includes(filtroTexto.toLowerCase());
 
     const categOk = !filtroCateg || l.categoria === filtroCateg;
-    const statusOk = !filtroStatus || l.status === filtroStatus;
 
-    return textoOk && categOk && statusOk;
+    return textoOk && categOk;
   });
 }
 
@@ -95,22 +93,14 @@ function livrosFiltrados() {
 /* RENDER STATS              */
 /* ========================= */
 function renderStats() {
-  document.getElementById('stat-total').textContent = LIVROS.length;
-  document.getElementById('stat-disp').textContent = LIVROS.filter(l => l.status === 'disponivel').length;
-  document.getElementById('stat-emp').textContent = LIVROS.filter(l => l.status === 'emprestado').length;
-  document.getElementById('stat-res').textContent = LIVROS.filter(l => l.status === 'reservado').length;
-}
-
-function labelStatus(s) {
-  return {
-    disponivel: 'Disponível',
-    emprestado: 'Emprestado',
-    reservado: 'Reservado'
-  }[s] || s;
+  const statTotal = document.getElementById('stat-total');
+  if (statTotal) {
+    statTotal.textContent = LIVROS.length;
+  }
 }
 
 /* ========================= */
-/* RENDER GRID (ESTILO NOVO) */
+/* RENDER GRID               */
 /* ========================= */
 function renderGrid() {
   const grid = document.getElementById('books-grid');
@@ -145,20 +135,11 @@ function renderGrid() {
       <div class="book-cover" style="background:${cor}">
         <img src="${capaUrl}" alt="${l.titulo}" onerror="this.style.display='none'; this.parentElement.textContent='${emoji}'" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">
         <div class="book-cover-overlay"></div>
-        <span class="book-status-dot ${l.status}"></span>
       </div>
       <div class="book-info">
         <div class="book-category">${categoriaDisplay}</div>
         <div class="book-title">${l.titulo}</div>
         <div class="book-author">${autorDisplay}</div>
-        <div class="book-footer">
-          <span class="book-copies">
-            <strong>${Math.max(0, l.quantidadeDisponivel)}</strong>/${l.quantidadeTotal} exempl.
-          </span>
-          <span class="status-badge ${l.status}">
-            ${labelStatus(l.status)}
-          </span>
-        </div>
       </div>
     </div>
     `;
@@ -169,19 +150,59 @@ function renderGrid() {
 window.renderGrid = renderGrid;
 
 /* ========================= */
-/* PAGINAÇÃO DINÂMICA        */
+/* PAGINAÇÃO / ROLETA        */
+/* ========================= */
+/* ========================= */
+/* PAGINAÇÃO INTELIGENTE     */
 /* ========================= */
 function renderPaginacao(total) {
   const pag = document.getElementById('pagination');
   if (!pag) return;
-  const pages = Math.ceil(total / POR_PAGINA);
-  if (pages <= 1) { pag.innerHTML = ''; return; }
 
-  let html = `<button class="page-btn" onclick="goPage(${paginaAtual - 1})" ${paginaAtual === 1 ? 'disabled' : ''}>‹</button>`;
-  for (let i = 1; i <= pages; i++) {
-    html += `<button class="page-btn ${i === paginaAtual ? 'active' : ''}" onclick="goPage(${i})">${i}</button>`;
+  const pages = Math.ceil(total / POR_PAGINA);
+  if (pages <= 1) { 
+    pag.innerHTML = ''; 
+    return; 
   }
-  html += `<button class="page-btn" onclick="goPage(${paginaAtual + 1})" ${paginaAtual === pages ? 'disabled' : ''}>›</button>`;
+
+  let html = `<button class="page-btn nav-btn" onclick="goPage(${paginaAtual - 1})" ${paginaAtual === 1 ? 'disabled' : ''}>‹</button>`;
+
+  // Define os limites visíveis (páginas vizinhas)
+  const delta = 2; // Quantas páginas mostrar antes e depois da atual
+  const range = [];
+  const rangeWithDots = [];
+  let lastPage;
+
+  for (let i = 1; i <= pages; i++) {
+    if (i === 1 || i === pages || (i >= paginaAtual - delta && i <= paginaAtual + delta)) {
+      range.push(i);
+    }
+  }
+
+  // Insere as reticências (...) entre os blocos
+  for (let i of range) {
+    if (lastPage) {
+      if (i - lastPage === 2) {
+        rangeWithDots.push(lastPage + 1);
+      } else if (i - lastPage !== 1) {
+        rangeWithDots.push('...');
+      }
+    }
+    rangeWithDots.push(i);
+    lastPage = i;
+  }
+
+  // Gera os elementos HTML
+  rangeWithDots.forEach(p => {
+    if (p === '...') {
+      html += `<span class="page-dots">...</span>`;
+    } else {
+      html += `<button class="page-btn ${p === paginaAtual ? 'active' : ''}" onclick="goPage(${p})">${p}</button>`;
+    }
+  });
+
+  html += `<button class="page-btn nav-btn" onclick="goPage(${paginaAtual + 1})" ${paginaAtual === pages ? 'disabled' : ''}>›</button>`;
+
   pag.innerHTML = html;
 }
 
@@ -193,7 +214,7 @@ function goPage(n) {
 window.goPage = goPage;
 
 /* ========================= */
-/* CONTROLES VISUAIS (CHIPS) */
+/* CONTROLES VISUAIS         */
 /* ========================= */
 function setView(mode) {
   viewMode = mode;
@@ -202,15 +223,6 @@ function setView(mode) {
   renderGrid();
 }
 window.setView = setView;
-
-function setStatus(btn, status) {
-  filtroStatus = status;
-  paginaAtual = 1;
-  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-  renderGrid();
-}
-window.setStatus = setStatus;
 
 // Listeners de pesquisa e categorias
 document.getElementById('search-input')?.addEventListener('input', (e) => {
@@ -226,14 +238,14 @@ document.getElementById('filter-categoria')?.addEventListener('change', (e) => {
 });
 
 document.getElementById('btnAtualizarAcervo')?.addEventListener('click', () => {
-  carregarLivros();
+  window.location.reload();
 });
 
 window.recarregarAcervo = carregarLivros;
 window.PageGuard?.enablePullToRefresh(carregarLivros);
 
 /* ========================= */
-/* MODAL DETALHES (ESTILO NOVO)*/
+/* MODAL DETALHES            */
 /* ========================= */
 async function openModal(id) {
   const l = LIVROS.find(x => String(x.id) === String(id) || String(x.supabaseId) === String(id));
@@ -249,12 +261,6 @@ async function openModal(id) {
   const emoji = l.emoji || '📖';
   const capaUrl = l.capa || `https://covers.openlibrary.org/b/isbn/${l.isbn}-M.jpg?default=false`;
 
-  const btnLabel = {
-    disponivel: 'Reservar Livro',
-    emprestado: 'Fila de Espera',
-    reservado: 'Fila de Espera'
-  }[l.status] || 'Indisponível';
-
   const isCarregando = reservasEmAndamento.has(reserveId);
 
   document.getElementById('modal-body').innerHTML = `
@@ -266,14 +272,12 @@ async function openModal(id) {
         <div class="modal-category">${categoriaDisplay}</div>
         <div class="modal-book-title" style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">${l.titulo}</div>
         <div class="modal-book-author">${autorDisplay}</div>
-        <span class="status-badge ${l.status}">${labelStatus(l.status)}</span>
       </div>
     </div>
     
     <div class="modal-info-grid" style="margin-top: 15px;">
       <div class="modal-info-item"><label>ISBN</label><span>${l.isbn || '-'}</span></div>
       <div class="modal-info-item"><label>Editora</label><span>${l.editora || '-'}</span></div>
-      <div class="modal-info-item"><label>Exemplares</label><span>${l.quantidadeDisponivel} disponíveis de ${l.quantidadeTotal}</span></div>
     </div>
 
     <div class="modal-desc-title" style="font-weight: bold; margin-top: 15px; margin-bottom: 5px;">Sinopse</div>
@@ -286,7 +290,7 @@ async function openModal(id) {
         data-reserve-id="${reserveId}"
         onclick="reservarLivro('${reserveId}')"
         ${isCarregando ? 'disabled aria-busy="true"' : ''}>
-        ${isCarregando ? '⏳ Reservando...' : `📚 ${btnLabel}`}
+        ${isCarregando ? '⏳ Reservando...' : '📖 Reservar Livro'}
       </button>
       <button class="btn-outline" onclick="closeModal()" style="border: 1px solid #ccc; background: white; padding: 10px 20px; border-radius: 8px; cursor: pointer;">Fechar</button>
     </div>
@@ -314,7 +318,7 @@ function setReservaLivroLoading(livroId, loading) {
   document.querySelectorAll(`[data-reserve-id="${livroId}"]`).forEach((button) => {
     button.disabled = loading;
     button.setAttribute("aria-busy", loading ? "true" : "false");
-    button.textContent = loading ? "⏳ Reservando..." : "📚 Reservar Livro";
+    button.textContent = loading ? "⏳ Reservando..." : "📖 Reservar Livro";
   });
 }
 
@@ -334,7 +338,7 @@ async function reservarLivro(livroId) {
     if (!usuarioAtual) {
       window.showAppMessage?.("Faça login para solicitar uma reserva.");
       return;
-    }
+    } 
 
     await ReservaService.solicitarReserva({
       supabaseId: livro.supabaseId || livro.id
