@@ -14,7 +14,7 @@ import {
 
 import { db } from "../firestore.js";
 import LivroService from "./LivroService.js";
-import ConfiguracaoService from "./ConfiguracaoService.js"; // <--- Novo Service importado
+import ConfiguracaoService from "./ConfiguracaoService.js";
 import { criarLog } from "./logServices.js";
 import NotificacaoService from "./NotificacaoService.js";
 
@@ -69,10 +69,11 @@ class EmprestimoService {
 
             // 1.5. Verifica o limite de livros do aluno (Regra do Painel de Admin)
             const historicoAluno = await this.listarEmprestimosAluno(usuario.uid);
-            const qtdEmprestados = historicoAluno.filter(emp => emp.status === "EMPRESTADO").length;
+            const qtdEmprestados = historicoAluno.filter(emp => emp.status === "EMPRESTADO" || emp.status === "ATRASADO").length;
             
-            if (qtdEmprestados >= regras.maxLivrosPorAluno) {
-                throw new Error(`Limite de empréstimos atingido! O máximo permitido é de ${regras.maxLivrosPorAluno} livros simultâneos.`);
+            const maxPermitido = regras?.maxLivrosPorAluno ?? 3;
+            if (qtdEmprestados >= maxPermitido) {
+                throw new Error(`Limite de empréstimos atingido! O máximo permitido é de ${maxPermitido} livros simultâneos.`);
             }
 
             // Define os prazos
@@ -83,8 +84,10 @@ class EmprestimoService {
             if (dataEntrega) {
                 dataFim = this._normalizarData(dataEntrega);
             } else {
-                const dataCalculada = new Date();
-                dataCalculada.setDate(dataCalculada.getDate() + regras.diasEmprestimo);
+                const base = dataRetirada ? (dataRetirada instanceof Date ? dataRetirada : new Date(dataRetirada)) : new Date();
+                const dataCalculada = new Date(base.getTime());
+                const dias = regras?.diasEmprestimo ?? 14;
+                dataCalculada.setDate(dataCalculada.getDate() + dias);
                 dataFim = Timestamp.fromDate(dataCalculada);
             }
 
@@ -119,7 +122,7 @@ class EmprestimoService {
             // 4. Registra no Log do sistema
             await criarLog({
                 usuarioId: usuario.uid,
-                nomeUsuario: usuario.nome || "Sem nome",
+                nomeUsuario: usuario.nome || usuario.displayName || "Sem nome",
                 matricula: usuario.matricula || "",
                 tipo: "EMPRESTIMO",
                 livroId: livroCompleto.id || "",
@@ -178,7 +181,7 @@ class EmprestimoService {
     }
 
     /**
-     * NOVO: Lista o Histórico Real do Usuário (apenas os livros com status DEVOLVIDO).
+     * Lista o Histórico Real do Usuário (apenas os livros com status DEVOLVIDO).
      * Ideal para alimentar a Área do Usuário de forma dinâmica.
      */
     async listarHistoricoUsuario(usuarioId) {
@@ -218,15 +221,20 @@ class EmprestimoService {
 
     async listarAtivos() {
         const todos = await this.listarTodos();
-        return todos.filter(emprestimo => emprestimo.status === "EMPRESTADO");
+        return todos.filter(emprestimo => emprestimo.status === "EMPRESTADO" || emprestimo.status === "ATRASADO");
     }
 
     async listarAtrasados() {
-        const ativos = await this.listarAtivos();
-        return ativos.filter(emprestimo => {
-            if (!emprestimo.prazoEntrega) return false;
-            const prazo = emprestimo.prazoEntrega?.toDate ? emprestimo.prazoEntrega.toDate() : new Date(emprestimo.prazoEntrega);
-            return new Date() > prazo;
+        const todos = await this.listarTodos();
+        const agora = new Date();
+        return todos.filter(emprestimo => {
+            if (emprestimo.status === "DEVOLVIDO") return false;
+            if (emprestimo.status === "ATRASADO") return true;
+            if (emprestimo.prazoEntrega) {
+                const prazo = emprestimo.prazoEntrega?.toDate ? emprestimo.prazoEntrega.toDate() : new Date(emprestimo.prazoEntrega);
+                return agora > prazo;
+            }
+            return false;
         });
     }
 
@@ -325,7 +333,7 @@ class EmprestimoService {
      */
     async excluir(emprestimoId) {
         try {
-             if (!emprestimoId) throw new Error("Empréstimo não informado.");
+            if (!emprestimoId) throw new Error("Empréstimo não informado.");
             await deleteDoc(doc(db, this.collectionName, emprestimoId));
             return true;
         } catch (error) {

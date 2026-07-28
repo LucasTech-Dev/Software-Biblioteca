@@ -36,6 +36,14 @@ class ReservaService {
                 throw new Error("Usuário não autenticado.");
             }
 
+            const usuarioId = usuario.id || usuario.uid;
+
+            // Evita reservas duplicadas ativas para o mesmo livro
+            const reservaExistente = await this.verificarReservaExistente({ usuarioId, supabaseId });
+            if (reservaExistente) {
+                throw new Error("Você já possui uma reserva pendente ou aprovada para este livro.");
+            }
+
             // 1. Busca os dados completos do livro (Catálogo + Acervo)
             const livroCompleto = await LivroService.buscarLivroCompleto(supabaseId);
 
@@ -51,8 +59,9 @@ class ReservaService {
                 titulo: livroCompleto.titulo || "Sem título",
                 
                 // Extrai as informações diretamente do objeto retornado pelo UsuarioService
-                usuarioId: usuario.id || usuario.uid,
+                usuarioId: usuarioId,
                 nomeUsuario: usuario.nome || usuario.displayName || "Sem nome",
+                matricula: usuario.matricula || "",
                 turma: usuario.turma || "",
 
                 status: "PENDENTE",
@@ -67,12 +76,12 @@ class ReservaService {
 
             // 4. Atualiza os dados do usuário (adiciona a reserva no array do usuário)
             if (UsuarioService.adicionarReserva) {
-                await UsuarioService.adicionarReserva(usuario.id || usuario.uid, reservaRef.id);
+                await UsuarioService.adicionarReserva(usuarioId, reservaRef.id);
             }
 
             // 5. Adiciona histórico
             if (UsuarioService.adicionarHistorico) {
-                await UsuarioService.adicionarHistorico(usuario.id || usuario.uid, {
+                await UsuarioService.adicionarHistorico(usuarioId, {
                     nome: livroCompleto.titulo || "Sem título",
                     retirada: "-",
                     devolucao: "-",
@@ -143,7 +152,13 @@ class ReservaService {
                 where("usuarioId", "==", uid)
             );
             const snapshot = await getDocs(q);
-            return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            return snapshot.docs
+                .map(doc => ({ id: doc.id, ...doc.data() }))
+                .sort((a, b) => {
+                    const dataA = a.dataSolicitacao?.seconds || 0;
+                    const dataB = b.dataSolicitacao?.seconds || 0;
+                    return dataB - dataA;
+                });
         } catch (error) {
             console.error(`Erro ao listar reservas do aluno ${uid}:`, error);
             throw error;
@@ -160,7 +175,13 @@ class ReservaService {
                 where("status", "==", "PENDENTE")
             );
             const snapshot = await getDocs(q);
-            return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            return snapshot.docs
+                .map(doc => ({ id: doc.id, ...doc.data() }))
+                .sort((a, b) => {
+                    const dataA = a.dataSolicitacao?.seconds || 0;
+                    const dataB = b.dataSolicitacao?.seconds || 0;
+                    return dataB - dataA;
+                });
         } catch (error) {
             console.error("Erro ao listar reservas pendentes:", error);
             throw error;
@@ -193,8 +214,8 @@ class ReservaService {
                 usuario: {
                     uid: reserva.usuarioId,
                     nome: reserva.nomeUsuario,
-                    matricula: reserva.matricula,
-                    turma: reserva.turma
+                    matricula: reserva.matricula || "",
+                    turma: reserva.turma || ""
                 },
                 supabaseId: reserva.supabaseId,
                 reservaId: reservaId,
@@ -238,6 +259,7 @@ class ReservaService {
         try {
             const reserva = await this.buscarReserva(reservaId);
             if (!reserva) throw new Error("Reserva não encontrada.");
+            if (reserva.status !== "PENDENTE") throw new Error("Apenas reservas pendentes podem ser recusadas.");
             
             await updateDoc(doc(db, this.collectionName, reservaId), {
                 status: "RECUSADA",
@@ -287,6 +309,7 @@ class ReservaService {
         try {
             const reserva = await this.buscarReserva(reservaId);
             if (!reserva) throw new Error("Reserva não encontrada.");
+            if (reserva.status !== "PENDENTE") throw new Error("Apenas reservas pendentes podem ser canceladas.");
 
             await updateDoc(doc(db, this.collectionName, reservaId), {
                 status: "CANCELADA"
@@ -309,7 +332,7 @@ class ReservaService {
 
             await NotificacaoService.criar({
                 usuarioId: reserva.usuarioId,
-                 titulo: "Reserva cancelada",
+                titulo: "Reserva cancelada",
                 mensagem: `Sua reserva de "${reserva.titulo}" foi cancelada.`,
                 tipo: "reserva_cancelada"
             });

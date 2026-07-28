@@ -1,195 +1,143 @@
-import {
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  updateDoc,
-  arrayUnion,
-  arrayRemove
-} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
-import { updatePassword } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
-
-import { auth } from "../auth.js";
 import { db } from "../firestore.js";
+import { auth } from "../auth.js";
+import { 
+  doc, 
+  getDoc, 
+  updateDoc, 
+  arrayUnion, 
+  arrayRemove, 
+  writeBatch 
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-class UsuarioService {
-
+const UsuarioService = {
   /**
-   * Obtém os dados do usuário atualmente autenticado no Firebase Auth.
-   */
-  async obterUsuarioAtual() {
-    const user = auth.currentUser;
-    if (!user) return null;
-    return this.obterUsuario(user.uid);
-  }
-
-  /**
-   * Busca um usuário pelo seu UID no Firestore.
+   * Obtém os dados de um usuário pelo seu UID (Usado por usuario.js e meusEmprestimos.js)
    */
   async obterUsuario(uid) {
-    if (!uid) throw new Error("UID do usuário não fornecido.");
-
-    const usuarioRef = doc(db, "usuarios", uid);
-    const usuarioSnap = await getDoc(usuarioRef);
-
-    if (!usuarioSnap.exists()) return null;
-
-    return {
-      id: usuarioSnap.id,
-      ...usuarioSnap.data()
-    };
-  }
-
-  /**
-   * Lista todos os usuários cadastrados (para o Painel Administrativo).
-   */
-  async listarTodos() {
+    if (!uid) return null;
     try {
-      const snap = await getDocs(collection(db, "usuarios"));
-      return snap.docs.map(documento => ({
-        id: documento.id,
-        ...documento.data()
-      }));
+      const ref = doc(db, "usuarios", uid);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) return null;
+      return { id: snap.id, uid: snap.id, ...snap.data() };
     } catch (error) {
-      console.error("Erro ao listar todos os usuários:", error);
-      return [];
+      console.error("Erro ao obter usuário por UID:", error);
+      return null;
     }
-  }
+  },
 
   /**
-   * Métodos para atualização do perfil
+   * Obtém os dados do usuário atualmente logado (Usado pelo ReservaService)
    */
-  async editarPerfil(uid, dados) {
-    return this.atualizarPerfil(uid, dados);
-  }
-
-  async atualizar(uid, dados) {
-    return this.atualizarPerfil(uid, dados);
-  }
-
-  async atualizarPerfil(uid, dados) {
-    if (!uid) throw new Error("UID do usuário não fornecido.");
-    const usuarioRef = doc(db, "usuarios", uid);
-    await updateDoc(usuarioRef, dados);
-  }
-
-  /**
-   * Altera a senha do usuário no Firebase Auth.
-   */
-  async alterarSenha(novaSenha) {
-    if (!auth.currentUser) {
-      throw new Error("Usuário não autenticado.");
+  async obterUsuarioAtual() {
+    try {
+      const user = auth.currentUser;
+      if (!user) return null;
+      return await this.obterUsuario(user.uid);
+    } catch (error) {
+      console.error("Erro ao obter usuário atual:", error);
+      return null;
     }
-
-    if (!novaSenha || novaSenha.length < 6) {
-      throw new Error("A senha deve ter no mínimo 6 caracteres.");
-    }
-
-    await updatePassword(auth.currentUser, novaSenha);
-  }
+  },
 
   /**
-   * Adiciona um registro ao histórico de leitura do usuário.
+   * Atualiza dados cadastrais do perfil do aluno
    */
-  async adicionarHistorico(uid, registro) {
-    if (!uid) throw new Error("UID do usuário não fornecido.");
-    const usuarioRef = doc(db, "usuarios", uid);
-    await updateDoc(usuarioRef, {
-      historico: arrayUnion(registro)
-    });
-  }
+  async atualizarUsuario(uid, dados) {
+    if (!uid || !dados) return;
+    try {
+      const ref = doc(db, "usuarios", uid);
+      await updateDoc(ref, dados);
+    } catch (error) {
+      console.error("Erro ao atualizar usuário:", error);
+      throw error;
+    }
+  },
 
   /**
-   * Gerenciamento de Reservas no perfil do usuário
+   * Vincula uma reserva ao perfil do aluno
    */
   async adicionarReserva(uid, reservaId) {
-    if (!uid) throw new Error("UID do usuário não fornecido.");
-    const usuarioRef = doc(db, "usuarios", uid);
-    await updateDoc(usuarioRef, {
-      reservas: arrayUnion(reservaId)
-    });
-  }
+    if (!uid || !reservaId) return;
+    try {
+      const ref = doc(db, "usuarios", uid);
+      await updateDoc(ref, {
+        reservas: arrayUnion(reservaId)
+      });
+    } catch (error) {
+      console.error("Erro ao adicionar reserva ao usuário:", error);
+    }
+  },
 
+  /**
+   * Remove uma reserva do perfil do aluno
+   */
   async removerReserva(uid, reservaId) {
-    if (!uid) throw new Error("UID do usuário não fornecido.");
-    const usuarioRef = doc(db, "usuarios", uid);
-    await updateDoc(usuarioRef, {
-      reservas: arrayRemove(reservaId)
-    });
-  }
+    if (!uid || !reservaId) return;
+    try {
+      const ref = doc(db, "usuarios", uid);
+      await updateDoc(ref, {
+        reservas: arrayRemove(reservaId)
+      });
+    } catch (error) {
+      console.error("Erro ao remover reserva do usuário:", error);
+    }
+  },
 
   /**
-   * Gerenciamento de Empréstimos no perfil do usuário
+   * Adiciona um registro no histórico do aluno
    */
-  async adicionarEmprestimo(uid, emprestimoId) {
-    if (!uid) throw new Error("UID do usuário não fornecido.");
-    const usuarioRef = doc(db, "usuarios", uid);
-    await updateDoc(usuarioRef, {
-      emprestimos: arrayUnion(emprestimoId)
-    });
-  }
-
-  async removerEmprestimo(uid, emprestimoId) {
-    if (!uid) throw new Error("UID do usuário não fornecido.");
-    const usuarioRef = doc(db, "usuarios", uid);
-    await updateDoc(usuarioRef, {
-      emprestimos: arrayRemove(emprestimoId)
-    });
-  }
+  async adicionarHistorico(uid, item) {
+    if (!uid || !item) return;
+    try {
+      const ref = doc(db, "usuarios", uid);
+      await updateDoc(ref, {
+        historico: arrayUnion(item)
+      });
+    } catch (error) {
+      console.error("Erro ao adicionar histórico:", error);
+    }
+  },
 
   /**
-   * Gerenciamento de Favoritos
+   * Oculta uma lista de reservas para o aluno (Botão "Apagar")
    */
-  async adicionarFavorito(uid, livroId) {
-    if (!uid) throw new Error("UID do usuário não fornecido.");
-    const usuarioRef = doc(db, "usuarios", uid);
-    await updateDoc(usuarioRef, {
-      favoritos: arrayUnion(livroId)
-    });
-  }
+  async ocultarReservas(uid, idsReservas) {
+    const validIds = (idsReservas || []).filter(id => typeof id === "string" && id.trim() !== "");
+    if (validIds.length === 0) return;
 
-  async removerFavorito(uid, livroId) {
-    if (!uid) throw new Error("UID do usuário não fornecido.");
-    const usuarioRef = doc(db, "usuarios", uid);
-    await updateDoc(usuarioRef, {
-      favoritos: arrayRemove(livroId)
-    });
-  }
+    try {
+      const batch = writeBatch(db);
+      validIds.forEach(id => {
+        const ref = doc(db, "reservas", id);
+        batch.update(ref, { visivelAluno: false });
+      });
+      await batch.commit();
+    } catch (error) {
+      console.error("Erro ao ocultar reservas:", error);
+      throw error;
+    }
+  },
 
   /**
-   * Ocultar e limpar registros visíveis do painel do aluno
+   * Oculta uma lista de empréstimos para o aluno (Botão "Apagar")
    */
-  async ocultarEmprestimos(uid, ids) {
-    if (!uid) throw new Error("UID do usuário não fornecido.");
-    const usuarioRef = doc(db, "usuarios", uid);
-    await updateDoc(usuarioRef, {
-      emprestimosOcultos: arrayUnion(...ids)
-    });
+  async ocultarEmprestimos(uid, idsEmprestimos) {
+    const validIds = (idsEmprestimos || []).filter(id => typeof id === "string" && id.trim() !== "");
+    if (validIds.length === 0) return;
+
+    try {
+      const batch = writeBatch(db);
+      validIds.forEach(id => {
+        const ref = doc(db, "emprestimos", id);
+        batch.update(ref, { visivelAluno: false });
+      });
+      await batch.commit();
+    } catch (error) {
+      console.error("Erro ao ocultar empréstimos:", error);
+      throw error;
+    }
   }
+};
 
-  async ocultarReservas(uid, ids) {
-    if (!uid) throw new Error("UID do usuário não fornecido.");
-    const usuarioRef = doc(db, "usuarios", uid);
-    await updateDoc(usuarioRef, {
-      reservasOcultas: arrayUnion(...ids)
-    });
-  }
-
-  async limparEmprestimosOcultos(uid) {
-    if (!uid) throw new Error("UID do usuário não fornecido.");
-    const usuarioRef = doc(db, "usuarios", uid);
-    await updateDoc(usuarioRef, {
-      emprestimosOcultos: []
-    });
-  } 
-
-  async limparReservasOcultas(uid) {
-    if (!uid) throw new Error("UID do usuário não fornecido.");
-    const usuarioRef = doc(db, "usuarios", uid);
-    await updateDoc(usuarioRef, {
-      reservasOcultas: []
-    });
-  }
-}
-
-export default new UsuarioService();
+export default UsuarioService;

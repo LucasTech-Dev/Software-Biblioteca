@@ -2,7 +2,6 @@
 <html lang="pt-BR">
 
 <head>
- 
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,21 +14,17 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
     rel="stylesheet">
-
 </head>
 
 <body>
 
   <header>
-
     <div class="header-left">
-
       <div class="avatar" id="avatarUsuario">
         --
       </div>
 
       <div class="header-info">
-
         <div class="header-name" id="nomeUsuario">
           Carregando...
         </div>
@@ -37,19 +32,15 @@
         <div class="header-sub" id="dadosUsuario">
           Carregando...
         </div>
-
       </div>
-
     </div>
 
     <div class="header-badge">
       📚 Minha Biblioteca
     </div>
-
   </header>
 
   <div class="hero">
-
     <h1>
       Meus <span>Empréstimos</span>
     </h1>
@@ -57,68 +48,54 @@
     <p>
       Acompanhe seus empréstimos e reservas.
     </p>
-
   </div>
 
   <div class="toolbar">
-
     <input
       id="searchInput"
       type="text"
       placeholder="Buscar livro..."
     >
-
   </div>
 
   <div class="filters">
-
-    <button
-      class="chip active"
-      data-filter="todos">
+    <button class="chip active" data-filter="todos">
       Todos
     </button>
 
-    <button
-      class="chip"
-      data-filter="reserva">
+    <button class="chip" data-filter="reserva">
       Em análise
     </button>
 
-    <button
-      class="chip"
-      data-filter="ativo">
+    <button class="chip" data-filter="ativo">
       Minhas Retiradas
     </button>
 
-    <button
-      class="chip"
-      data-filter="atrasado">
+    <button class="chip" data-filter="atrasado">
       Atrasados
     </button>
 
-    <button
-      class="chip"
-      data-filter="devolvido">
+    <button class="chip" data-filter="devolvido">
       Devolvidos
     </button>
-
   </div>
 
   <div class="actions-bar">
-
-    <button
-      id="btnApagar"
-      class="btn-apagar"
-      style="display:none;">
-      🗑️ Apagar
+    <button id="btnVoltar" class="btn-acao outline">
+      ⬅️ Voltar
     </button>
 
+    <button id="btnAtualizar" class="btn-acao outline">
+      🔄 Atualizar
+    </button>
+
+    <button id="btnApagar" class="btn-apagar" style="display:none;">
+      🗑️ Apagar
+    </button>
   </div>
 
   <main>
-
     <div class="loan-list" id="loan-list"></div>
-
   </main>
 
   <div id="modalResumoAluno" class="modal">
