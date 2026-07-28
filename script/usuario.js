@@ -19,6 +19,7 @@ const moedasUsuario = document.getElementById("moedasUsuario");
 const historicoDiv = document.getElementById("historicoLeituras");
 const notificacoesDiv = document.getElementById("notificacoes");
 const heroTitulo = document.querySelector(".hero h1");
+const btnVoltar = document.getElementById("btnVoltar");
 
 // ========================================
 // FORMATADOR DE DATA
@@ -32,7 +33,7 @@ function formatar(timestamp) {
 }
 
 // ========================================
-// RENDERIZAR HISTÓRICO (Vindo de EmprestimoService)
+// RENDERIZAR HISTÓRICO
 // ========================================
 function renderHistorico(historico) {
   historicoDiv.innerHTML = "";
@@ -50,7 +51,6 @@ function renderHistorico(historico) {
     const div = document.createElement("div");
     div.className = "item";
 
-    // Padronização dos nomes das propriedades
     const titulo = livro.titulo || livro.tituloLivro || "Livro sem título";
     const retirada = formatar(livro.retiradoEm || livro.dataRetirada);
     const devolucao = formatar(livro.devolvidoEm || livro.dataDevolucao || livro.atualizadoEm);
@@ -67,7 +67,7 @@ function renderHistorico(historico) {
 }
 
 // ========================================
-// RENDERIZAR NOTIFICAÇÕES (Vindo de NotificacaoService)
+// RENDERIZAR NOTIFICAÇÕES
 // ========================================
 function renderNotificacoes(notificacoes) {
   notificacoesDiv.innerHTML = "";
@@ -117,7 +117,22 @@ onAuthStateChanged(auth, async (user) => {
       return;
     }
 
-    // Preenche o perfil e moedas na tela
+    // Configura o redirecionamento dinâmico (Professor vs Aluno)
+    if (btnVoltar) {
+      const isProfessor = (
+        dados.tipo === "professor" || 
+        dados.role === "professor" || 
+        dados.cargo === "professor" || 
+        dados.tipoUsuario === "professor"
+      );
+      
+      const destino = isProfessor ? "telaProfessor.html" : "indexTelaAluno.html";
+      btnVoltar.onclick = () => {
+        window.location.href = destino;
+      };
+    }
+
+    // Preenche o perfil na tela
     heroTitulo.innerText = `Bem-vindo(a), ${dados.nome}`;
     nomeUsuario.innerText = dados.nome || "Não definido";
     matriculaUsuario.innerText = dados.matricula || "Não definida";
@@ -127,11 +142,11 @@ onAuthStateChanged(auth, async (user) => {
       moedasUsuario.innerText = `${dados.moedas || 0} 🪙`;
     }
 
-    // 2. Carrega histórico real do banco de dados (Status: DEVOLVIDO)
+    // 2. Carrega histórico do banco de dados
     const historico = await EmprestimoService.listarHistoricoUsuario(user.uid);
     renderHistorico(historico);
 
-    // 3. Carrega as notificações reais da coleção de notificações
+    // 3. Carrega notificações
     const notificacoes = await NotificacaoService.listarUsuario(user.uid);
     renderNotificacoes(notificacoes);
 
@@ -184,7 +199,7 @@ document.getElementById("btnAtualizarPerfil")?.addEventListener("click", async (
   } finally {
     if (btn) {
       btn.disabled = false;
-      btn.textContent = '↻ Atualizar Dados';
+      btn.textContent = '🔄 Atualizar Dados';
     }
   }
 });

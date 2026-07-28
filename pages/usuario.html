@@ -4,9 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BibliotecaEscolar — Perfil do Usuário</title>
+  <title>Biblioteca Escolar — Perfil do Usuário</title>
 
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../style/usuario.css">
   <script src="../script/pageGuard.js"></script>
 </head>
@@ -14,9 +14,13 @@
 <body>
 
   <header>
-    <div class="logo">
-      Biblioteca Escolar
+    <div class="logo" style="display: flex; align-items: center; gap: 12px;">
+      <button id="btnVoltar" class="btn-voltar" title="Voltar" aria-label="Voltar">
+        <span>←</span>
+      </button>
+      <span>Biblioteca Escolar</span>
     </div>
+
     <div>
       Perfil do Usuário
     </div>
@@ -59,7 +63,7 @@
           <input type="password" id="novaSenha" placeholder="Digite sua nova senha">
         </div>
         <button class="btn" id="btnAtualizarPerfil" type="button">
-          ↻ Atualizar Dados
+          🔄 Atualizar Dados
         </button>
         <button class="btn" id="btnAlterarSenha">
           Alterar Senha
@@ -78,7 +82,7 @@
   </main>
 
   <footer>
-    <span>BibliotecaEscolar © 2026</span>
+    <span>Biblioteca Escolar &copy; 2026</span>
     <span>Área do Usuário</span>
   </footer>
 
