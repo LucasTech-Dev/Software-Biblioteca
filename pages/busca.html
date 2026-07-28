@@ -3,52 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Busca — BibliotecaEscolar</title>
+  <title>Busca — Biblioteca Online</title>
   <link rel="stylesheet" href="../style/busca.css">
   <script src="../script/pageGuard.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
- 
-
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <!-- HEADER -->
   <header>
     <a class="logo" href="telaProfessor.html">
       <span class="logo-mark">Instituto Estadual Riachuelo</span>
       <span class="logo-tag">Biblioteca Online</span>
     </a>
-    <nav>
-      <a class="nav-link" href="acervo.html"><span class="nav-icon">📚</span> Acervo</a>
-      <a class="nav-link active" href="busca.html"><span class="nav-icon">🔍</span> Busca</a>
-      <a class="nav-link" href="emprestimos.html"><span class="nav-icon">🔄</span> Empréstimos</a>
-      <a class="nav-link" href="relatorio.html"><span class="nav-icon">📊</span> Relatórios</a>
-      <a class="nav-link" href="usuario.html"><span class="nav-icon">👥</span> Usuários</a>
-    </nav>
   </header>
 
-  <!-- BARRA DE BUSCA -->
   <div class="search-bar-wrap">
     <div class="search-bar">
       <div class="search-input-wrap">
         <span class="search-icon">🔍</span>
-        <input type="text" id="searchInput" placeholder="Buscar por título, autor, ISBN ou tema…" oninput="filterBooks()" />
+        <input type="text" id="searchInput" placeholder="Buscar por título, autor, ISBN ou categoria…" oninput="filterBooks()" />
       </div>
       <button class="btn btn-primary" onclick="filterBooks()">Buscar</button>
     </div>
   </div>
 
-  <!-- PAGE HERO -->
   <div class="page-hero">
     <div>
-      <div class="breadcrumb">
-        <a href="telaProfessor.html">Início</a>
-        <span>›</span> Busca
-      </div>
       <div class="page-title"><span class="page-icon">🔍</span> Catálogo de Livros</div>
-      <div class="page-sub">Encontre materiais disponíveis em nosso acervo</div>
+      <div class="page-sub">Encontre materiais no acervo da biblioteca</div>
     </div>
-    <div style="display:flex; gap:10px;">
+    
+    <div class="page-hero-actions">
+      <button class="btn btn-secondary" type="button" onclick="window.location.href='indexTelaAluno.html'">⬅️ Voltar</button>
+      <button id="btnAtualizarBusca" class="btn btn-secondary" type="button">🔄 Atualizar</button>
       <button class="btn btn-secondary btn-sm" onclick="toggleView('lista')">☰ Lista</button>
       <button class="btn btn-secondary btn-sm" onclick="toggleView('grade')">⊞ Grade</button>
     </div>
@@ -57,36 +44,17 @@
   <main>
     <div class="search-layout">
 
-      <!-- FILTROS -->
       <aside class="filters-panel">
-
-        <div class="filter-group">
-          <div class="filter-group-title">Disponibilidade</div>
-          <div class="filter-options">
-            <label class="filter-option">
-              <input type="checkbox" onchange="filterBooks()" data-filter="disponivel"> Disponível
-              <span class="filter-count">18</span>
-            </label>
-            <label class="filter-option">
-              <input type="checkbox" onchange="filterBooks()" data-filter="emprestado"> Emprestado
-              <span class="filter-count">7</span>
-            </label>
-            <label class="filter-option">
-              <input type="checkbox" onchange="filterBooks()" data-filter="reservado"> Reservado
-              <span class="filter-count">3</span>
-            </label>
-          </div>
-        </div>
 
         <div class="filter-group">
           <div class="filter-group-title">Categoria</div>
           <div class="filter-options">
-            <label class="filter-option"><input type="checkbox" onchange="filterBooks()"> Literatura Brasileira <span class="filter-count">12</span></label>
-            <label class="filter-option"><input type="checkbox" onchange="filterBooks()"> Ficção Científica <span class="filter-count">6</span></label>
-            <label class="filter-option"><input type="checkbox" onchange="filterBooks()"> História <span class="filter-count">9</span></label>
-            <label class="filter-option"><input type="checkbox" onchange="filterBooks()"> Ciências <span class="filter-count">5</span></label>
-            <label class="filter-option"><input type="checkbox" onchange="filterBooks()"> Matemática <span class="filter-count">4</span></label>
-            <label class="filter-option"><input type="checkbox" onchange="filterBooks()"> Poesia <span class="filter-count">3</span></label>
+            <label class="filter-option"><input type="checkbox" onchange="filterBooks()" value="Literatura Brasileira"> Literatura Brasileira</label>
+            <label class="filter-option"><input type="checkbox" onchange="filterBooks()" value="Ficção Científica"> Ficção Científica</label>
+            <label class="filter-option"><input type="checkbox" onchange="filterBooks()" value="História"> História</label>
+            <label class="filter-option"><input type="checkbox" onchange="filterBooks()" value="Ciências"> Ciências</label>
+            <label class="filter-option"><input type="checkbox" onchange="filterBooks()" value="Matemática"> Matemática</label>
+            <label class="filter-option"><input type="checkbox" onchange="filterBooks()" value="Poesia"> Poesia</label>
           </div>
         </div>
 
@@ -104,16 +72,14 @@
 
       </aside>
 
-      <!-- RESULTADOS -->
-      <div>
+      <div class="results-area">
         <div class="results-header">
-          <div class="results-count" id="resultsCount">Exibindo <strong>28</strong> livros</div>
+          <div class="results-count" id="resultsCount">Exibindo <strong>0</strong> livros</div>
           <div class="results-sort">
             Ordenar por:
             <select onchange="sortBooks(this.value)">
               <option value="titulo">Título A–Z</option>
               <option value="autor">Autor</option>
-              <option value="popular">Mais lidos</option>
               <option value="recente">Recém adicionados</option>
             </select>
           </div>
@@ -121,24 +87,18 @@
 
         <div class="book-list" id="bookList"></div>
 
-        <div class="pagination">
-          <button class="page-btn active">1</button>
-          <button class="page-btn">2</button>
-          <button class="page-btn">3</button>
-          <button class="page-btn">›</button>
-        </div>
+        <div class="pagination" id="pagination"></div>
       </div>
 
     </div>
   </main>
  
-  <!-- FOOTER -->
   <footer>
-    <span>BibliotecaEscolar — Sistema de Gestão &copy; 2025</span>
+    <span>Biblioteca Online — Sistema de Gestão &copy; 2026</span>
     <span>Módulo: Busca</span>
   </footer>
 
   <script type="module" src="../script/busca.js"></script>
 
 </body>
-</html>  
+</html>

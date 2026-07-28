@@ -11,329 +11,259 @@ window.PageGuard?.hold();
 // ========================================
 // ESTADO
 // ========================================
-
 let BOOKS = [];
-
+let BOOKS_FILTRADOS = [];
 let usuarioAtual = null;
-
 const reservasEmAndamento = new Set();
 
+let paginaAtual = 1;
+const POR_PAGINA = 8;
+let carregando = false;
 
 // ========================================
 // AUTH
 // ========================================
-
-onAuthStateChanged(auth, async(user) => {
-
+onAuthStateChanged(auth, async (user) => {
   if (!user) {
-
     window.showAppMessage?.("Faça login.");
-
-    window.location.href = "pages/login.html";
-
+    window.location.href = "login.html";
     return;
   }
 
   usuarioAtual = user;
 
   try {
-
     await carregarLivros();
-
-  }
-
-  finally {
-
+  } finally {
     window.PageGuard?.ready();
-
   }
-
 });
-
 
 // ========================================
 // CARREGAR LIVROS
 // ========================================
-
 async function carregarLivros() {
+  if (carregando) return;
+  carregando = true;
+
+  const btn = document.getElementById('btnAtualizarBusca');
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = '⏳ Atualizando...';
+  }
 
   try {
     const livros = await LivroService.listarAcervo();
 
     BOOKS = livros.map((livro) => ({
-      id: livro.id,
+      id: livro.id || livro.supabaseId,
       title: livro.titulo,
       author: Array.isArray(livro.autores) ? livro.autores.join(", ") : (livro.autores || "Autor desconhecido"),
       category: livro.categoria || livro.categorias?.[0] || "Geral",
       year: livro.publicacao || "",
-      isbn: livro.isbn,
-      status: livro.status || "disponivel",
-      copies: livro.quantidadeDisponivel ?? 1,
-      emoji: livro.emoji || "📚"
+      isbn: livro.isbn || "-",
+      emoji: livro.emoji || "📖"
     }));
 
-    renderBooks(BOOKS);
-  }
-
-  catch (error) {
+    BOOKS_FILTRADOS = [...BOOKS];
+    paginaAtual = 1;
+    renderBooks();
+  } catch (error) {
     console.error(error);
     window.showAppMessage?.("Erro ao carregar livros.");
+  } finally {
+    carregando = false;
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = '🔄 Atualizar';
+    }
   }
-
 }
 
-
 // ========================================
-// STATUS
+// RENDER BOOKS (COM PAGINAÇÃO)
 // ========================================
+function renderBooks() {
+  const container = document.getElementById('bookList');
+  const countEl = document.getElementById('resultsCount');
 
-function statusInfo(status, copies) {
-
-  if (status === 'disponivel') {
-
-    return {
-
-      cls: 'avail-yes',
-
-      label: `Disponível (${copies} ex.)`,
-
-      pill: 'pill-green'
-
-    };
-
+  if (countEl) {
+    countEl.innerHTML = `Exibindo <strong>${BOOKS_FILTRADOS.length}</strong> livros`;
   }
 
-  if (status === 'emprestado') {
-
-    return {
-
-      cls: 'avail-no',
-
-      label: 'Emprestado',
-
-      pill: 'pill-coral'
-
-    };
-
-  }
-
-  return {
-
-    cls: 'avail-few',
-
-    label: 'Reservado',
-
-    pill: 'pill-amber'
-
-  };
-
-}
-
-
-// ========================================
-// RENDER
-// ========================================
-
-function renderBooks(list) {
-
-  const container =
-    document.getElementById('bookList');
-
-  document.getElementById('resultsCount').innerHTML = `
-    Exibindo <strong>${list.length}</strong> livros
-  `;
-
-  if (list.length === 0) {
-
+  if (BOOKS_FILTRADOS.length === 0) {
     container.innerHTML = `
-      <div style="padding:40px;text-align:center;">
+      <div style="padding:40px;text-align:center;color:var(--ink-muted);">
         Nenhum livro encontrado.
       </div>
     `;
-
+    renderPaginacao(0);
     return;
   }
 
-  container.innerHTML = list.map((b) => {
+  const inicio = (paginaAtual - 1) * POR_PAGINA;
+  const pagina = BOOKS_FILTRADOS.slice(inicio, inicio + POR_PAGINA);
 
-    const s = statusInfo(b.status, b.copies);
+  container.innerHTML = pagina.map((b) => {
+    const isCarregando = reservasEmAndamento.has(b.id);
 
     return `
-
       <div class="book-card">
-
         <div class="book-cover">
           ${b.emoji}
         </div>
 
         <div class="book-info">
-
-          <div class="book-title">
-            ${b.title}
-          </div>
-
-          <div class="book-author">
-            ${b.author}
-          </div>
-
+          <div class="book-title">${b.title}</div>
+          <div class="book-author">${b.author}</div>
           <div class="book-meta">
-
-            <span class="pill pill-muted">
-              ${b.category}
-            </span>
-
-            <span class="pill pill-muted">
-              ISBN: ${b.isbn}
-            </span>
-
+            <span class="pill pill-muted">${b.category}</span>
+            <span class="pill pill-muted">ISBN: ${b.isbn}</span>
           </div>
-
         </div>
 
         <div class="book-actions">
-
-          <div class="availability ${s.cls}">
-            ${s.label}
-          </div>
-
-          ${b.status === 'disponivel'
-
-            ?
-
-            `<button
-              class="btn btn-primary btn-sm"
-              data-reserve-id="${b.id}"
-              onclick="reservar('${b.id}')"
-              ${reservasEmAndamento.has(b.id) ? 'disabled aria-busy="true"' : ''}>
-
-              ${reservasEmAndamento.has(b.id) ? '⏳ Reservando...' : '📅 Reservar'}
-
-            </button>`
-
-            :
-
-            `<span class="pill pill-amber">
-              Indisponível
-            </span>`
-          }
-
+          <button
+            class="btn btn-primary btn-sm"
+            data-reserve-id="${b.id}"
+            onclick="reservar('${b.id}')"
+            ${isCarregando ? 'disabled aria-busy="true"' : ''}>
+            ${isCarregando ? '⏳ Reservando...' : '📖 Reservar'}
+          </button>
         </div>
-
       </div>
-
     `;
-
   }).join('');
 
+  renderPaginacao(BOOKS_FILTRADOS.length);
 }
 
+// ========================================
+// ROLETA DE PAGINAÇÃO
+// ========================================
+function renderPaginacao(total) {
+  const pag = document.getElementById('pagination');
+  if (!pag) return;
+
+  const pages = Math.ceil(total / POR_PAGINA);
+  if (pages <= 1) {
+    pag.innerHTML = '';
+    return;
+  }
+
+  let html = `<button class="page-btn nav-btn" onclick="goPage(${paginaAtual - 1})" ${paginaAtual === 1 ? 'disabled' : ''}>‹</button>`;
+
+  const delta = 2;
+  const range = [];
+  const rangeWithDots = [];
+  let lastPage;
+
+  for (let i = 1; i <= pages; i++) {
+    if (i === 1 || i === pages || (i >= paginaAtual - delta && i <= paginaAtual + delta)) {
+      range.push(i);
+    }
+  }
+
+  for (let i of range) {
+    if (lastPage) {
+      if (i - lastPage === 2) {
+        rangeWithDots.push(lastPage + 1);
+      } else if (i - lastPage !== 1) {
+        rangeWithDots.push('...');
+      }
+    }
+    rangeWithDots.push(i);
+    lastPage = i;
+  }
+
+  rangeWithDots.forEach(p => {
+    if (p === '...') {
+      html += `<span class="page-dots">...</span>`;
+    } else {
+      html += `<button class="page-btn ${p === paginaAtual ? 'active' : ''}" onclick="goPage(${p})">${p}</button>`;
+    }
+  });
+
+  html += `<button class="page-btn nav-btn" onclick="goPage(${paginaAtual + 1})" ${paginaAtual === pages ? 'disabled' : ''}>›</button>`;
+
+  pag.innerHTML = html;
+}
+
+function goPage(n) {
+  paginaAtual = n;
+  renderBooks();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+window.goPage = goPage;
 
 // ========================================
-// FILTRO
+// FILTROS
 // ========================================
-
 function filterBooks() {
+  const q = document.getElementById('searchInput')?.value.toLowerCase() || '';
 
-  const q =
-    document
-      .getElementById('searchInput')
-      .value
-      .toLowerCase();
-
-  let list = BOOKS.filter(b =>
-
+  BOOKS_FILTRADOS = BOOKS.filter(b =>
     b.title.toLowerCase().includes(q) ||
-
     b.author.toLowerCase().includes(q) ||
-
     b.isbn.includes(q) ||
-
     b.category.toLowerCase().includes(q)
-
   );
 
-  renderBooks(list);
-
+  paginaAtual = 1;
+  renderBooks();
 }
-
 window.filterBooks = filterBooks;
 
-
 // ========================================
-// SORT
+// ORDENAÇÃO
 // ========================================
-
 function sortBooks(val) {
-
-  let list = [...BOOKS];
-
   if (val === 'titulo') {
-
-    list.sort((a, b) =>
-      a.title.localeCompare(b.title));
-
+    BOOKS_FILTRADOS.sort((a, b) => a.title.localeCompare(b.title));
+  } else if (val === 'autor') {
+    BOOKS_FILTRADOS.sort((a, b) => a.author.localeCompare(b.author));
+  } else if (val === 'recente') {
+    BOOKS_FILTRADOS.sort((a, b) => (b.year || 0) - (a.year || 0));
   }
 
-  if (val === 'autor') {
-
-    list.sort((a, b) =>
-      a.author.localeCompare(b.author));
-
-  }
-
-  if (val === 'recente') {
-
-    list.sort((a, b) =>
-      b.year - a.year);
-
-  }
-
-  renderBooks(list);
-
+  paginaAtual = 1;
+  renderBooks();
 }
-
 window.sortBooks = sortBooks;
 
-
 // ========================================
-// LIMPAR
+// LIMPAR FILTROS
 // ========================================
-
 function clearFilters() {
+  const input = document.getElementById('searchInput');
+  if (input) input.value = '';
 
-  document.getElementById('searchInput').value = '';
-
-  renderBooks(BOOKS);
-
+  BOOKS_FILTRADOS = [...BOOKS];
+  paginaAtual = 1;
+  renderBooks();
 }
-
 window.clearFilters = clearFilters;
 
-
+// ========================================
+// BOTÃO ATUALIZAR
+// ========================================
+document.getElementById('btnAtualizarBusca')?.addEventListener('click', () => {
+  window.location.reload();
+});
 
 function setReservaLoading(livroId, loading) {
-
-  document
-    .querySelectorAll(`[data-reserve-id="${livroId}"]`)
-    .forEach((button) => {
-
-      button.disabled = loading;
-      button.setAttribute("aria-busy", loading ? "true" : "false");
-      button.textContent = loading ? "⏳ Reservando..." : "📅 Reservar";
-
-    });
-
+  document.querySelectorAll(`[data-reserve-id="${livroId}"]`).forEach((button) => {
+    button.disabled = loading;
+    button.setAttribute("aria-busy", loading ? "true" : "false");
+    button.textContent = loading ? "⏳ Reservando..." : "📖 Reservar";
+  });
 }
 
 // ========================================
 // RESERVA
 // ========================================
-
 async function reservar(livroId) {
-
-  if (reservasEmAndamento.has(livroId)) {
-    return;
-  }
+  if (reservasEmAndamento.has(livroId)) return;
 
   reservasEmAndamento.add(livroId);
   setReservaLoading(livroId, true);
@@ -348,31 +278,12 @@ async function reservar(livroId) {
 
     window.showAppMessage?.("Livro reservado com sucesso.");
     await carregarLivros();
-  }
-
-  catch (error) {
+  } catch (error) {
     console.error(error);
     window.showAppMessage?.("Erro ao reservar livro.");
-  }
-
-  finally {
+  } finally {
     reservasEmAndamento.delete(livroId);
     setReservaLoading(livroId, false);
   }
-
 }
- 
 window.reservar = reservar;
-
-
-// ========================================
-// DETALHES
-// ========================================
-
-function verDetalhes(titulo) {
-
-  window.showAppMessage?.(`Livro: ${titulo}`);
-
-}
-
-window.verDetalhes = verDetalhes;
