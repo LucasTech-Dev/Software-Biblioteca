@@ -36,14 +36,11 @@
     <div class="page-hero-actions">
       <button class="btn btn-secondary" type="button" onclick="window.location.href='indexTelaAluno.html'">⬅️ Voltar</button>
       <button id="btnAtualizarBusca" class="btn btn-secondary" type="button">🔄 Atualizar</button>
-      <button class="btn btn-secondary btn-sm" onclick="toggleView('lista')">☰ Lista</button>
-      <button class="btn btn-secondary btn-sm" onclick="toggleView('grade')">⊞ Grade</button>
     </div>
   </div>
 
   <main>
     <div class="search-layout">
-
       <div class="results-area">
         <div class="results-header">
           <div class="results-count" id="resultsCount">Exibindo <strong>0</strong> livros</div>
@@ -61,9 +58,18 @@
 
         <div class="pagination" id="pagination"></div>
       </div>
-
     </div>
   </main>
+
+  <div class="modal-overlay" id="modal-overlay" onclick="closeModalOnOverlay(event)">
+    <div class="modal" id="modal">
+      <div class="modal-header">
+        <span class="modal-title" id="modal-title">Detalhes do livro</span>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+    </div>
+  </div>
  
   <footer>
     <span>Biblioteca Online — Sistema de Gestão &copy; 2026</span>
