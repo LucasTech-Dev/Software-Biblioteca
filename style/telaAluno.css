@@ -126,6 +126,62 @@ header {
   color: rgba(255, 255, 255, 0.6);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ========================= */
+/* BOTÃO LOGOUT MODERNO */
+/* ========================= */
+
+.btn-logout {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #f1f5f9;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.btn-logout svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: #94a3b8;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.3s ease, transform 0.3s ease;
+}
+
+.btn-logout:hover {
+  background-color: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+  box-shadow: 0 8px 12px -3px rgba(239, 68, 68, 0.3);
+  transform: translateY(-2px);
+}
+
+.btn-logout:hover svg {
+  stroke: #ffffff;
+  transform: translateX(3px);
+}
+
+.btn-logout:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
 /* ========================= */
 /* HERO */
 /* ========================= */
@@ -757,30 +813,6 @@ footer {
   }
 
 }
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.btn-logout {
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 6px 14px;
-  border-radius: 6px;
-  font-weight: 600;
-  font-size: 13px;
-  cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
-}
-
-.btn-logout:hover {
-  background: rgba(239, 68, 68, 0.85); /* Vermelho ao passar o mouse */
-  border-color: rgba(239, 68, 68, 1);
-}
-
 
 /* ========================= */
 /* RESPONSIVO */
