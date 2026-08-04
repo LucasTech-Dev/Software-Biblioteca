@@ -189,14 +189,8 @@ body {
     color: white;
 }
 
-.role-text span {
-    font-size: 14px;
-    color: #777;
-}
 
-.role-opt.active .role-text span {
-    color: #d4c089;
-}
+
 
 
 /* CAMPOS */
