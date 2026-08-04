@@ -6,28 +6,21 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta name="description" content="Sistema Biblioteca Escolar">
-  <meta name="keywords" content="programação, css, html, javascript, biblioteca">
+  <meta name="description" content="Sistema Biblioteca Escolar — Portal do Professor">
   <meta name="author" content="Lucas Sant'Ana Dias">
 
-  <title>BibliotecaEscolar — Sistema</title>
+  <title>BibliotecaEscolar — Portal do Professor</title>
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="../style/telaProfessor.css">
-  <script src="../script/pageGuard.js"></script>
-
-  <!-- Google Fonts -->
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
     rel="stylesheet"
   >
+
+  <link rel="stylesheet" href="../style/telaProfessor.css">
+  <script src="../script/pageGuard.js"></script>
 </head>
 
 <body>
-
-  <!-- ========================= -->
-  <!-- HEADER -->
-  <!-- ========================= -->
 
   <header>
 
@@ -36,13 +29,19 @@
       <span class="logo-tag">Biblioteca Online</span>
     </div>
 
-    <span class="header-meta">Versão 1.0</span>
+    <div class="header-actions">
+      <span class="header-meta">Portal do Professor — v1.0</span>
+      <button id="btnLogout" class="btn-logout" type="button" title="Sair do sistema">
+        <span>Sair da conta</span>
+        <svg viewBox="0 0 24 24">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+      </button>
+    </div>
 
   </header>
-
-  <!-- ========================= -->
-  <!-- HERO -->
-  <!-- ========================= -->
 
   <div class="hero">
 
@@ -59,37 +58,7 @@
 
   </div>
 
-  <!-- ========================= -->
-  <!-- ESTATÍSTICAS -->
-  <!-- ========================= -->
-
-  <div class="stats">
-
-    <div class="stat">
-      <span class="stat-num">6</span>
-      <span class="stat-label">Módulos</span>
-    </div>
-
-    <div class="stat">
-      <span class="stat-num">24</span>
-      <span class="stat-label">Funcionalidades</span>
-    </div>
-
-    <div class="stat">
-      <span class="stat-num">3</span>
-      <span class="stat-label">Perfis de usuário</span>
-    </div>
-
-    <div class="stat">
-      <span class="stat-num">100%</span>
-      <span class="stat-label">Web-based</span>
-    </div>
-
-  </div>
-
-  <!-- ========================= -->
-  <!-- MAIN -->
-  <!-- ========================= -->
+  <div class="stats"></div>
 
   <main>
 
@@ -100,38 +69,26 @@
 
     <div class="modules">
 
-      <!-- ========================= -->
-      <!-- ACERVO -->
-      <!-- ========================= -->
-
-      <div class="module-card mod-acervo"
-        onclick="window.location.href='acervo.html'">
+      <div class="module-card mod-acervo" onclick="window.location.href='acervo.html'">
 
         <div class="module-header">
-
           <div class="module-icon">📚</div>
-
           <div>
             <div class="module-name">Acervo</div>
             <div class="module-sub">Gestão do catálogo</div>
           </div>
-
         </div>
 
         <div class="module-body">
-
           <p class="module-desc">
-            Central do sistema. Controla todos os livros, revistas e materiais
-            disponíveis na biblioteca.
+            Central do sistema. Controla todos os livros, revistas e materiais disponíveis na biblioteca.
           </p>
-
           <ul class="module-features">
             <li>Cadastro com ISBN, título e autor</li>
             <li>Organização por categorias e gênero</li>
             <li>Controle de exemplares disponíveis</li>
             <li>Registro de novas aquisições</li>
           </ul>
-
         </div>
 
         <div class="module-footer">
@@ -141,38 +98,26 @@
 
       </div>
 
-      <!-- ========================= -->
-      <!-- USUÁRIOS -->
-      <!-- ========================= -->
-
-      <div class="module-card mod-usuario"
-        onclick="window.location.href='usuario.html'">
+      <div class="module-card mod-usuario" onclick="window.location.href='usuario.html'">
 
         <div class="module-header">
-
           <div class="module-icon">👥</div>
-
           <div>
             <div class="module-name">Usuários</div>
             <div class="module-sub">Alunos e professores</div>
           </div>
-
         </div>
 
         <div class="module-body">
-
           <p class="module-desc">
-            Cadastro e gerenciamento de todos os membros que utilizam a biblioteca,
-            com perfis de acesso diferenciados.
+            Cadastro e gerenciamento de todos os membros que utilizam a biblioteca, com perfis de acesso diferenciados.
           </p>
-
           <ul class="module-features">
             <li>Cadastro com nome, turma e matrícula</li>
             <li>Perfis: aluno, professor, administrador</li>
             <li>Histórico de empréstimos por usuário</li>
             <li>Notificações de prazos e atrasos</li>
           </ul>
-
         </div>
 
         <div class="module-footer">
@@ -182,38 +127,26 @@
 
       </div>
 
-      <!-- ========================= -->
-      <!-- EMPRÉSTIMOS -->
-      <!-- ========================= -->
-
-      <div class="module-card mod-emprestimos"
-        onclick="window.location.href='emprestimos.html'">
+      <div class="module-card mod-emprestimos" onclick="window.location.href='emprestimos.html'">
 
         <div class="module-header">
-
           <div class="module-icon">🔄</div>
-
           <div>
             <div class="module-name">Empréstimos</div>
             <div class="module-sub">Retirada e devolução</div>
           </div>
-
         </div>
 
         <div class="module-body">
-
           <p class="module-desc">
-            Controla todo o ciclo de empréstimo: da retirada à devolução,
-            incluindo prazos e penalidades por atraso.
+            Controla todo o ciclo de empréstimo: da retirada à devolução, incluindo prazos e penalidades por atraso.
           </p>
-
           <ul class="module-features">
             <li>Registro de retirada com data e prazo</li>
             <li>Controle de devoluções</li>
             <li>Alertas de atraso automáticos</li>
             <li>Renovação de prazos</li>
           </ul>
-
         </div>
 
         <div class="module-footer">
@@ -223,38 +156,26 @@
 
       </div>
 
-      <!-- ========================= -->
-      <!-- BUSCA -->
-      <!-- ========================= -->
-
-      <div class="module-card mod-busca"
-        onclick="window.location.href='busca.html'">
+      <div class="module-card mod-busca" onclick="window.location.href='busca.html'">
 
         <div class="module-header">
-
           <div class="module-icon">🔍</div>
-
           <div>
             <div class="module-name">Busca</div>
             <div class="module-sub">Catálogo online</div>
           </div>
-
         </div>
 
         <div class="module-body">
-
           <p class="module-desc">
-            Permite que alunos e professores encontrem materiais por diferentes
-            critérios, sem precisar ir à biblioteca.
+            Permite que alunos e professores encontrem materiais por diferentes critérios, sem precisar ir à biblioteca.
           </p>
-
           <ul class="module-features">
             <li>Busca por título, autor ou tema</li>
             <li>Filtro por categoria e faixa etária</li>
             <li>Ver disponibilidade em tempo real</li>
             <li>Fila de reservas online</li>
           </ul>
-
         </div>
 
         <div class="module-footer">
@@ -264,38 +185,26 @@
 
       </div>
 
-      <!-- ========================= -->
-      <!-- RELATÓRIOS -->
-      <!-- ========================= -->
-
-      <div class="module-card mod-relatorio"
-        onclick="window.location.href='relatorio.html'">
+      <div class="module-card mod-relatorio" onclick="window.location.href='relatorio.html'">
 
         <div class="module-header">
-
           <div class="module-icon">📊</div>
-
           <div>
             <div class="module-name">Relatórios</div>
             <div class="module-sub">Estatísticas e histórico</div>
           </div>
-
         </div>
 
         <div class="module-body">
-
           <p class="module-desc">
-            Gera relatórios e gráficos para ajudar a escola a entender o uso
-            da biblioteca e tomar decisões.
+            Gera relatórios e gráficos para ajudar a escola a entender o uso da biblioteca e tomar decisões.
           </p>
-
           <ul class="module-features">
             <li>Ranking de livros mais lidos</li>
             <li>Histórico de empréstimos</li>
             <li>Relatório de atrasos e pendências</li>
             <li>Exportação para PDF e Excel</li>
           </ul>
-
         </div>
 
         <div class="module-footer">
@@ -305,38 +214,26 @@
 
       </div>
 
-      <!-- ========================= -->
-      <!-- ADMINISTRAÇÃO -->
-      <!-- ========================= -->
-
-      <div class="module-card mod-administracao"
-        onclick="window.location.href='administracao.html'">
+      <div class="module-card mod-administracao" onclick="window.location.href='administracao.html'">
 
         <div class="module-header">
-
           <div class="module-icon">⚙️</div>
-
           <div>
             <div class="module-name">Administração</div>
             <div class="module-sub">Configuração e backup</div>
           </div>
-
         </div>
 
         <div class="module-body">
-
           <p class="module-desc">
-            Painel exclusivo do bibliotecário responsável. Configurações gerais,
-            backup e controle total do sistema.
+            Painel exclusivo do bibliotecário responsável. Configurações gerais, backup e controle total do sistema.
           </p>
-
           <ul class="module-features">
             <li>Configuração de prazos e regras</li>
             <li>Backup automático dos dados</li>
             <li>Controle de permissões de acesso</li>
             <li>Log de atividades do sistema</li>
           </ul>
-
         </div>
 
         <div class="module-footer">
@@ -350,24 +247,12 @@
 
   </main>
 
-  <!-- ========================= -->
-  <!-- FOOTER -->
-  <!-- ========================= -->
-
   <footer>
-    <span>BibliotecaEscolar — Sistema de Gestão &copy; 2025</span>
-    <span>Diagrama de arquitetura v1.0</span>
+    <span>BibliotecaEscolar — Portal do Professor &copy; 2026</span>
+    <span>Versão 1.0</span>
   </footer>
 
-  <!-- ========================= -->
-  <!-- SCRIPTS -->
-  <!-- ========================= -->
-
-  <script src="../script/telaProfessor.js"></script>
-
-  <!-- Firebase -->
-  
-  <!-- Script principal -->
+  <script type="module" src="../script/telaProfessor.js"></script>
 
 </body>
 

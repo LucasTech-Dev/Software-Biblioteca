@@ -9,7 +9,7 @@ import ReservaService from "../firebase/services/ReservaService.js";
 
 window.PageGuard?.hold();
 
-/* ========================= */
+/* ========================= */ 
 /* ESTADO GERAL              */
 /* ========================= */
 let LIVROS = [];
@@ -29,6 +29,19 @@ let carregandoAcervo = false;
 /* ========================= */
 onAuthStateChanged(auth, async (user) => {
   usuarioAtual = user;
+
+  // Verifica se é aluno e oculta o botão de Importar Livro
+  const email = user?.email?.toLowerCase() || '';
+  const btnImportar = document.getElementById('btnImportarLivro');
+
+  if (btnImportar) {
+    if (email.includes('@estudante')) {
+      btnImportar.style.display = 'none'; // Esconde para alunos
+    } else {
+      btnImportar.style.display = ''; // Exibe para professores/demais perfis
+    }
+  }
+
   try {
     await carregarLivros();
   } finally {
@@ -150,9 +163,6 @@ function renderGrid() {
 window.renderGrid = renderGrid;
 
 /* ========================= */
-/* PAGINAÇÃO / ROLETA        */
-/* ========================= */
-/* ========================= */
 /* PAGINAÇÃO INTELIGENTE     */
 /* ========================= */
 function renderPaginacao(total) {
@@ -167,8 +177,7 @@ function renderPaginacao(total) {
 
   let html = `<button class="page-btn nav-btn" onclick="goPage(${paginaAtual - 1})" ${paginaAtual === 1 ? 'disabled' : ''}>‹</button>`;
 
-  // Define os limites visíveis (páginas vizinhas)
-  const delta = 2; // Quantas páginas mostrar antes e depois da atual
+  const delta = 2;
   const range = [];
   const rangeWithDots = [];
   let lastPage;
@@ -179,7 +188,6 @@ function renderPaginacao(total) {
     }
   }
 
-  // Insere as reticências (...) entre os blocos
   for (let i of range) {
     if (lastPage) {
       if (i - lastPage === 2) {
@@ -192,7 +200,6 @@ function renderPaginacao(total) {
     lastPage = i;
   }
 
-  // Gera os elementos HTML
   rangeWithDots.forEach(p => {
     if (p === '...') {
       html += `<span class="page-dots">...</span>`;
@@ -214,7 +221,7 @@ function goPage(n) {
 window.goPage = goPage;
 
 /* ========================= */
-/* CONTROLES VISUAIS         */
+/* CONTROLES VISUAIS & NAVEGAÇÃO */
 /* ========================= */
 function setView(mode) {
   viewMode = mode;
@@ -239,6 +246,21 @@ document.getElementById('filter-categoria')?.addEventListener('change', (e) => {
 
 document.getElementById('btnAtualizarAcervo')?.addEventListener('click', () => {
   window.location.reload();
+});
+
+/* ========================= */
+/* LÓGICA DO BOTÃO VOLTAR    */
+/* ========================= */
+document.getElementById('btnVoltar')?.addEventListener('click', () => {
+  const email = usuarioAtual?.email?.toLowerCase() || '';
+
+  if (email.includes('@educar')) {
+    window.location.href = 'telaProfessor.html';
+  } else if (email.includes('@estudante')) {
+    window.location.href = 'indexTelaAluno.html';
+  } else {
+    window.location.href = 'indexTelaAluno.html';
+  }
 });
 
 window.recarregarAcervo = carregarLivros;
