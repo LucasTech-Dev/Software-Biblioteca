@@ -57,12 +57,17 @@ async function carregarLivros() {
 
     BOOKS = livros.map((livro) => ({
       id: livro.id || livro.supabaseId,
+      supabaseId: livro.supabaseId || livro.id, 
       title: livro.titulo,
       author: Array.isArray(livro.autores) ? livro.autores.join(", ") : (livro.autores || "Autor desconhecido"),
       category: livro.categoria || livro.categorias?.[0] || "Geral",
       year: livro.publicacao || "",
       isbn: livro.isbn || "-",
-      emoji: livro.emoji || "📖"
+      emoji: livro.emoji || "📖",
+      cor: livro.cor || "#E8EDFF",
+      capa: livro.capa || `https://covers.openlibrary.org/b/isbn/${livro.isbn}-M.jpg?default=false`,
+      editora: livro.editora || "-",
+      desc: livro.desc || livro.descricao || "Nenhuma sinopse cadastrada para este exemplar."
     }));
 
     BOOKS_FILTRADOS = [...BOOKS];
@@ -105,12 +110,10 @@ function renderBooks() {
   const pagina = BOOKS_FILTRADOS.slice(inicio, inicio + POR_PAGINA);
 
   container.innerHTML = pagina.map((b) => {
-    const isCarregando = reservasEmAndamento.has(b.id);
-
     return `
-      <div class="book-card">
-        <div class="book-cover">
-          ${b.emoji}
+      <div class="book-card" onclick="openModal('${b.id}')" style="cursor: pointer;">
+        <div class="book-cover" style="background:${b.cor};">
+           <img src="${b.capa}" alt="${b.title}" onerror="this.style.display='none'; this.parentElement.textContent='${b.emoji}'" style="width:100%;height:100%;object-fit:cover;">
         </div>
 
         <div class="book-info">
@@ -123,12 +126,8 @@ function renderBooks() {
         </div>
 
         <div class="book-actions">
-          <button
-            class="btn btn-primary btn-sm"
-            data-reserve-id="${b.id}"
-            onclick="reservar('${b.id}')"
-            ${isCarregando ? 'disabled aria-busy="true"' : ''}>
-            ${isCarregando ? '⏳ Reservando...' : '📖 Reservar'}
+          <button class="btn btn-primary btn-sm" type="button" onclick="event.stopPropagation(); openModal('${b.id}')">
+            📖 Detalhes
           </button>
         </div>
       </div>
@@ -251,39 +250,115 @@ document.getElementById('btnAtualizarBusca')?.addEventListener('click', () => {
   window.location.reload();
 });
 
+// ========================================
+// MODAL DE DETALHES
+// ========================================
+async function openModal(id) {
+  const l = BOOKS.find(x => String(x.id) === String(id));
+  if (!l) {
+    console.error("Livro não encontrado:", id);
+    return;
+  }
+
+  const isCarregando = reservasEmAndamento.has(String(l.id));
+
+  document.getElementById('modal-body').innerHTML = `
+    <div class="modal-book-header">
+      <div class="modal-cover" style="background:${l.cor}">
+        <img src="${l.capa}" alt="${l.title}" onerror="this.style.display='none'; this.parentElement.textContent='${l.emoji}'" style="width:100%;height:100%;object-fit:cover;border-radius:8px;">
+      </div>
+      <div class="modal-book-meta">
+        <div class="modal-category">${l.category}</div>
+        <div class="modal-book-title" style="font-size: 20px; font-weight: bold; margin-bottom: 5px;">${l.title}</div>
+        <div class="modal-book-author">${l.author}</div>
+      </div>
+    </div>
+    
+    <div class="modal-info-grid" style="margin-top: 15px;">
+      <div class="modal-info-item"><label>ISBN</label><span>${l.isbn || '-'}</span></div>
+      <div class="modal-info-item"><label>Editora</label><span>${l.editora || '-'}</span></div>
+    </div>
+
+    <div class="modal-desc-title" style="font-weight: bold; margin-top: 15px; margin-bottom: 5px;">Sinopse</div>
+    <p class="modal-desc" style="color:#555; font-size:14px; line-height:1.5;">${l.desc}</p>
+    
+    <div class="modal-actions" style="margin-top:20px; display:flex; gap: 10px;">
+      <button
+        class="btn-primary btn"
+        style="flex: 1;"
+        data-reserve-id="${l.id}"
+        onclick="reservar('${l.id}')"
+        ${isCarregando ? 'disabled aria-busy="true"' : ''}>
+        ${isCarregando ? '⏳ Reservando...' : '📖 Reservar Livro'}
+      </button>
+      <button class="btn btn-secondary" onclick="closeModal()">Fechar</button>
+    </div>
+  `;
+
+  document.getElementById('modal-overlay').classList.add('open');
+}
+window.openModal = openModal;
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open');
+}
+window.closeModal = closeModal;
+
+function closeModalOnOverlay(e) {
+  if (e.target === document.getElementById('modal-overlay')) {
+    closeModal();
+  }
+}
+window.closeModalOnOverlay = closeModalOnOverlay;
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ========================================
+// LÓGICA DE RESERVA
+// ========================================
 function setReservaLoading(livroId, loading) {
   document.querySelectorAll(`[data-reserve-id="${livroId}"]`).forEach((button) => {
     button.disabled = loading;
     button.setAttribute("aria-busy", loading ? "true" : "false");
-    button.textContent = loading ? "⏳ Reservando..." : "📖 Reservar";
+    button.textContent = loading ? "⏳ Reservando..." : "📖 Reservar Livro";
   });
 }
 
-// ========================================
-// RESERVA
-// ========================================
 async function reservar(livroId) {
-  if (reservasEmAndamento.has(livroId)) return;
+  const idStr = String(livroId);
 
-  reservasEmAndamento.add(livroId);
-  setReservaLoading(livroId, true);
+  if (reservasEmAndamento.has(idStr)) return;
+
+  // Busca segura comparando ambos como String
+  const livro = BOOKS.find(b => String(b.id) === idStr);
+  if (!livro) {
+    console.error("Livro não encontrado para o ID:", livroId);
+    window.showAppMessage?.("Livro não encontrado.");
+    return;
+  }
+
+  if (!usuarioAtual) {
+    window.showAppMessage?.("Faça login para solicitar uma reserva.");
+    return;
+  }
+
+  reservasEmAndamento.add(idStr);
+  setReservaLoading(livro.id, true);
 
   try {
-    const livro = BOOKS.find(b => b.id === livroId);
-    if (!livro) return;
-
     await ReservaService.solicitarReserva({
-      supabaseId: livro.id
+      supabaseId: livro.supabaseId || livro.id
     });
 
     window.showAppMessage?.("Livro reservado com sucesso.");
+    closeModal();
     await carregarLivros();
   } catch (error) {
     console.error(error);
-    window.showAppMessage?.("Erro ao reservar livro.");
+    window.showAppMessage?.(error.message || "Erro ao reservar livro.");
   } finally {
-    reservasEmAndamento.delete(livroId);
-    setReservaLoading(livroId, false);
+    reservasEmAndamento.delete(idStr);
+    setReservaLoading(livro.id, false);
   }
 }
-window.reservar = reservar; 
+window.reservar = reservar;

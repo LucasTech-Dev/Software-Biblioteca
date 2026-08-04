@@ -11,22 +11,16 @@
 
   <title>BibliotecaEscolar — Portal do Aluno</title>
 
-  <!-- Google Fonts -->
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
     rel="stylesheet"
   >
 
-  <!-- CSS -->
   <link rel="stylesheet" href="../style/telaAluno.css">
   <script src="../script/pageGuard.js"></script>
 </head>
 
 <body>
-
-  <!-- ========================= -->
-  <!-- HEADER -->
-  <!-- ========================= -->
 
   <header>
 
@@ -35,13 +29,19 @@
       <span class="logo-tag">Biblioteca Online</span>
     </div>
 
-    <span class="header-meta">Portal do Aluno — v1.0</span>
+    <div class="header-actions">
+      <span class="header-meta">Portal do Aluno — v1.0</span>
+      <button id="btnLogout" class="btn-logout" type="button" title="Sair do sistema">
+        <span>Sair da conta</span>
+        <svg viewBox="0 0 24 24">
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+          <polyline points="16 17 21 12 16 7"></polyline>
+          <line x1="21" y1="12" x2="9" y2="12"></line>
+        </svg>
+      </button>
+    </div>
 
   </header>
-
-  <!-- ========================= -->
-  <!-- HERO -->
-  <!-- ========================= -->
 
   <div class="hero">
 
@@ -57,37 +57,7 @@
 
   </div>
 
-  <!-- ========================= -->
-  <!-- ESTATÍSTICAS -->
-  <!-- ========================= -->
-
-  <div class="stats">
-
-    <div class="stat">
-      <span class="stat-num">4</span>
-      <span class="stat-label">Módulos</span>
-    </div>
-
-    <div class="stat">
-      <span class="stat-num">16</span>
-      <span class="stat-label">Funcionalidades</span>
-    </div>
-
-    <div class="stat">
-      <span class="stat-num">1</span>
-      <span class="stat-label">Perfil de usuário</span>
-    </div>
-
-    <div class="stat">
-      <span class="stat-num">100%</span>
-      <span class="stat-label">Web-based</span>
-    </div>
-
-  </div>
-
-  <!-- ========================= -->
-  <!-- MAIN -->
-  <!-- ========================= -->
+  <div class="stats"></div>
 
   <main>
 
@@ -98,12 +68,7 @@
 
     <div class="modules">
 
-      <!-- ========================= -->
-      <!-- ACERVO -->
-      <!-- ========================= -->
-
-      <div class="module-card mod-acervo"
-        onclick="window.location.href='acervo.html'">
+      <div class="module-card mod-acervo" onclick="window.location.href='acervo.html'">
 
         <div class="module-header">
 
@@ -129,7 +94,7 @@
             <li>Fazer reserva de livros online</li>
           </ul>
 
-        </div>
+        </div> 
 
         <div class="module-footer">
           <span class="badge">Módulo central</span>
@@ -138,12 +103,7 @@
 
       </div>
 
-      <!-- ========================= -->
-      <!-- USUÁRIO -->
-      <!-- ========================= -->
-
-      <div class="module-card mod-usuario"
-        onclick="window.location.href='usuario.html'">
+      <div class="module-card mod-usuario" onclick="window.location.href='usuario.html'">
 
         <div class="module-header">
 
@@ -178,12 +138,7 @@
 
       </div>
 
-      <!-- ========================= -->
-      <!-- EMPRÉSTIMOS -->
-      <!-- ========================= -->
-
-      <div class="module-card mod-emprestimos"
-        onclick="window.location.href='meusEmprestimos.html'">
+      <div class="module-card mod-emprestimos" onclick="window.location.href='meusEmprestimos.html'">
 
         <div class="module-header">
 
@@ -218,12 +173,7 @@
 
       </div>
 
-      <!-- ========================= -->
-      <!-- BUSCA -->
-      <!-- ========================= -->
-
-      <div class="module-card mod-busca"
-        onclick="window.location.href='busca.html'">
+      <div class="module-card mod-busca" onclick="window.location.href='busca.html'">
 
         <div class="module-header">
 
@@ -262,24 +212,12 @@
 
   </main>
 
-  <!-- ========================= -->
-  <!-- FOOTER -->
-  <!-- ========================= -->
-
   <footer>
-    <span>BibliotecaEscolar — Portal do Aluno &copy; 2025</span>
+    <span>BibliotecaEscolar — Portal do Aluno &copy; 2026</span>
     <span>Versão 1.0</span>
   </footer>
 
-  <!-- ========================= -->
-  <!-- SCRIPTS -->
-  <!-- ========================= -->
-
   <script type="module" src="../script/telaAluno.js"></script>
- 
-  <!-- Firebase -->
-
-  <!-- Script principal -->
 
 </body>
 

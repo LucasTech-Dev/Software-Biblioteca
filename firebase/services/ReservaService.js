@@ -38,12 +38,6 @@ class ReservaService {
 
             const usuarioId = usuario.id || usuario.uid;
 
-            // Evita reservas duplicadas ativas para o mesmo livro
-            const reservaExistente = await this.verificarReservaExistente({ usuarioId, supabaseId });
-            if (reservaExistente) {
-                throw new Error("Você já possui uma reserva pendente ou aprovada para este livro.");
-            }
-
             // 1. Busca os dados completos do livro (Catálogo + Acervo)
             const livroCompleto = await LivroService.buscarLivroCompleto(supabaseId);
 
@@ -342,5 +336,5 @@ class ReservaService {
         }
     }
 }
-
+ 
 export default new ReservaService();
