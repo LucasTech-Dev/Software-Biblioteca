@@ -21,7 +21,7 @@ const POR_PAGINA = 8;
 let carregando = false;
 
 // ========================================
-// AUTH
+// AUTH E VALIDAÇÃO DE PERFIL
 // ========================================
 onAuthStateChanged(auth, async (user) => {
   if (!user) {
@@ -31,6 +31,21 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   usuarioAtual = user;
+
+  // Lógica de redirecionamento dinâmico do botão "Voltar"
+  const email = user.email || "";
+  const btnVoltar = document.getElementById("btnVoltar");
+
+  if (btnVoltar) {
+    if (email.includes("@educar")) {
+      btnVoltar.href = "telaProfessor.html";
+    } else if (email.includes("@estudante")) {
+      btnVoltar.href = "indexTelaAluno.html";
+    } else {
+      // Fallback de segurança para perfil de aluno
+      btnVoltar.href = "indexTelaAluno.html"; 
+    }
+  }
 
   try {
     await carregarLivros();
