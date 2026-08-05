@@ -1,0 +1,22 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+/* Tema personalizado combinando com o projeto */
+@plugin "daisyui/theme" {
+  name: "biblioteca";
+  default: true;
+  color-scheme: "dark";
+  
+  --color-primary: #3b82f6;          /* Azul destaque */
+  --color-primary-content: #ffffff;
+  --color-secondary: #8b5cf6;        /* Roxo */
+  --color-secondary-content: #ffffff;
+  --color-accent: #10b981;           /* Verde sucesso */
+  --color-accent-content: #ffffff;
+  --color-neutral: #1f2937;
+  --color-neutral-content: #f3f4f6;
+  --color-base-100: #1e293b;         /* Fundo dos Cards e Modal */
+  --color-base-200: #0f172a;         /* Fundo da Página */
+  --color-base-300: #334155;         /* Bordas */
+  --color-base-content: #f8fafc;     /* Cor dos textos */
+}

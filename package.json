@@ -1,0 +1,12 @@
+{
+  "name": "software-biblioteca",
+  "version": "1.0.0",
+  "scripts": {
+    "build:css": "npx @tailwindcss/cli -i ./style/tailwind.css -o ./style/output.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "daisyui": "^5.7.15",
+    "tailwindcss": "^4.3.3"
+  }
+}

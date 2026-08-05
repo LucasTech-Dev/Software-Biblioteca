@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Alunos - Biblioteca</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['"DM Sans"', 'sans-serif'],
+              display: ['"Playfair Display"', 'serif'],
+            },
+            colors: {
+              biblio: {
+                dark: '#1a3a6b',    /* Azul Escuro (Botões, Títulos e Nav) */
+                hover: '#1e4d8c',   /* Azul Hover */
+                light: '#e6f1fb',   /* Fundo Azul Claro */
+                border: '#85b7eb'   /* Bordas Azuis */
+              }
+            }
+          }
+        }
+      }
+    </script>
+</head>
+<body class="bg-[#f8fafc] min-h-screen font-sans text-gray-800">
+
+    <header class="bg-biblio-dark border-b border-biblio-hover px-8 py-4 flex justify-between items-center shadow-md">
+        <a class="flex flex-col" href="telaProfessor.html">
+            <span class="text-xs font-bold text-biblio-light uppercase tracking-wider">Instituto Estadual Riachuelo</span>
+            <span class="text-2xl font-display font-bold text-white">Biblioteca Online</span>
+        </a>
+        <div class="flex items-center gap-4">
+            <span class="text-sm font-bold text-biblio-dark bg-white px-4 py-1.5 rounded-full shadow-sm">Painel Professor</span>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-10 max-w-6xl">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4 border-b border-gray-200 pb-6">
+            <div>
+                <h1 class="text-4xl font-display font-bold text-biblio-dark flex items-center gap-3">
+                    <i class="fa-solid fa-users-gear text-3xl"></i> Gestão de Alunos
+                </h1>
+                <p class="text-gray-500 mt-2 text-lg">Histórico de leitura e saldo de moedas dos alunos.</p>
+            </div>
+            
+            <div class="flex flex-wrap gap-3">
+                <a href="telaProfessor.html" class="btn bg-biblio-dark hover:bg-biblio-hover text-white border-none rounded font-medium shadow-sm px-6 h-12 min-h-12 flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-left"></i> Voltar
+                </a>
+                
+                <button onclick="window.atualizarDados()" class="btn bg-biblio-dark hover:bg-biblio-hover text-white border-none rounded font-medium shadow-sm px-6 h-12 min-h-12 flex items-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> Atualizar Dados
+                </button>
+            </div>
+        </div>
+
+        <div id="loadingScreen" class="hidden justify-center items-center py-20 flex-col gap-4">
+            <span class="loading loading-spinner loading-lg text-biblio-dark"></span>
+            <p class="text-gray-500 font-medium">Buscando registros na base de dados...</p>
+        </div>
+
+        <div id="gridAlunos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            </div>
+    </main>
+
+    <dialog id="modal_aluno" class="modal modal-bottom sm:modal-middle backdrop-blur-sm">
+        <div class="modal-box bg-white rounded-xl shadow-2xl p-8 border-t-4 border-biblio-dark">
+            <h3 id="modalNomeAluno" class="font-display font-bold text-3xl text-biblio-dark mb-4">Nome do Aluno</h3>
+            
+            <div id="modalMoedas" class="inline-flex items-center gap-2 bg-amber-50 text-amber-700 border border-amber-200 rounded-lg px-4 py-2 font-bold mb-8">
+                <i class="fa-solid fa-coins text-amber-500 text-lg"></i>
+                <span class="text-xl">0</span> Moedas
+            </div>
+
+            <div class="space-y-6">
+                <div>
+                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-book-open"></i> Empréstimos Ativos
+                    </h4>
+                    <ul id="listaEmprestados" class="bg-gray-50 rounded border border-gray-100 p-2 text-sm divide-y divide-gray-100">
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-2">
+                        <i class="fa-solid fa-clock-rotate-left"></i> Histórico de Devoluções
+                    </h4>
+                    <ul id="listaDevolvidos" class="bg-gray-50 rounded border border-gray-100 p-2 text-sm divide-y divide-gray-100">
+                    </ul>
+                </div>
+            </div>
+
+            <div class="modal-action mt-8 pt-4 border-t border-gray-100">
+                <form method="dialog">
+                    <button class="btn bg-biblio-dark hover:bg-biblio-hover text-white border-none px-8">Fechar Painel</button>
+                </form>
+            </div>
+        </div>
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+
+    <script src="../script/scriptUsuario.js" type="module"></script>
+</body>
+</html>
