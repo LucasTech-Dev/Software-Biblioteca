@@ -2,19 +2,19 @@
 <html lang="pt-BR">
 
 <head>
-
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../style/emprestimos.css">
   <script src="../script/pageGuard.js"></script>
 
+  <script src="https://cdn.tailwindcss.com"></script>
+
   <title>BibliotecaEscolar — Empréstimos</title>
  
   <link
     href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap"
     rel="stylesheet">
-
 </head>
  
 <body>
@@ -24,8 +24,19 @@
     <div>Módulo Empréstimos</div>
   </header>
 
-  <div class="hero">
+  <div class="px-5 py-3 bg-white border-b border-slate-200">
+    <button 
+      onclick="window.history.back()" 
+      class="flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-700 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors shadow-sm cursor-pointer"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+      </svg>
+      Voltar
+    </button>
+  </div>
 
+  <div class="hero">
     <h1>
       Controle de <span>Empréstimos</span><br>
       e <span>Devoluções</span>
@@ -34,7 +45,6 @@
     <p>
       Gerencie retiradas, devoluções e acompanhe o status dos livros da biblioteca escolar.
     </p>
-
   </div>
 
   <div style="
@@ -118,7 +128,7 @@
         class="btn btn-danger"
         id="btnExcluirGeral"
         style="display:none;">
-        🗑 Excluir Tudo
+        🗑️ Excluir Tudo
       </button>
 
     </div>
@@ -126,7 +136,6 @@
     <div class="card">
 
       <table>
-
         <thead>
           <tr>
             <th>Aluno</th>
@@ -137,11 +146,9 @@
             <th>Status</th>
           </tr>
         </thead>
-
         <tbody>
           <tr></tr>
         </tbody>
-
       </table>
 
     </div>
@@ -149,21 +156,17 @@
   </main>
 
   <div id="modalAprovacao" class="modal">
-
     <div class="modal-content">
-
       <h2>Aprovar Empréstimo</h2>
 
       <p>
         <strong>Aluno:</strong>
         <span id="modalAluno"></span>
       </p>
-
       <p>
         <strong>Turma:</strong>
         <span id="modalTurma"></span>
       </p>
-
       <p>
         <strong>Livro:</strong>
         <span id="modalLivro"></span>
@@ -176,80 +179,64 @@
       <input type="date" id="dataEntrega">
 
       <div class="modal-actions">
-
         <button id="btnNegarModal" class="btn btn-danger">
           Negar
         </button>
-
         <button id="btnCancelarModal" class="btn btn-secondary">
           Cancelar
         </button>
-
         <button id="btnConfirmarModal" class="btn btn-primary">
           Confirmar
         </button>
-
       </div>
-
     </div>
-
   </div>
 
   <div id="modalDevolucao" class="modal">
-
     <div class="modal-content">
-
       <h2>Registrar Devolução</h2>
 
       <p>
         <strong>Aluno:</strong>
         <span id="devolucaoAluno"></span>
       </p>
-
       <p>
         <strong>Livro:</strong>
         <span id="devolucaoLivro"></span>
       </p>
-
       <p>
         <strong>Prazo:</strong>
         <span id="devolucaoPrazo"></span>
       </p>
 
       <div class="modal-actions">
-
         <button id="btnCancelarDevolucao" class="btn btn-secondary">
           Cancelar
         </button>
-
         <button id="btnConfirmarDevolucao" class="btn btn-primary">
           Marcar como devolvido
         </button>
+      </div>
+    </div>
+  </div>
 
+  <div id="modalResumoProfessor" class="modal">
+    <div class="modal-content">
+      <h2>Resumo do Aluno</h2>
+
+      <p><strong>Aluno:</strong> <span id="profResumoAluno"></span></p>
+      <p><strong>Livro:</strong> <span id="profResumoLivro"></span></p>
+
+      <div style="background: #F4F7FB; border: 1px solid #E2E8F0; padding: 12px; border-radius: 8px; margin: 12px 0; max-height: 180px; overflow-y: auto;">
+        <p id="profResumoTexto" style="white-space: pre-wrap; font-size: 14px; color: #334155; margin: 0;"></p>
       </div>
 
-    </div>
-
-  </div>
-
-
-<div id="modalResumoProfessor" class="modal">
-  <div class="modal-content">
-    <h2>Resumo do Aluno</h2>
-
-    <p><strong>Aluno:</strong> <span id="profResumoAluno"></span></p>
-    <p><strong>Livro:</strong> <span id="profResumoLivro"></span></p>
-
-    <div style="background: #F4F7FB; border: 1px solid #E2E8F0; padding: 12px; border-radius: 8px; margin: 12px 0; max-height: 180px; overflow-y: auto;">
-      <p id="profResumoTexto" style="white-space: pre-wrap; font-size: 14px; color: #334155; margin: 0;"></p>
-    </div>
-
-    <div class="modal-actions">
-      <button id="btnFecharResumoProf" class="btn btn-secondary">Fechar</button>
-      <button id="btnAprovarResumoProf" class="btn btn-primary">Aprovar (+1 🪙)</button>
+      <div class="modal-actions">
+        <button id="btnFecharResumoProf" class="btn btn-secondary">Fechar</button>
+        <button id="btnAprovarResumoProf" class="btn btn-primary">Aprovar (+1 🪙)</button>
+      </div>
     </div>
   </div>
-</div>
 
   <script type="module" src="../script/emprestimos.js"></script>
 
