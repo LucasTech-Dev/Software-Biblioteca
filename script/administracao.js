@@ -23,12 +23,26 @@ let listaUsuarios = [];
 let listaLogs = [];
 let currentAdminNome = "Administrador";
 
-// Mapeamentos Visuais
+// Mapeamentos Visuais - Tailwind & DaisyUI
 const tipoLabel = { admin: "Admin", prof: "Professor", aluno: "Aluno", bibliotecario: "Bibliotecário" };
-const tipoClass = { admin: "role-admin", prof: "role-prof", aluno: "role-aluno", bibliotecario: "role-admin" };
+const tipoClass = { 
+  admin: "badge badge-primary badge-sm text-white", 
+  prof: "badge badge-info badge-sm text-white", 
+  aluno: "badge badge-neutral badge-sm", 
+  bibliotecario: "badge badge-primary badge-sm text-white" 
+};
 
 const logLabel = { cfg: "Config", back: "Backup", add: "Adição", del: "Remoção", acc: "Acesso", EMPRESTIMO: "Empréstimo", DEVOLUCAO: "Devolução", RESERVA: "Reserva" };
-const logClass = { cfg: "log-cfg", back: "log-back", add: "log-add", del: "log-del", acc: "log-acc", EMPRESTIMO: "log-add", DEVOLUCAO: "log-acc", RESERVA: "log-cfg" };
+const logClass = { 
+  cfg: "badge badge-warning badge-sm text-white", 
+  back: "badge badge-info badge-sm text-white", 
+  add: "badge badge-success badge-sm text-white", 
+  del: "badge badge-error badge-sm text-white", 
+  acc: "badge badge-primary badge-sm text-white", 
+  EMPRESTIMO: "badge badge-success badge-sm text-white", 
+  DEVOLUCAO: "badge badge-primary badge-sm text-white", 
+  RESERVA: "badge badge-warning badge-sm text-white" 
+};
 
 // ========================================
 // INICIALIZAÇÃO
@@ -79,23 +93,21 @@ async function carregarConfiguracoes() {
 
 async function carregarUsuarios() {
   try {
-    // Usamos o Service para buscar todos os usuários
     listaUsuarios = await UsuarioService.listarTodos(); 
     renderUsuarios();
   } catch (error) {
     console.error("Erro ao carregar usuários:", error);
-    tbodyUsuarios.innerHTML = `<tr><td colspan="5" style="text-align:center;">Erro ao carregar usuários.</td></tr>`;
+    tbodyUsuarios.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-base-content/50">Erro ao carregar usuários.</td></tr>`;
   }
 }
 
 async function carregarLogs() {
   try {
-    // Usamos o Service de Logs
-    listaLogs = await listarLogs(50); // Função no service que busca os 50 mais recentes
+    listaLogs = await listarLogs(50); 
     renderLogs();
   } catch (error) {
     console.error("Erro ao carregar logs:", error);
-    tbodyLogs.innerHTML = `<tr><td colspan="4" style="text-align:center;">Erro ao carregar logs.</td></tr>`;
+    tbodyLogs.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-base-content/50">Erro ao carregar logs.</td></tr>`;
   }
 }
 
@@ -104,7 +116,7 @@ async function carregarLogs() {
 // ========================================
 function renderUsuarios() {
   if (!listaUsuarios || !listaUsuarios.length) {
-    tbodyUsuarios.innerHTML = `<tr><td colspan="5" style="text-align:center;">Nenhum usuário encontrado.</td></tr>`;
+    tbodyUsuarios.innerHTML = `<tr><td colspan="5" class="text-center py-6 text-base-content/50">Nenhum usuário encontrado.</td></tr>`;
     return;
   }
 
@@ -112,24 +124,26 @@ function renderUsuarios() {
     const tipoF = u.perfil || "aluno"; 
     const ativoStatus = u.ativo !== false; 
     const tipoStr = tipoLabel[tipoF] || tipoF;
-    const classeStr = tipoClass[tipoF] || "role-aluno";
+    const classeStr = tipoClass[tipoF] || "badge badge-neutral badge-sm";
 
     return `
       <tr>
-        <td style="font-weight:500;color:#1a2740;">${u.nome || 'Sem Nome'}</td>
-        <td style="color:#5a80aa;">${u.email || 'Sem Email'}</td>
-        <td><span class="role-tag ${classeStr}">${tipoStr}</span></td>
+        <td class="font-medium text-base-content">${u.nome || 'Sem Nome'}</td>
+        <td class="text-base-content/70">${u.email || 'Sem Email'}</td>
+        <td><span class="${classeStr}">${tipoStr}</span></td>
         <td>
-          <span class="${ativoStatus ? 'status-ativo' : 'status-inativo'}">
+          <span class="${ativoStatus ? 'text-success font-semibold' : 'text-error font-semibold'}">
             ${ativoStatus ? '● Ativo' : '○ Inativo'}
           </span>
         </td>
-        <td class="table-actions">
-          <button class="btn-sm btn-sm--edit" onclick="window.editarPermissao('${u.id || u.uid}', '${u.nome}')">✎ Editar</button>
-          <button class="btn-sm ${ativoStatus ? 'btn-sm--toggle-off' : 'btn-sm--toggle-on'}"
-                  onclick="window.toggleStatus('${u.id || u.uid}', ${ativoStatus}, '${u.nome}')">
-            ${ativoStatus ? '○ Desativar' : '● Ativar'}
-          </button>
+        <td>
+          <div class="flex flex-wrap gap-2">
+            <button class="btn btn-xs btn-outline" onclick="window.editarPermissao('${u.id || u.uid}', '${u.nome}')">✎ Editar</button>
+            <button class="btn btn-xs btn-outline ${ativoStatus ? 'btn-error' : 'btn-success'}"
+                    onclick="window.toggleStatus('${u.id || u.uid}', ${ativoStatus}, '${u.nome}')">
+              ${ativoStatus ? '○ Desativar' : '● Ativar'}
+            </button>
+          </div>
         </td>
       </tr>
     `;
@@ -140,7 +154,7 @@ function renderLogs() {
   if (!listaLogs || !listaLogs.length) {
     tbodyLogs.innerHTML = `
       <tr>
-        <td colspan="4" style="text-align:center;color:#8aabcc;padding:24px;font-style:italic;">
+        <td colspan="4" class="text-center py-6 text-base-content/50 italic">
           Nenhum log registrado.
         </td>
       </tr>`;
@@ -150,15 +164,15 @@ function renderLogs() {
   tbodyLogs.innerHTML = listaLogs.map(l => {
     const dataHora = formatarData(l.criadoEm);
     const logTipoStr = logLabel[l.tipo] || "Sistema";
-    const logClasseStr = logClass[l.tipo] || "log-cfg";
+    const logClasseStr = logClass[l.tipo] || "badge badge-neutral badge-sm";
     const acaoTexto = l.detalhes ? l.detalhes : (l.acao || `Ação: ${l.tipo}`);
 
     return `
       <tr>
-        <td style="color:#5a80aa;font-size:12px;">${dataHora}</td>
-        <td><span class="log-tag ${logClasseStr}">${logTipoStr}</span></td>
+        <td class="text-xs text-base-content/70">${dataHora}</td>
+        <td><span class="${logClasseStr}">${logTipoStr}</span></td>
         <td>${acaoTexto}</td>
-        <td style="color:#5a80aa;font-size:12px;">${l.nomeUsuario || l.usr || 'Sistema'}</td>
+        <td class="text-xs text-base-content/70">${l.nomeUsuario || l.usr || 'Sistema'}</td>
       </tr>
     `;
   }).join('');
@@ -200,7 +214,7 @@ async function limparLogsAcao() {
   if (!confirmar) return;
 
   try {
-    await limparTodosLogs(); // Função que deve existir no seu logServices.js
+    await limparTodosLogs(); 
     listaLogs = [];
     renderLogs();
     
@@ -219,7 +233,6 @@ async function limparLogsAcao() {
 window.toggleStatus = async function(uid, estadoAtual, nome) {
   try {
     const novoEstado = !estadoAtual;
-    // Precisamos que o UsuarioService tenha um método de atualizar
     await UsuarioService.atualizar(uid, { ativo: novoEstado });
 
     const acaoText = novoEstado ? "ativado" : "desativado";
@@ -266,10 +279,10 @@ function formatarData(timestamp) {
 
 function mostrarToast(msg) {
   toast.textContent = msg;
-  toast.style.display = "flex";
+  toast.classList.remove("hidden"); // Remove a classe hidden do Tailwind
   clearTimeout(toast._timer);
-  toast._timer = setTimeout(() => { toast.style.display = "none"; }, 3500);
-}
+  toast._timer = setTimeout(() => { toast.classList.add("hidden"); }, 3500);
+} 
 
 // ========================================
 // EVENT LISTENERS DE BOTÕES
