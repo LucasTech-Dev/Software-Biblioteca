@@ -207,19 +207,15 @@ window.confirmarSalvarECadastrar = async () => {
   // Converter a string de autores separados por vírgula em um array estruturado
   const autoresArray = autoresInput.split(',').map(a => a.trim()).filter(a => a !== '');
 
-  // Cores estéticas aleatórias para o background padrão de capa
-  const coresCapa = ['#E8EDFF', '#FEE2E2', '#FEF3C7', '#D1FAE5', '#E0F2FE', '#F3E8FF'];
-  const corAleatoria = coresCapa[Math.floor(Math.random() * coresCapa.length)];
-
   const novoLivroSupabase = {
     titulo: titulo,
     autores: autoresArray,
     isbn: isbn,
-    categoria: categoria,
+    categorias: [categoria],
     desc: desc || "Nenhuma sinopse cadastrada para este exemplar.",
-    cor: corAleatoria,
-    emoji: "📖",
+    emoji: "📖", // O SupabaseLivroService vai enviar, certifique-se que o banco aceita se der erro de novo
     capa: `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false`
+    // Removi a chave "cor" daqui para evitar qualquer conflito residual, já que o backend a recusa.
   };
 
   try {
@@ -247,7 +243,7 @@ window.confirmarSalvarECadastrar = async () => {
 };
 
 /* ============================================== */
-/* AUXILIARES DE INTERFAZ                         */
+/* AUXILIARES DE INTERFACE                        */
 /* ============================================== */
 function limparInputsPrincipais() {
   const t = document.getElementById('add-titulo');

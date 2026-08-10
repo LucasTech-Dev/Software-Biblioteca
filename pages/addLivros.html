@@ -1,70 +1,27 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-
+<html lang="pt-BR" data-theme="winter">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Biblioteca Online — Importar Livros</title>
-  
-  <link rel="stylesheet" href="../style/addLivros.css">
+  <meta name="description" content="Sistema Biblioteca Escolar - Importar Livros">
+  <meta name="author" content="Lucas Sant'Ana Dias">
+  <title>BibliotecaEscolar - Importar Livros</title>
+
   <script src="../script/pageGuard.js"></script>
 
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/daisyui@4.7.2/dist/full.min.css" rel="stylesheet" type="text/css" />
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   
   <style>
-    /* Formulário Simples de Importação */
-    .add-form-container {
-      background: white;
-      padding: 24px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      margin-bottom: 24px;
-      display: flex;
-      gap: 16px;
-      align-items: flex-end;
-      flex-wrap: wrap;
-    }
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      flex: 1;
-      min-width: 240px;
-    }
-    .input-group label {
-      margin-bottom: 8px;
-      font-weight: 500;
-      font-size: 14px;
-      color: #333;
-    }
-    .input-group input, .input-group textarea, .input-group select {
-      padding: 12px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 15px;
-      outline: none;
-      transition: border-color 0.2s;
-      background: #fff;
-    }
-    .input-group input:focus, .input-group textarea:focus, .input-group select:focus {
-      border-color: #1E3A8A;
-    }
-    .btn-search {
-      padding: 12px 24px;
-      background: #1E3A8A;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 700;
-      height: 46px;
-      font-size: 15px;
-      transition: background 0.2s;
-    }
-    .btn-search:hover {
-      background: #172e6e;
-    }
+    body { font-family: 'DM Sans', sans-serif; }
+    h1, h2, .font-serif { font-family: 'Playfair Display', serif; }
+    
+    .bg-escola-blue { background-color: #21408E; }
 
-    /* Estilos do Modal Adicional */
+    /* Modal Overlay com transição suave compatível com o addLivros.js */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -72,109 +29,121 @@
       width: 100%;
       height: 100%;
       background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(2px);
       display: flex;
       align-items: center;
       justify-content: center;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.25s ease-in-out;
       z-index: 1000;
     }
     .modal-overlay.open {
       opacity: 1;
       pointer-events: auto;
     }
-    .modal {
-      background: white;
-      width: 90%;
-      max-width: 500px;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-      transform: translateY(-20px);
-      transition: transform 0.3s ease;
+    .modal-card {
+      transform: translateY(-15px);
+      transition: transform 0.25s ease-in-out;
     }
-    .modal-overlay.open .modal {
+    .modal-overlay.open .modal-card {
       transform: translateY(0);
-    }
-    .modal-header {
-      padding: 20px;
-      border-bottom: 1px solid #eee;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .modal-title {
-      font-size: 18px;
-      font-weight: bold;
-      color: #1E3A8A;
-    }
-    .modal-close {
-      background: none;
-      border: none;
-      font-size: 20px;
-      cursor: pointer;
-      color: #888;
-    }
-    .modal-body {
-      padding: 20px;
-      max-height: 70vh;
-      overflow-y: auto;
     }
   </style>
 </head>
+<body class="bg-base-200 min-h-screen flex flex-col">
 
-<body>
-
-  <header>
-    <div class="logo">
-      <span class="logo-mark">Instituto Estadual Riachuelo</span>
-      <span class="logo-tag">Gestão de Acervo</span>
-    </div>
-    <span class="header-meta">Versão 1.0</span>
-  </header>
-
-  <div class="page active">
-    <nav class="breadcrumb">
-      <a href="telaProfessor.html">Início</a>
-      <span class="breadcrumb-sep">›</span>
-      <span class="breadcrumb-current">Importar Livros</span>
-    </nav>
-
-    <div class="hero">
-      <h1>Importar<br><span>Livros</span></h1>
-      <p class="hero-desc">
-        Adicione exemplares diretamente ao acervo. O sistema buscará as informações no catálogo global; caso o livro não exista, você poderá cadastrá-lo na hora.
-      </p>
-    </div>
-
-    <main>
-      <div class="add-form-container">
-        <div class="input-group">
-          <label for="add-titulo">Título do Livro</label>
-          <input type="text" id="add-titulo" placeholder="Ex: O Pequeno Príncipe">
-        </div>
-        <div class="input-group">
-          <label for="add-isbn">ISBN do Livro</label>
-          <input type="text" id="add-isbn" placeholder="Ex: 9788531505324">
-        </div>
-        <button class="btn-search" onclick="adicionarLivro()">➕ Adicionar Livro</button>
+  <section class="bg-escola-blue text-white py-6 px-8 shadow-md">
+    <div class="container mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+      
+      <div>
+        <h1 class="text-3xl font-bold font-serif mb-1">Importar Livros</h1>
+        <p class="text-white/70 text-sm max-w-2xl">
+          Adicione exemplares diretamente ao acervo. O sistema buscará as informações no catálogo global; caso o livro não exista, você poderá cadastrá-lo na hora.
+        </p>
       </div>
 
-      <div id="catalogo-grid" class="books-grid"></div>
-    </main>
-  </div>
+      <div class="flex-none flex items-center gap-2 sm:gap-4">
+        <button onclick="window.location.reload()" class="btn btn-sm btn-ghost text-white hover:bg-white/10 font-normal">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 mr-1">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+          </svg>
+          Atualizar
+        </button>
+
+        <a href="telaProfessor.html" class="btn btn-sm btn-outline text-white hover:bg-white hover:text-[#21408E] font-normal border-white/50">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-4 h-4 mr-1">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
+          </svg>
+          Voltar
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <main class="flex-1 container mx-auto px-4 py-8 max-w-5xl">
+    
+    <section class="card bg-base-100 shadow-xl mb-8">
+      <div class="card-body">
+        <h2 class="card-title font-serif text-2xl text-neutral-800 mb-2">Buscar ou Cadastrar Exemplar</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+          
+          <div class="form-control md:col-span-5">
+            <label class="label" for="add-titulo">
+              <span class="label-text font-semibold text-neutral-700">Título do Livro</span>
+            </label>
+            <input type="text" id="add-titulo" placeholder="Ex: O Pequeno Príncipe" class="input input-bordered w-full focus:outline-none focus:border-[#21408E]" />
+          </div>
+
+          <div class="form-control md:col-span-4">
+            <label class="label" for="add-isbn">
+              <span class="label-text font-semibold text-neutral-700">ISBN do Livro</span>
+            </label>
+            <input type="text" id="add-isbn" placeholder="Ex: 9788531505324" class="input input-bordered w-full focus:outline-none focus:border-[#21408E]" />
+          </div>
+
+          <div class="md:col-span-3">
+            <button onclick="adicionarLivro()" class="btn w-full text-white hover:opacity-90 font-bold border-none" style="background-color: #21408E;">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 mr-1">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              Adicionar Livro
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <div id="catalogo-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      </div>
+
+  </main>
 
   <div class="modal-overlay" id="modal-overlay" onclick="closeModalOnOverlay(event)">
-    <div class="modal">
-      <div class="modal-header">
-        <span class="modal-title" id="modal-title">Adicionar Exemplares</span>
-        <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-card card bg-base-100 w-11/12 max-w-lg shadow-2xl overflow-hidden border border-base-300">
+      
+      <div class="p-4 border-b border-base-200 flex justify-between items-center bg-base-200/50">
+        <h3 class="font-serif font-bold text-xl text-[#21408E]" id="modal-title">Adicionar Exemplares</h3>
+        <button class="btn btn-sm btn-circle btn-ghost" onclick="closeModal()">✕</button>
       </div>
-      <div class="modal-body" id="modal-body">
+      
+      <div class="p-6 max-h-[75vh] overflow-y-auto" id="modal-body">
         </div>
+
     </div>
   </div>
+
+  <footer class="footer items-center p-4 bg-neutral text-neutral-content mt-auto">
+    <div class="items-center grid-flow-col">
+      <p>BibliotecaEscolar - Sistema de Gestão &copy; 2026</p>
+    </div>
+    <div class="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
+      <p>Módulo: Acervo v1.0</p>
+    </div>
+  </footer>
 
   <script type="module" src="../script/addLivros.js"></script>
 </body>

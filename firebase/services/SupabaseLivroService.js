@@ -39,17 +39,18 @@ class SupabaseLivroService {
 
     /**
      * Busca um livro pelo ISBN.
+     * Uso de .maybeSingle() para evitar erro quando o livro não existe.
      */
     async buscarPorISBN(isbn) {
         const { data, error } = await supabase
             .from("livros")
             .select("*")
             .eq("isbn", isbn)
-            .single();
+            .maybeSingle();
 
         if (error) {
             console.error("Erro ao buscar ISBN:", error);
-            throw error;
+            return null;
         }
 
         return data;
@@ -115,9 +116,19 @@ class SupabaseLivroService {
      * Registra um novo livro global no catálogo do Supabase.
      */
     async criarLivro(livro) {
+        // Envia apenas as colunas válidas existentes no banco
+        const payload = {
+            titulo: livro.titulo,
+            isbn: livro.isbn,
+            autores: livro.autores || [],
+            categorias: livro.categorias || [],
+            capa: livro.capa || null,
+            descricao: livro.desc || livro.descricao || null
+        };
+
         const { data, error } = await supabase
             .from("livros")
-            .insert([livro])
+            .insert([payload])
             .select()
             .single();
 
