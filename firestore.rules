@@ -35,18 +35,18 @@ service cloud.firestore {
 
     match /usuarios/{userId} {
       allow read: if isProfessor() || isOwner(userId);
-
       allow create: if isOwner(userId)
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.perfil == 'aluno';
-
-      allow update: if isProfessor()
-        && request.resource.data.perfil in ['aluno', 'professor']
-        && request.resource.data.uid == resource.data.uid
-        || (isOwner(userId)
+      allow update: if (
+          isProfessor()
+          && request.resource.data.perfil in ['aluno', 'professor']
+          && request.resource.data.uid == resource.data.uid
+        ) || (
+          isOwner(userId)
           && request.resource.data.perfil == resource.data.perfil
-          && keepsUserIdentity());
-
+          && keepsUserIdentity()
+        );
       allow delete: if false;
     }
 
@@ -58,31 +58,26 @@ service cloud.firestore {
     match /reservas/{document} {
       allow read: if isProfessor()
         || (isAuthenticated() && isOwner(resource.data.usuarioId));
-
       allow create: if isAluno()
         && isOwner(request.resource.data.usuarioId)
         && request.resource.data.status == 'PENDENTE';
-
       allow update: if isProfessor()
         || (isOwner(resource.data.usuarioId)
+          && resource.data.status == 'PENDENTE'
           && request.resource.data.usuarioId == resource.data.usuarioId
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'visivelAluno', 'observacao'])
           && request.resource.data.status in ['PENDENTE', 'CANCELADA']);
-
       allow delete: if false;
     }
 
     match /emprestimos/{document} {
       allow read: if isProfessor()
         || (isAuthenticated() && isOwner(resource.data.usuarioId));
-
       allow create: if isProfessor();
-
       allow update: if isProfessor()
         || (isOwner(resource.data.usuarioId)
           && request.resource.data.usuarioId == resource.data.usuarioId
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['visivelAluno']));
-
       allow delete: if false;
     }
 
@@ -91,7 +86,8 @@ service cloud.firestore {
       allow create: if isProfessor();
       allow update: if isAuthenticated()
         && isOwner(resource.data.usuarioId)
-        && request.resource.data.usuarioId == resource.data.usuarioId;
+        && request.resource.data.usuarioId == resource.data.usuarioId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lida']);
       allow delete: if isAuthenticated() && isOwner(resource.data.usuarioId);
     }
 
@@ -100,6 +96,7 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // Fail closed: collections not explicitly declared above are denied.
     match /{document=**} {
       allow read, write: if false;
     }
