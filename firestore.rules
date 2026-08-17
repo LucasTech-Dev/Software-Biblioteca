@@ -6,23 +6,44 @@ service cloud.firestore {
       return request.auth != null;
     }
 
+    function userDoc() {
+      return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data;
+    }
+
     function isProfessor() {
-      return isAuthenticated() && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == 'professor';
+      return isAuthenticated()
+        && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid))
+        && userDoc().perfil == 'professor';
     }
 
     function isAluno() {
-      return isAuthenticated() && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.perfil == 'aluno';
+      return isAuthenticated()
+        && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid))
+        && userDoc().perfil == 'aluno';
     }
 
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
+    function keepsUserIdentity() {
+      return request.resource.data.uid == resource.data.uid
+        && request.resource.data.email == resource.data.email;
+    }
+
+    function keepsOwner(field) {
+      return request.resource.data[field] == resource.data[field];
+    }
+
     match /usuarios/{userId} {
       allow read: if isAuthenticated() && (isProfessor() || isOwner(userId));
-      allow create: if isAuthenticated() && isOwner(userId);
+      // Self-registration can only create an aluno. Professor accounts must be provisioned separately.
+      allow create: if isOwner(userId)
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.perfil == 'aluno';
       allow update: if isAuthenticated() && (
-        isProfessor() || (isOwner(userId) && request.resource.data.perfil == resource.data.perfil)
+        (isProfessor() && request.resource.data.uid == resource.data.uid)
+        || (isOwner(userId) && request.resource.data.perfil == resource.data.perfil && keepsUserIdentity())
       );
       allow delete: if false;
     }
@@ -34,9 +55,11 @@ service cloud.firestore {
 
     match /reservas/{document} {
       allow read: if isAuthenticated() && (isProfessor() || isOwner(resource.data.usuarioId));
-      allow create: if isAuthenticated() && isAluno();
+      allow create: if isAluno() && isOwner(request.resource.data.usuarioId);
       allow update: if isAuthenticated() && (
-        isProfessor() || isOwner(resource.data.usuarioId)
+        (isProfessor())
+        || (isOwner(resource.data.usuarioId)
+          && request.resource.data.usuarioId == resource.data.usuarioId)
       );
       allow delete: if false;
     }
@@ -45,14 +68,16 @@ service cloud.firestore {
       allow read: if isAuthenticated() && (isProfessor() || isOwner(resource.data.usuarioId));
       allow create: if isProfessor();
       allow update: if isAuthenticated() && (
-        isProfessor() || isOwner(resource.data.usuarioId)
+        isProfessor()
+        || (isOwner(resource.data.usuarioId)
+          && request.resource.data.usuarioId == resource.data.usuarioId)
       );
       allow delete: if false;
     }
 
     match /notificacoes/{document} {
       allow read: if isAuthenticated() && isOwner(resource.data.usuarioId);
-      allow create: if isAuthenticated() && isProfessor();
+      allow create: if isProfessor();
       allow update: if isAuthenticated()
         && isOwner(resource.data.usuarioId)
         && request.resource.data.usuarioId == resource.data.usuarioId;
@@ -60,8 +85,7 @@ service cloud.firestore {
     }
 
     match /logs/{document} {
-      allow read: if isProfessor();
-      allow write: if isProfessor();
+      allow read, write: if isProfessor();
     }
   }
 }
