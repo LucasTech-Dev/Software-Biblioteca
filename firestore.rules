@@ -10,16 +10,18 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data;
     }
 
-    function isProfessor() {
+    function hasProfile(profile) {
       return isAuthenticated()
         && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid))
-        && userDoc().perfil == 'professor';
+        && userDoc().perfil == profile;
+    }
+
+    function isProfessor() {
+      return hasProfile('professor');
     }
 
     function isAluno() {
-      return isAuthenticated()
-        && exists(/databases/$(database)/documents/usuarios/$(request.auth.uid))
-        && userDoc().perfil == 'aluno';
+      return hasProfile('aluno');
     }
 
     function isOwner(userId) {
@@ -31,20 +33,15 @@ service cloud.firestore {
         && request.resource.data.email == resource.data.email;
     }
 
-    function keepsOwner(field) {
-      return request.resource.data[field] == resource.data[field];
-    }
-
     match /usuarios/{userId} {
-      allow read: if isAuthenticated() && (isProfessor() || isOwner(userId));
-      // Self-registration can only create an aluno. Professor accounts must be provisioned separately.
+      allow read: if isProfessor() || isOwner(userId);
       allow create: if isOwner(userId)
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.perfil == 'aluno';
-      allow update: if isAuthenticated() && (
-        (isProfessor() && request.resource.data.uid == resource.data.uid)
-        || (isOwner(userId) && request.resource.data.perfil == resource.data.perfil && keepsUserIdentity())
-      );
+      allow update: if isProfessor()
+        || (isOwner(userId)
+          && request.resource.data.perfil == resource.data.perfil
+          && keepsUserIdentity());
       allow delete: if false;
     }
 
@@ -54,24 +51,24 @@ service cloud.firestore {
     }
 
     match /reservas/{document} {
-      allow read: if isAuthenticated() && (isProfessor() || isOwner(resource.data.usuarioId));
-      allow create: if isAluno() && isOwner(request.resource.data.usuarioId);
-      allow update: if isAuthenticated() && (
-        (isProfessor())
+      allow read: if isProfessor()
+        || (isAuthenticated() && isOwner(resource.data.usuarioId));
+      allow create: if isAluno()
+        && isOwner(request.resource.data.usuarioId)
+        && request.resource.data.status == 'PENDENTE';
+      allow update: if isProfessor()
         || (isOwner(resource.data.usuarioId)
-          && request.resource.data.usuarioId == resource.data.usuarioId)
-      );
+          && request.resource.data.usuarioId == resource.data.usuarioId);
       allow delete: if false;
     }
 
     match /emprestimos/{document} {
-      allow read: if isAuthenticated() && (isProfessor() || isOwner(resource.data.usuarioId));
+      allow read: if isProfessor()
+        || (isAuthenticated() && isOwner(resource.data.usuarioId));
       allow create: if isProfessor();
-      allow update: if isAuthenticated() && (
-        isProfessor()
+      allow update: if isProfessor()
         || (isOwner(resource.data.usuarioId)
-          && request.resource.data.usuarioId == resource.data.usuarioId)
-      );
+          && request.resource.data.usuarioId == resource.data.usuarioId);
       allow delete: if false;
     }
 
@@ -85,7 +82,13 @@ service cloud.firestore {
     }
 
     match /logs/{document} {
-      allow read, write: if isProfessor();
+      allow read, create: if isProfessor();
+      allow update, delete: if false;
+    }
+
+    // Fail closed: collections not explicitly declared above are denied.
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }
