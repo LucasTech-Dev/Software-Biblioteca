@@ -2,21 +2,22 @@ name: CodeQL
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main", "pre-main"]
   pull_request:
-    branches: ["main"]
+    branches: ["main", "pre-main"]
   schedule:
     - cron: "30 3 * * 1"
+  workflow_dispatch:
 
 permissions:
   contents: read
   security-events: write
-  actions: read
 
 jobs:
   analyze:
     name: Analyze JavaScript
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,8 +27,5 @@ jobs:
         with:
           languages: javascript
 
-      - name: Autobuild
-        uses: github/codeql-action/autobuild@v3
-
-      - name: Perform CodeQL Analysis
+      - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v3
