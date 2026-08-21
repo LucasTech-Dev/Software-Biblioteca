@@ -1,18 +1,17 @@
 import { db } from "../firestore.js";
 import { auth } from "../auth.js";
-import { 
-  doc, 
-  getDoc, 
-  updateDoc, 
-  arrayUnion, 
-  arrayRemove, 
-  writeBatch 
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  updateDoc,
+  arrayUnion,
+  arrayRemove,
+  writeBatch
 } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const UsuarioService = {
-  /**
-   * Obtém os dados de um usuário pelo seu UID (Usado por usuario.js e meusEmprestimos.js)
-   */
   async obterUsuario(uid) {
     if (!uid) return null;
     try {
@@ -26,9 +25,6 @@ const UsuarioService = {
     }
   },
 
-  /**
-   * Obtém os dados do usuário atualmente logado (Usado pelo ReservaService)
-   */
   async obterUsuarioAtual() {
     try {
       const user = auth.currentUser;
@@ -40,11 +36,18 @@ const UsuarioService = {
     }
   },
 
-  /**
-   * Atualiza dados cadastrais do perfil do aluno
-   */
-  async atualizarUsuario(uid, dados) {
-    if (!uid || !dados) return;
+  async listarTodos() {
+    try {
+      const snapshot = await getDocs(collection(db, "usuarios"));
+      return snapshot.docs.map((item) => ({ id: item.id, uid: item.id, ...item.data() }));
+    } catch (error) {
+      console.error("Erro ao listar usuários:", error);
+      throw error;
+    }
+  },
+
+  async atualizar(uid, dados) {
+    if (!uid || !dados || typeof dados !== "object") return;
     try {
       const ref = doc(db, "usuarios", uid);
       await updateDoc(ref, dados);
@@ -54,54 +57,43 @@ const UsuarioService = {
     }
   },
 
-  /**
-   * Vincula uma reserva ao perfil do aluno
-   */
+  async atualizarUsuario(uid, dados) {
+    return this.atualizar(uid, dados);
+  },
+
   async adicionarReserva(uid, reservaId) {
     if (!uid || !reservaId) return;
     try {
       const ref = doc(db, "usuarios", uid);
-      await updateDoc(ref, {
-        reservas: arrayUnion(reservaId)
-      });
+      await updateDoc(ref, { reservas: arrayUnion(reservaId) });
     } catch (error) {
       console.error("Erro ao adicionar reserva ao usuário:", error);
+      throw error;
     }
   },
 
-  /**
-   * Remove uma reserva do perfil do aluno
-   */
   async removerReserva(uid, reservaId) {
     if (!uid || !reservaId) return;
     try {
       const ref = doc(db, "usuarios", uid);
-      await updateDoc(ref, {
-        reservas: arrayRemove(reservaId)
-      });
+      await updateDoc(ref, { reservas: arrayRemove(reservaId) });
     } catch (error) {
       console.error("Erro ao remover reserva do usuário:", error);
+      throw error;
     }
   },
 
-  /**
-   * Adiciona um registro no histórico do aluno
-   */
   async adicionarHistorico(uid, item) {
     if (!uid || !item) return;
     try {
       const ref = doc(db, "usuarios", uid);
-      await updateDoc(ref, {
-        historico: arrayUnion(item)
-      });
+      await updateDoc(ref, { historico: arrayUnion(item) });
     } catch (error) {
       console.error("Erro ao adicionar histórico:", error);
+      throw error;
     }
   },
 
-  /**
-   * Oculta uma lista de reservas para o aluno (Botão "Apagar")
-   */
   async ocultarReservas(uid, idsReservas) {
     const validIds = (idsReservas || []).filter(id => typeof id === "string" && id.trim() !== "");
     if (validIds.length === 0) return;
@@ -109,8 +101,7 @@ const UsuarioService = {
     try {
       const batch = writeBatch(db);
       validIds.forEach(id => {
-        const ref = doc(db, "reservas", id);
-        batch.update(ref, { visivelAluno: false });
+        batch.update(doc(db, "reservas", id), { visivelAluno: false });
       });
       await batch.commit();
     } catch (error) {
@@ -119,9 +110,6 @@ const UsuarioService = {
     }
   },
 
-  /**
-   * Oculta uma lista de empréstimos para o aluno (Botão "Apagar")
-   */
   async ocultarEmprestimos(uid, idsEmprestimos) {
     const validIds = (idsEmprestimos || []).filter(id => typeof id === "string" && id.trim() !== "");
     if (validIds.length === 0) return;
@@ -129,8 +117,7 @@ const UsuarioService = {
     try {
       const batch = writeBatch(db);
       validIds.forEach(id => {
-        const ref = doc(db, "emprestimos", id);
-        batch.update(ref, { visivelAluno: false });
+        batch.update(doc(db, "emprestimos", id), { visivelAluno: false });
       });
       await batch.commit();
     } catch (error) {

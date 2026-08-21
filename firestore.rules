@@ -31,20 +31,34 @@ service cloud.firestore {
         && request.resource.data.email == resource.data.email;
     }
 
-    function keepsOwner(field) {
-      return request.resource.data[field] == resource.data[field];
-    }
-
     match /usuarios/{userId} {
       allow read: if isAuthenticated() && (isProfessor() || isOwner(userId));
-      // Self-registration can only create an aluno. Professor accounts must be provisioned separately.
+
+      // Public registration may create only an aluno profile for the authenticated UID.
       allow create: if isOwner(userId)
         && request.resource.data.uid == request.auth.uid
-        && request.resource.data.perfil == 'aluno';
-      allow update: if isAuthenticated() && (
-        (isProfessor() && request.resource.data.uid == resource.data.uid)
-        || (isOwner(userId) && request.resource.data.perfil == resource.data.perfil && keepsUserIdentity())
-      );
+        && request.resource.data.perfil == 'aluno'
+        && request.resource.data.email == request.auth.token.email;
+
+      // Professors may only change operational status fields, never identity or role.
+      allow update: if isProfessor()
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['ativo', 'bloqueado', 'atualizadoEm']);
+
+      // A student may update only their own profile/display fields and client-side
+      // UI state. Counters, role, identity and authorization fields are protected.
+      allow update: if isOwner(userId)
+        && request.resource.data.perfil == resource.data.perfil
+        && request.resource.data.perfil == 'aluno'
+        && keepsUserIdentity()
+        && request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly([
+            'nome', 'matricula', 'turma', 'atualizadoEm',
+            'reservas', 'historico', 'emprestimosOcultos', 'reservasOcultas',
+            'ultimoLogin'
+          ]);
+
       allow delete: if false;
     }
 
@@ -55,36 +69,69 @@ service cloud.firestore {
 
     match /reservas/{document} {
       allow read: if isAuthenticated() && (isProfessor() || isOwner(resource.data.usuarioId));
-      allow create: if isAluno() && isOwner(request.resource.data.usuarioId);
-      allow update: if isAuthenticated() && (
-        (isProfessor())
-        || (isOwner(resource.data.usuarioId)
-          && request.resource.data.usuarioId == resource.data.usuarioId)
-      );
+
+      // A student can create only a reservation owned by themselves and with the
+      // expected initial state. Authorization fields are server-controlled.
+      allow create: if isAluno()
+        && request.resource.data.usuarioId == request.auth.uid
+        && request.resource.data.status == 'PENDENTE'
+        && request.resource.data.professorId == null;
+
+      // Only professors may approve/reject reservations. Students can only cancel
+      // their own still-pending reservation, and cannot alter any other field.
+      allow update: if isProfessor()
+        || (
+          isAluno()
+          && isOwner(resource.data.usuarioId)
+          && resource.data.status == 'PENDENTE'
+          && request.resource.data.usuarioId == resource.data.usuarioId
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+          && request.resource.data.status == 'CANCELADA'
+        );
+
       allow delete: if false;
     }
 
     match /emprestimos/{document} {
       allow read: if isAuthenticated() && (isProfessor() || isOwner(resource.data.usuarioId));
+
       allow create: if isProfessor();
-      allow update: if isAuthenticated() && (
-        isProfessor()
-        || (isOwner(resource.data.usuarioId)
-          && request.resource.data.usuarioId == resource.data.usuarioId)
-      );
-      allow delete: if false;
+
+      // Students may only hide their own loan from their UI. All loan state,
+      // dates and ownership remain server-authoritative.
+      allow update: if isProfessor()
+        || (
+          isAluno()
+          && isOwner(resource.data.usuarioId)
+          && request.resource.data.usuarioId == resource.data.usuarioId
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['visivelAluno'])
+          && request.resource.data.visivelAluno == false
+        );
+
+      allow delete: if isProfessor();
     }
 
     match /notificacoes/{document} {
       allow read: if isAuthenticated() && isOwner(resource.data.usuarioId);
       allow create: if isProfessor();
+
+      // A user may only mark their own notification as read.
       allow update: if isAuthenticated()
         && isOwner(resource.data.usuarioId)
-        && request.resource.data.usuarioId == resource.data.usuarioId;
+        && request.resource.data.usuarioId == resource.data.usuarioId
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['lida'])
+        && request.resource.data.lida == true;
+
       allow delete: if isAuthenticated() && isOwner(resource.data.usuarioId);
     }
 
     match /logs/{document} {
+      allow read, write: if isProfessor();
+    }
+
+    // System configuration controls loan limits and deadlines and must never be
+    // writable by a client that is not a professor.
+    match /configuracoes/{document} {
       allow read, write: if isProfessor();
     }
   }
