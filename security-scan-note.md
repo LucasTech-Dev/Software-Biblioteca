@@ -1,1 +1,0 @@
-Security hardening work is being reviewed on the security-hardening-2026-08 branch.
